@@ -25,11 +25,11 @@ namespace GW2Scratch.ArcdpsLogManager.Sections.Statistics.Tabs
 			{
 				BeginHorizontal();
 				{
-					BeginGroup("Profession counts", new Padding(5), new Size(5, 5), xscale: true);
+					BeginGroup("職業計數", new Padding(5), new Size(5, 5), xscale: true);
 					{
 						foreach (var profession in ProfessionData.Professions.Select(x => x.Profession))
 						{
-							professionCountLabels[profession] = new Label {Text = "Unknown"};
+							professionCountLabels[profession] = new Label {Text = "未知"};
 
 							BeginHorizontal();
 							{
@@ -48,7 +48,7 @@ namespace GW2Scratch.ArcdpsLogManager.Sections.Statistics.Tabs
 					}
 					EndGroup();
 
-					BeginGroup("Specialization counts", xscale: true);
+					BeginGroup("特化計數", xscale: true);
 					{
 						BeginHorizontal();
 						{
@@ -58,18 +58,18 @@ namespace GW2Scratch.ArcdpsLogManager.Sections.Statistics.Tabs
 								{
 									BeginHorizontal();
 									{
-										coreCountLabels[profession.Profession] = new Label {Text = "Unknown", Width = 60};
+										coreCountLabels[profession.Profession] = new Label {Text = "未知", Width = 60};
 										var coreImage = new ImageView
 										{
 											Image = imageProvider.GetTinyProfessionIcon(profession.Profession),
-											ToolTip = $"Core {GameNames.GetName(profession.Profession)}"
+											ToolTip = $"核心 {GameNames.GetName(profession.Profession)}"
 										};
 										Add(coreImage);
 										Add(coreCountLabels[profession.Profession]);
 
 										foreach (var specialization in new[] {profession.HoT, profession.PoF, profession.EoD})
 										{
-											eliteCountLabels[specialization] = new Label {Text = "Unknown", Width = 60};
+											eliteCountLabels[specialization] = new Label {Text = "未知", Width = 60};
 											var image = new ImageView
 											{
 												Image = imageProvider.GetTinyProfessionIcon(specialization),
@@ -142,7 +142,7 @@ namespace GW2Scratch.ArcdpsLogManager.Sections.Statistics.Tabs
 				var profession = pair.Key;
 				var label = pair.Value;
 				var count = professionCounts[profession];
-				label.Text = $"{count} ({count / (float) logCount:0.00} on average)";
+				label.Text = $"{count} (平均 {count / (float) logCount:0.00} 位)";
 			}
 
 			foreach (var pair in coreCountLabels)

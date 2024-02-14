@@ -12,25 +12,25 @@ namespace GW2Scratch.ArcdpsLogManager.Dialogs
 	{
 		public ApiDialog(ApiProcessor apiProcessor)
 		{
-			Title = "API data - arcdps Log Manager";
+			Title = "API 資料 - arcdps 日誌管理器";
 			ClientSize = new Size(500, -1);
 			var formLayout = new DynamicLayout();
 			Content = formLayout;
 
-			var item = new Button {Text = "Close"};
+			var item = new Button {Text = "關閉"};
 			item.Click += (sender, args) => Close();
 			PositiveButtons.Add(item);
 
 			var deleteButton = new Button
 			{
-				Text = "Delete the cache",
+				Text = "刪除快取",
 			};
 
-			var enableCheckbox = new CheckBox {Text = "Use the GW2 API", Checked = Settings.UseGW2Api};
+			var enableCheckbox = new CheckBox {Text = "使用激戰2 API", Checked = Settings.UseGW2Api};
 			enableCheckbox.CheckedChanged += (sender, args) => Settings.UseGW2Api = enableCheckbox.Checked ?? false;
 
-			var guildCountLabel = new Label {Text = "Not loaded"};
-			var sizeLabel = new Label {Text = "No file"};
+			var guildCountLabel = new Label {Text = "沒有加載" };
+			var sizeLabel = new Label {Text = "沒有檔案"};
 
 			UpdateLabelTexts(apiProcessor.ApiData, guildCountLabel, sizeLabel);
 
@@ -38,15 +38,15 @@ namespace GW2Scratch.ArcdpsLogManager.Dialogs
 			{
 				formLayout.AddRow(new Label
 				{
-					Text = "Guild names and tags have to be loaded from the official GW2 API as the EVTC logs only contain GUID values.",
+					Text = "公會名稱和標籤必須從激戰2官方 API 加載，因為 EVTC 日誌僅包含 GUID 值。",
 					Wrap = WrapMode.Word
 				});
 			}
 			formLayout.EndVertical();
 			formLayout.BeginVertical(new Padding(10), new Size(5, 5));
 			{
-				formLayout.AddRow(new Label {Text = "Guilds:"}, guildCountLabel);
-				formLayout.AddRow(new Label {Text = "Cache file size:"}, sizeLabel);
+				formLayout.AddRow(new Label {Text = "公會數:"}, guildCountLabel);
+				formLayout.AddRow(new Label {Text = "快取檔案大小:"}, sizeLabel);
 			}
 			formLayout.EndVertical();
 			formLayout.BeginVertical(new Padding(10), new Size(5, 5));
@@ -67,15 +67,14 @@ namespace GW2Scratch.ArcdpsLogManager.Dialogs
 			deleteButton.Click += (sender, args) =>
 			{
 				if (MessageBox.Show(
-					    $"Delete the API cache? The API data of all {apiProcessor.ApiData.CachedGuildCount} guilds " +
-					    "will be forgotten. Renamed guilds will have their names/tags updated, but data of " +
-					    "disbanded guilds won't be retrievable anymore. You may have to restart the program for " +
-					    "everything to update.",
+					    $"確定刪除 API 快取? 所有 {apiProcessor.ApiData.CachedGuildCount} 個公會的 API 資料都將被刪除。 " +
+						"重新命名的公會名稱/標籤會更新，但解散的公會資料將無法再檢索。 " +
+						"您可能需要重新啟動程式才能更新所有內容。",
 					    MessageBoxButtons.OKCancel) == DialogResult.Ok)
 				{
 					apiProcessor.ApiData.Clear();
 					apiProcessor.ApiData.SaveDataToFile();
-					MessageBox.Show("API Cache deleted.");
+					MessageBox.Show("API 快取已刪除。");
 					UpdateLabelTexts(apiProcessor.ApiData, guildCountLabel, sizeLabel);
 				}
 			};
@@ -93,7 +92,7 @@ namespace GW2Scratch.ArcdpsLogManager.Dialogs
 
 		private void UpdateGuildCountText(ApiData apiData, Label label)
 		{
-			string text = "Not loaded";
+			string text = "沒有加載";
 
 			if (apiData != null)
 			{
@@ -105,12 +104,12 @@ namespace GW2Scratch.ArcdpsLogManager.Dialogs
 
 		private void UpdateCacheSizeText(ApiData apiData, Label label)
 		{
-			string text = "Not loaded";
+			string text = "沒有加載";
 
 			if (apiData != null)
 			{
 				FileInfo fileInfo = apiData.GetCacheFileInfo();
-				text = fileInfo.Exists ? $"{fileInfo.Length / 1000.0 / 1000.0:0.00} MB" : "No file";
+				text = fileInfo.Exists ? $"{fileInfo.Length / 1000.0 / 1000.0:0.00} MB" : "沒有檔案";
 			}
 
 			label.Text = text;

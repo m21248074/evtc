@@ -39,10 +39,10 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 
 		private static readonly Dictionary<string, string> Abbreviations = new Dictionary<string, string>
 		{
-			{ "★", "Favorite" },
-			{ "CM", "Challenge Mode or Emboldened" },
-			{ "Instabilities", "Fractals of the Mists" },
-			{ "Scale", "Fractals of the Mists" },
+			{ "★", "最愛" },
+			{ "CM", "挑戰或膽量模式" },
+			{ "霧鎖異變", "迷霧碎層, FotM" },
+			{ "碎層難度係數", "迷霧碎層, FotM)" },
 		};
 		
 		public bool ReadOnly { get; init; }
@@ -141,14 +141,14 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 
 			gridView.Columns.Add(new GridColumn()
 			{
-				HeaderText = "Encounter",
+				HeaderText = "遭遇戰名稱",
 				DataCell = new TextBoxCell
 				{
 					Binding = new DelegateBinding<LogData, string>(x =>
 					{
 						if (x.ParsingStatus is ParsingStatus.Unparsed or ParsingStatus.Parsing)
 						{
-							return "Processing...";
+							return "處理中...";
 						}
 
 						return nameProvider.GetName(x);
@@ -190,7 +190,7 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 
 			var resultColumn = new GridColumn()
 			{
-				HeaderText = "Result",
+				HeaderText = "結果",
 				DataCell = new TextBoxCell
 				{
 					Binding = new DelegateBinding<LogData, string>(x =>
@@ -198,18 +198,18 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 						switch (x.EncounterResult)
 						{
 							case EncounterResult.Success:
-								return "Success";
+								return "成功";
 							case EncounterResult.Failure:
 								if (Settings.ShowFailurePercentagesInLogList && x.HealthPercentage.HasValue)
 								{
-									return $"Failure ({x.HealthPercentage * 100:0.00}%)";
+									return $"失敗 ({x.HealthPercentage * 100:0.00}%)";
 								}
 								else
 								{
-									return "Failure";
+									return "失敗";
 								}
 							case EncounterResult.Unknown:
-								return "Unknown";
+								return "未知";
 							default:
 								throw new ArgumentOutOfRangeException();
 						}
@@ -220,7 +220,7 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 			
 			var fractalScaleColumn = new GridColumn
 			{
-				HeaderText = "Scale",
+				HeaderText = "碎層難度係數",
 				DataCell = new TextBoxCell
 				{
 					Binding = new DelegateBinding<LogData, string>(x => x.LogExtras?.FractalExtras?.FractalScale?.ToString() ?? "")
@@ -251,7 +251,7 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 			
 			var instabilityColumn = new GridColumn
 			{
-				HeaderText = "Instabilities",
+				HeaderText = "霧鎖異變",
 				DataCell = instabilityCell,
 				Width = 3 * (PlayerIconSize + PlayerIconSpacing)
 			};
@@ -259,14 +259,14 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 			
 			var dateColumn = new GridColumn()
 			{
-				HeaderText = "Date",
+				HeaderText = "日期",
 				DataCell = new TextBoxCell
 				{
 					Binding = new DelegateBinding<LogData, string>(x =>
 					{
 						if (x.EncounterStartTime == default)
 						{
-							return "Unknown";
+							return "未知";
 						}
 
 						string prefix = x.IsEncounterStartTimePrecise ? "" : "~";
@@ -280,7 +280,7 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 
 			var durationColumn = new GridColumn()
 			{
-				HeaderText = "Duration",
+				HeaderText = "戰鬥時間",
 				DataCell = new TextBoxCell
 				{
 					Binding = new DelegateBinding<LogData, string>(x =>
@@ -292,7 +292,7 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 						}
 
 						var seconds = x.EncounterDuration.TotalSeconds;
-						return $"{(int) seconds / 60:0}m {seconds % 60:00.0}s";
+						return $"{(int) seconds / 60:0}分 {seconds % 60:00.0}秒";
 					})
 				}
 			};
@@ -300,10 +300,10 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 
 			gridView.Columns.Add(new GridColumn
 			{
-				HeaderText = "Character",
+				HeaderText = "使用角色",
 				DataCell = new TextBoxCell
 				{
-					Binding = new DelegateBinding<LogData, string>(x => x.PointOfView?.CharacterName ?? "Unknown")
+					Binding = new DelegateBinding<LogData, string>(x => x.PointOfView?.CharacterName ?? "未知")
 				}
 			});
 
@@ -329,7 +329,7 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 
 			var compositionColumn = new GridColumn()
 			{
-				HeaderText = "Players",
+				HeaderText = "玩家",
 				DataCell = compositionCell,
 				Width = 11 * (PlayerIconSize + PlayerIconSpacing) // There are logs with 11 players here and there
 			};
@@ -338,7 +338,7 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 
 			gridView.Columns.Add(new GridColumn
 			{
-				HeaderText = "Map ID",
+				HeaderText = "地圖 ID",
 				DataCell = new TextBoxCell
 				{
 					Binding = new DelegateBinding<LogData, string>(x => x.MapId?.ToString() ?? "Unknown")
@@ -347,7 +347,7 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 
 			gridView.Columns.Add(new GridColumn
 			{
-				HeaderText = "Game Version",
+				HeaderText = "遊戲版本",
 				DataCell = new TextBoxCell
 				{
 					Binding = new DelegateBinding<LogData, string>(x => x.GameBuild?.ToString() ?? "Unknown")
@@ -356,7 +356,7 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 
 			gridView.Columns.Add(new GridColumn
 			{
-				HeaderText = "arcdps Version",
+				HeaderText = "arcdps 版本",
 				DataCell = new TextBoxCell
 				{
 					Binding = new DelegateBinding<LogData, string>(x => x.EvtcVersion)

@@ -8,35 +8,35 @@ namespace GW2Scratch.ArcdpsLogManager.Dialogs
 	{
 		public CacheDialog(ManagerForm managerForm)
 		{
-			Title = "Log cache - arcdps Log Manager";
+			Title = "日誌快取 - arcdps 日誌管理器";
 			ClientSize = new Size(500, -1);
 			var formLayout = new DynamicLayout();
 
-			var item = new Button {Text = "Close"};
+			var item = new Button {Text = "關閉"};
 			item.Click += (sender, args) => Close();
 			PositiveButtons.Add(item);
 
 			var deleteButton = new Button
 			{
-				Text = "Delete the cache",
+				Text = "刪除快取",
 			};
 
 			var pruneButton = new Button
 			{
-				Text = "Prune missing logs",
+				Text = "修剪遺失的日誌",
 			};
 
-			var countLabel = new Label {Text = "Not loaded"};
-			var unloadedCountLabel = new Label {Text = "Not loaded"};
-			var sizeLabel = new Label {Text = "No file"};
+			var countLabel = new Label {Text = "沒有加載" };
+			var unloadedCountLabel = new Label {Text = "沒有加載"};
+			var sizeLabel = new Label {Text = "沒有檔案"};
 
 			formLayout.BeginVertical(new Padding(10), new Size(0, 0));
 			{
 				formLayout.AddRow(new Label
 				{
-					Text = "The processed contents of logs are saved in a cache file to save time. " +
-					       "You can delete the cached results here to process the logs again or prune " +
-					       "results for logs that are not in the scanned directory anymore.",
+					Text = "日誌的處理內容保存在快取檔案中以節省時間。 " +
+						   "您可以在此處刪除快取的結果以再次處理日誌，" +
+						   "或刪除不再位於掃描目錄中的日誌的結果。",
 					Wrap = WrapMode.Word
 				});
 			}
@@ -44,9 +44,9 @@ namespace GW2Scratch.ArcdpsLogManager.Dialogs
 			formLayout.BeginVertical(new Padding(10), new Size(5, 5));
 			{
 				UpdateLabelTexts(managerForm, countLabel, unloadedCountLabel, sizeLabel);
-				formLayout.AddRow(new Label {Text = "Total cached logs:"}, countLabel);
-				formLayout.AddRow(new Label {Text = "Unloaded cached logs:"}, unloadedCountLabel);
-				formLayout.AddRow(new Label {Text = "Cache file size:"}, sizeLabel);
+				formLayout.AddRow(new Label {Text = "快取日誌總數:" }, countLabel);
+				formLayout.AddRow(new Label {Text = "未加載快取日誌:" }, unloadedCountLabel);
+				formLayout.AddRow(new Label {Text = "快取檔案大小:"}, sizeLabel);
 			}
 			formLayout.EndVertical();
 			formLayout.BeginVertical(new Padding(10), new Size(5, 5));
@@ -60,12 +60,12 @@ namespace GW2Scratch.ArcdpsLogManager.Dialogs
 			{
 				int unloadedLogs = managerForm.LogCache?.GetUnloadedLogCount(managerForm.LoadedLogs) ?? 0;
 				if (MessageBox.Show(
-					    $"Prune the cache? {unloadedLogs} results of currently unloaded logs will be forgotten. " +
-					    "If the logs are added back in the future, they will have to be processed again.",
+					    $"確定修剪快取? 目前未加載日誌的 {unloadedLogs} 個結果將會被刪除。 " +
+						"如果以後重新新增日誌，則必須重新處理。",
 					    MessageBoxButtons.OKCancel) == DialogResult.Ok)
 				{
 					int pruned = managerForm.LogCache?.Prune(managerForm.LoadedLogs) ?? 0;
-					MessageBox.Show($"Cache pruned, {pruned} results forgotten.");
+					MessageBox.Show($"快取已修剪， {pruned} 個結果被刪除。");
 					managerForm.LogCache?.SaveToFile();
 					UpdateLabelTexts(managerForm, countLabel, unloadedCountLabel, sizeLabel);
 					managerForm.ReloadLogs();
@@ -76,13 +76,13 @@ namespace GW2Scratch.ArcdpsLogManager.Dialogs
 			{
 				int logCount = managerForm.LogCache?.LogCount ?? 0;
 				if (MessageBox.Show(
-					    $"Delete the cache? The results of all {logCount} cached logs will be forgotten. " +
-					    "All logs will have to be processed again.",
+					    $"確定刪除快取? 所有 {logCount} 個快取日誌的結果都將被忘記。 " +
+						"所有日誌都必須重新處理。",
 					    MessageBoxButtons.OKCancel) == DialogResult.Ok)
 				{
 					managerForm.LogCache?.Clear();
 					managerForm.LogCache?.SaveToFile();
-					MessageBox.Show($"Cache deleted, {logCount} results forgotten.");
+					MessageBox.Show($"快取已刪除， {logCount} 個結果被刪除。");
 					UpdateLabelTexts(managerForm, countLabel, unloadedCountLabel, sizeLabel);
 					managerForm.ReloadLogs();
 				}
@@ -103,7 +103,7 @@ namespace GW2Scratch.ArcdpsLogManager.Dialogs
 
 		private void UpdateCacheCountText(ManagerForm managerForm, Label label)
 		{
-			string text = "Not loaded";
+			string text = "沒有加載";
 
 			if (managerForm.LogCache != null)
 			{
@@ -115,7 +115,7 @@ namespace GW2Scratch.ArcdpsLogManager.Dialogs
 
 		private void UpdateUnloadedCacheCountLabel(ManagerForm managerForm, Label label)
 		{
-			string text = "Not loaded";
+			string text = "沒有加載";
 
 			if (managerForm.LogCache != null)
 			{
@@ -127,12 +127,12 @@ namespace GW2Scratch.ArcdpsLogManager.Dialogs
 
 		private void UpdateCacheSizeText(ManagerForm managerForm, Label label)
 		{
-			string text = "Not loaded";
+			string text = "沒有加載";
 
 			if (managerForm.LogCache != null)
 			{
 				var fileInfo = managerForm.LogCache.GetCacheFileInfo();
-				text = fileInfo.Exists ? $"{fileInfo.Length / 1000.0 / 1000.0:0.00} MB" : "No file";
+				text = fileInfo.Exists ? $"{fileInfo.Length / 1000.0 / 1000.0:0.00} MB" : "沒有檔案";
 			}
 
 			label.Text = text;

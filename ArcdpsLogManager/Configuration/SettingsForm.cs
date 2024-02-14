@@ -10,7 +10,7 @@ namespace GW2Scratch.ArcdpsLogManager.Configuration
 
 		public SettingsForm()
 		{
-			Title = "Settings - arcdps Log Manager";
+			Title = "設定 - arcdps 日誌管理器";
 			ClientSize = new Size(400, -1);
 			MinimumSize = new Size(400, 300);
 
@@ -28,7 +28,7 @@ namespace GW2Scratch.ArcdpsLogManager.Configuration
 				tabs.Pages.Add(page);
 			}
 
-			var saveButton = new Button {Text = "Save"};
+			var saveButton = new Button {Text = "保存"};
 			saveButton.Click += (sender, args) =>
 			{
 				foreach (var page in pages)

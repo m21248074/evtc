@@ -10,7 +10,7 @@ namespace GW2Scratch.ArcdpsLogManager.Gw2Api
 	public class ApiData
 	{
 		public const string NoGuildGuid = "00000000-0000-0000-0000-000000000000";
-		public static readonly ApiGuild NoGuild = new ApiGuild {Tag = "", Name = "No guild"};
+		public static readonly ApiGuild NoGuild = new ApiGuild {Tag = "", Name = "沒有公會"};
 
 		private readonly ConcurrentDictionary<string, ApiGuild> guildDataCache;
 

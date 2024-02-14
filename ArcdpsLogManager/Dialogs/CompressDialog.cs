@@ -18,24 +18,24 @@ namespace GW2Scratch.ArcdpsLogManager.Dialogs
 				.Where(x => !logCompressionProcessor.IsScheduledOrBeingProcessed(x))
 				.ToList();
 			
-			Title = "Compress logs - arcdps Log Manager";
+			Title = "壓縮日誌 - arcdps 日誌管理器";
 			ClientSize = new Size(500, -1);
 			DynamicLayout layout = new DynamicLayout();
 			
-			Button closeButton = new Button { Text = "Close" };
+			Button closeButton = new Button { Text = "關閉" };
 			closeButton.Click += (_, _) => Close();
 			PositiveButtons.Add(closeButton);
 
 			Label savedSpaceLabel = new Label { Text = "0.00 MB" };
 			Button compressLogsButton = new Button
 			{
-				Text = "Compress logs",
+				Text = "壓縮日誌",
 				Enabled = logCompressionProcessor.GetScheduledItemCount() == 0 && compressibleLogs.Count > 0
 			};
 			
 			Button cancelCompressionButton = new Button
 			{
-				Text = "Stop compression",
+				Text = "停止壓縮",
 				Enabled = logCompressionProcessor.GetScheduledItemCount() > 0
 			};
 				
@@ -110,8 +110,8 @@ namespace GW2Scratch.ArcdpsLogManager.Dialogs
 			{
 				layout.AddRow(new Label
 				{
-					Text = "You may compress your uncompressed logs to save a significant amount of storage space. " +
-					       "This will transform your .evtc logs into .zevtc logs.",
+					Text = "您可以壓縮未壓縮的日誌以節省大量儲存空間。 " +
+						   "這會將您的 .evtc 日誌轉換為 .zevtc 日誌。",
 					Wrap = WrapMode.Word
 				});
 			}
@@ -124,9 +124,9 @@ namespace GW2Scratch.ArcdpsLogManager.Dialogs
 			layout.EndVertical();
 			layout.BeginVertical(new Padding(10), new Size(5, 5));
 			{
-				layout.AddRow("Uncompressed logs: ", compressibleCountLabel);
-				layout.AddRow("Newly compressed logs: ", compressedCountLabel);
-				layout.AddRow("Saved storage space: ", savedSpaceLabel);
+				layout.AddRow("未壓縮日誌數: ", compressibleCountLabel);
+				layout.AddRow("新壓縮日誌數: ", compressedCountLabel);
+				layout.AddRow("節省儲存空間: ", savedSpaceLabel);
 			}
 			layout.EndVertical();
 			layout.BeginHorizontal();

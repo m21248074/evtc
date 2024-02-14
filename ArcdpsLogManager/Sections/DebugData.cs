@@ -35,17 +35,17 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 						layout.Add(null, true);
 					}
 					layout.EndHorizontal();
-					layout.AddRow("File name", logData.FileInfo.Name);
-					layout.AddRow("File size", $"{logData.FileInfo.Length / 1000f / 1000f:0.000} MB");
-					layout.AddRow("File creation", $"{logData.FileInfo.CreationTime}");
+					layout.AddRow("檔案名稱", logData.FileInfo.Name);
+					layout.AddRow("檔案大小", $"{logData.FileInfo.Length / 1000f / 1000f:0.000} MB");
+					layout.AddRow("檔案建立日期", $"{logData.FileInfo.CreationTime}");
 					layout.AddRow(null);
-					layout.AddRow("Processing status", $"{logData.ParsingStatus}");
-					layout.AddRow("Processing time", $"{logData.ParseMilliseconds} ms");
-					layout.AddRow("Processed at date", $"{logData.ParseTime}");
-					layout.AddRow("Processed with manager version", $"{logData.ParsingVersion}");
-					layout.AddRow("dps.report upload state", logData.DpsReportEIUpload.UploadState.ToString());
-					layout.AddRow("dps.report upload time", logData.DpsReportEIUpload.UploadTime?.ToString(CultureInfo.InvariantCulture));
-					layout.AddRow("dps.report url", logData.DpsReportEIUpload.Url);
+					layout.AddRow("處理狀態", $"{logData.ParsingStatus}");
+					layout.AddRow("處理時間", $"{logData.ParseMilliseconds} 毫秒");
+					layout.AddRow("處理日期", $"{logData.ParseTime}");
+					layout.AddRow("處理的管理器版本", $"{logData.ParsingVersion}");
+					layout.AddRow("dps.report 上傳狀態", logData.DpsReportEIUpload.UploadState.ToString());
+					layout.AddRow("dps.report 上傳時間", logData.DpsReportEIUpload.UploadTime?.ToString(CultureInfo.InvariantCulture));
+					layout.AddRow("dps.report 網址", logData.DpsReportEIUpload.Url);
 					if (logData.ParsingStatus == ParsingStatus.Failed)
 					{
 						layout.EndVertical();

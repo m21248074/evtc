@@ -51,19 +51,19 @@ namespace GW2Scratch.ArcdpsLogManager.Sections.Statistics.Tabs
 
 			gridView.Columns.Add(new GridColumn
 			{
-				HeaderText = "Encounter name",
+				HeaderText = "遭遇戰名稱",
 				DataCell = new TextBoxCell {Binding = new DelegateBinding<EncounterStats, string>(x => x.Name)}
 			});
 
 			gridView.Columns.Add(new GridColumn
 			{
-				HeaderText = "Logs",
+				HeaderText = "日誌",
 				DataCell = new TextBoxCell {Binding = new DelegateBinding<EncounterStats, string>(x => $"{x.LogCount}")}
 			});
 
 			var totalTimeColumn = new GridColumn
 			{
-				HeaderText = "Total time",
+				HeaderText = "總時間",
 				DataCell = new TextBoxCell
 				{
 					Binding = new DelegateBinding<EncounterStats, string>(x => FormatTimeSpan(x.GetTotalTimeSpent()))
@@ -75,8 +75,8 @@ namespace GW2Scratch.ArcdpsLogManager.Sections.Statistics.Tabs
 
 			var shownResults = new (EncounterResult Result, string CountHeaderText, string TimeHeaderText, string AverageHeaderText)[]
 			{
-				(EncounterResult.Success, "Successes", "Time in successes", "Average success time"),
-				(EncounterResult.Failure, "Failures", "Time in failures", "Average failure time")
+				(EncounterResult.Success, "成功數", "成功總時間", "平均成功時間"),
+				(EncounterResult.Failure, "失敗數", "失敗總時間", "平均失敗時間")
 			};
 
 			foreach ((var result, string countHeaderText, string timeHeaderText, string averageHeaderText) in shownResults)
@@ -118,7 +118,7 @@ namespace GW2Scratch.ArcdpsLogManager.Sections.Statistics.Tabs
 
 			var successRateColumn = new GridColumn
 			{
-				HeaderText = "Success rate",
+				HeaderText = "成功率",
 				DataCell = new TextBoxCell
 				{
 					Binding = new DelegateBinding<EncounterStats, string>(x => $"{x.GetSuccessRate() * 100:0.0}%")
@@ -135,7 +135,8 @@ namespace GW2Scratch.ArcdpsLogManager.Sections.Statistics.Tabs
 
 		private string FormatTimeSpan(TimeSpan time)
 		{
-			var str = $@"{time:hh\h\ mm\m\ ss\s}";
+			var hour = time.ToString("hh") == "00" ? "" : time.ToString("hh")+"小時";
+			var str = hour + time.ToString("mm") + "分 " + time.ToString("ss") + "秒";
 			if (time.Days > 0)
 			{
 				str = $@"{time:%d\d} " + str;

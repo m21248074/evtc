@@ -15,13 +15,13 @@ namespace GW2Scratch.ArcdpsLogManager.Uploads
 	public class DpsReportUploader : IDisposable
 	{
 		public static readonly DpsReportDomain DefaultDomain = new DpsReportDomain("https://dps.report",
-			"Cloudflare. Supports HTTPS. May be unreliable in Eastern European and Asian countries");
+			"Cloudflare. 支援 HTTPS。 在東歐和亞洲國家可能不可靠");
 
 		private static readonly DpsReportDomain DomainA = new DpsReportDomain("http://a.dps.report",
-			"Imperva. Supports HTTP ONLY. Fairly reliable, use as last resort.");
+			"Imperva. 僅支援 HTTP。 相當可靠，作為最後手段。");
 
 		private static readonly DpsReportDomain DomainB = new DpsReportDomain("https://b.dps.report",
-			"Stackpath. Supports HTTPS. Alternative service domain that supports HTTPS.");
+			"Stackpath. 支援 HTTPS。 支援 HTTPS 的替代服務網域。");
 
 		public static IReadOnlyList<DpsReportDomain> AvailableDomains { get; } = new[]
 		{

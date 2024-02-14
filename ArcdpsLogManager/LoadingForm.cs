@@ -17,7 +17,7 @@ namespace GW2Scratch.ArcdpsLogManager
 			var layout = new DynamicLayout();
 
 			Icon = Resources.GetProgramIcon();
-			Title = "Loading - arcdps Log Manager";
+			Title = "加載中 - arcdps 日誌管理器";
 			ClientSize = new Size(200, 80);
 			Resizable = false;
 			Content = layout;
@@ -25,7 +25,7 @@ namespace GW2Scratch.ArcdpsLogManager
 			layout.BeginCentered(spacing: new Size(5, 5));
 			{
 				layout.Add(null, yscale: true);
-				layout.AddCentered("Loading the cache");
+				layout.AddCentered("加載快取中");
 				layout.AddCentered(new ProgressBar {Indeterminate = true});
 				layout.Add(null, yscale: true);
 			}

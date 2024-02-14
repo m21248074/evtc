@@ -62,8 +62,8 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 			var characterGridView = ConstructCharacterGridView();
 
 			var tabs = new TabControl();
-			tabs.Pages.Add(new TabPage(accountGridView) {Text = "Accounts"});
-			tabs.Pages.Add(new TabPage(characterGridView) {Text = "Characters"});
+			tabs.Pages.Add(new TabPage(accountGridView) {Text = "帳號"});
+			tabs.Pages.Add(new TabPage(characterGridView) {Text = "角色"});
 
 			PropertyChanged += (sender, args) =>
 			{
@@ -108,7 +108,7 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 			{
 				if (args.PropertyName != nameof(GuildData)) return;
 
-				string name = GuildData.Guid != null ? ApiData.GetGuildName(GuildData.Guid) : "(Unknown)";
+				string name = GuildData.Guid != null ? ApiData.GetGuildName(GuildData.Guid) : "(未知)";
 				string tag = GuildData.Guid != null ? ApiData.GetGuildTag(GuildData.Guid) : "???";
 				label.Text = $"{name} [{tag}]";
 			};
@@ -128,9 +128,9 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 				if (args.PropertyName != nameof(GuildData)) return;
 				if (GuildData == null) return;
 
-				string members = $"{GuildData.Accounts.Count} {(GuildData.Accounts.Count == 1 ? "member" : "members")}";
+				string members = $"{GuildData.Accounts.Count} 個成員";
 				string characters =
-					$"{GuildData.Characters.Count} {(GuildData.Characters.Count == 1 ? "character" : "characters")}";
+					$"{GuildData.Characters.Count} 個角色";
 				label.Text = $"{members}, {characters}";
 			};
 
@@ -139,7 +139,7 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 
 		private Button ConstructLogListButton()
 		{
-			var button = new Button {Text = "Show logs with this guild"};
+			var button = new Button {Text = "顯示該公會的日誌" };
 			button.Click += (sender, args) =>
 			{
 				var form = new Form
@@ -150,7 +150,7 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 					},
 					Width = 900,
 					Height = 700,
-					Title = $"arcdps Log Manager: logs with a member in {ApiData.GetGuildName(guildData.Guid)}"
+					Title = $"arcdps 日誌管理員: 帶有公會 {ApiData.GetGuildName(guildData.Guid)} 成員的日誌"
 				};
 				form.Show();
 			};
@@ -163,7 +163,7 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 			var gridView = new GridView<GuildCharacter>();
 			gridView.Columns.Add(new GridColumn
 			{
-				HeaderText = "Logs",
+				HeaderText = "日誌數",
 				DataCell = new TextBoxCell
 					{Binding = new DelegateBinding<GuildCharacter, string>(x => $"{x.Logs.Count}")}
 			});
@@ -180,13 +180,13 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 			gridView.Columns.Add(classImageColumn);
 			gridView.Columns.Add(new GridColumn
 			{
-				HeaderText = "Character",
+				HeaderText = "角色",
 				DataCell = new TextBoxCell
 					{Binding = new DelegateBinding<GuildCharacter, string>(x => x.Name)}
 			});
 			gridView.Columns.Add(new GridColumn
 			{
-				HeaderText = "Account",
+				HeaderText = "帳號",
 				DataCell = new TextBoxCell
 					{Binding = new DelegateBinding<GuildCharacter, string>(x => x.Account.Name.Substring(1))}
 			});
@@ -213,19 +213,19 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 			var gridView = new GridView<GuildMember>();
 			gridView.Columns.Add(new GridColumn
 			{
-				HeaderText = "Logs",
+				HeaderText = "日誌數",
 				DataCell = new TextBoxCell
 					{Binding = new DelegateBinding<GuildMember, string>(x => $"{x.Logs.Count}")}
 			});
 			gridView.Columns.Add(new GridColumn
 			{
-				HeaderText = "Account",
+				HeaderText = "帳號",
 				DataCell = new TextBoxCell
 					{Binding = new DelegateBinding<GuildMember, string>(x => x.Name.Substring(1))}
 			});
 			gridView.Columns.Add(new GridColumn
 			{
-				HeaderText = "Characters",
+				HeaderText = "角色數",
 				DataCell = new TextBoxCell
 					{Binding = new DelegateBinding<GuildMember, string>(x => $"{x.Characters.Count}")}
 			});

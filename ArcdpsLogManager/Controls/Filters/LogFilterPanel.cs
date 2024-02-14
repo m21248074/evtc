@@ -28,23 +28,23 @@ namespace GW2Scratch.ArcdpsLogManager.Controls.Filters
 
 			encounterTree = new LogEncounterFilterTree(imageProvider, Filters, logNameProvider);
 
-			var successCheckBox = new CheckBox {Text = "Success"};
+			var successCheckBox = new CheckBox {Text = "成功"};
 			successCheckBox.CheckedBinding.Bind(this, x => x.Filters.ShowSuccessfulLogs);
-			var failureCheckBox = new CheckBox {Text = "Failure"};
+			var failureCheckBox = new CheckBox {Text = "失敗"};
 			failureCheckBox.CheckedBinding.Bind(this, x => x.Filters.ShowFailedLogs);
-			var unknownCheckBox = new CheckBox {Text = "Unknown"};
+			var unknownCheckBox = new CheckBox {Text = "未知"};
 			unknownCheckBox.CheckedBinding.Bind(this, x => x.Filters.ShowUnknownLogs);
 
-			var normalModeCheckBox = new CheckBox {Text = "Normal"};
+			var normalModeCheckBox = new CheckBox {Text = "普通"};
 			normalModeCheckBox.CheckedBinding.Bind(this, x => x.Filters.ShowNormalModeLogs);
-			var challengeModeCheckBox = new CheckBox {Text = "Challenge"};
+			var challengeModeCheckBox = new CheckBox {Text = "挑戰"};
 			challengeModeCheckBox.CheckedBinding.Bind(this, x => x.Filters.ShowChallengeModeLogs);
-			var emboldenedCheckBox = new CheckBox {Text = "Emboldened"};
+			var emboldenedCheckBox = new CheckBox {Text = "膽量"};
 			emboldenedCheckBox.CheckedBinding.Bind(this, x => x.Filters.ShowEmboldenedModeLogs);
 
-			var nonFavoritesCheckBox = new CheckBox {Text = "☆ Non-favorites"};
+			var nonFavoritesCheckBox = new CheckBox {Text = "☆ 非最愛"};
 			nonFavoritesCheckBox.CheckedBinding.Bind(this, x => x.Filters.ShowNonFavoriteLogs);
-			var favoritesCheckBox = new CheckBox {Text = "★ Favorites"};
+			var favoritesCheckBox = new CheckBox {Text = "★ 最愛"};
 			favoritesCheckBox.CheckedBinding.Bind(this, x => x.Filters.ShowFavoriteLogs);
 
 			// TODO: This is currently only a one-way binding
@@ -60,7 +60,7 @@ namespace GW2Scratch.ArcdpsLogManager.Controls.Filters
 			var endDateTimePicker = new DateTimePicker {Mode = DateTimePickerMode.DateTime};
 			endDateTimePicker.ValueBinding.Bind(this, x => x.Filters.MaxDateTime);
 
-			var lastDayButton = new Button {Text = "Last 24 hours"};
+			var lastDayButton = new Button {Text = "過去 24 小時" };
 			lastDayButton.Click += (sender, args) =>
 			{
 				// We round the time to the previous minute as the interface for picking seconds
@@ -71,7 +71,7 @@ namespace GW2Scratch.ArcdpsLogManager.Controls.Filters
 				endDateTimePicker.Value = null;
 			};
 			
-			var lastWeekButton = new Button {Text = "Last 7 days"};
+			var lastWeekButton = new Button {Text = "過去 7 天"};
 			lastWeekButton.Click += (sender, args) =>
 			{
 				// We round the time to the previous minute as the interface for picking seconds
@@ -82,13 +82,13 @@ namespace GW2Scratch.ArcdpsLogManager.Controls.Filters
 				endDateTimePicker.Value = null;
 			};
 
-			var allTimeButton = new Button {Text = "All time"};
+			var allTimeButton = new Button {Text = "所有時間"};
 			allTimeButton.Click += (sender, args) => {
 				startDateTimePicker.Value = null;
 				endDateTimePicker.Value = null;
 			};
 
-			var advancedFiltersButton = new Button {Text = "Advanced filters"};
+			var advancedFiltersButton = new Button {Text = "進階篩選器" };
 			advancedFiltersButton.Click += (sender, args) =>
 			{
 				var advancedFilterPanel = new AdvancedFilterPanel(logCache, apiData, logProcessor, uploadProcessor,
@@ -96,7 +96,7 @@ namespace GW2Scratch.ArcdpsLogManager.Controls.Filters
 				
 				var form = new Form
 				{
-					Title = "Advanced filters - arcdps Log Manager",
+					Title = "進階篩選器 - arcdps 日誌管理器",
 					Content = advancedFilterPanel,
 				};
 				
@@ -113,17 +113,17 @@ namespace GW2Scratch.ArcdpsLogManager.Controls.Filters
 				var nonDefaultCount = AdvancedFilterPanel.CountNonDefaultAdvancedFilters(filters);
 				if (nonDefaultCount > 0)
 				{
-					advancedFiltersButton.Text = $"Advanced filters ({nonDefaultCount} set)";
+					advancedFiltersButton.Text = $"進階篩選器 ({nonDefaultCount} 個設定)";
 				}
 				else
 				{
-					advancedFiltersButton.Text = "Advanced filters";
+					advancedFiltersButton.Text = "進階篩選器";
 				}
 			};
 
 			BeginVertical(new Padding(0, 0, 0, 4), spacing: new Size(4, 4));
 			{
-				BeginGroup("Result", new Padding(4, 0, 4, 2), spacing: new Size(6, 0));
+				BeginGroup("結果", new Padding(4, 0, 4, 2), spacing: new Size(6, 0));
 				{
 					BeginHorizontal();
 					{
@@ -134,7 +134,7 @@ namespace GW2Scratch.ArcdpsLogManager.Controls.Filters
 					EndHorizontal();
 				}
 				EndGroup();
-				BeginGroup("Mode", new Padding(4, 0, 4, 2), spacing: new Size(6, 0));
+				BeginGroup("模式", new Padding(4, 0, 4, 2), spacing: new Size(6, 0));
 				{
 					BeginHorizontal();
 					{
@@ -145,20 +145,20 @@ namespace GW2Scratch.ArcdpsLogManager.Controls.Filters
 					EndHorizontal();
 				}
 				EndGroup();
-				BeginGroup("Date", new Padding(4, 0, 4, 2), spacing: new Size(4, 4));
+				BeginGroup("日期", new Padding(4, 0, 4, 2), spacing: new Size(4, 4));
 				{
 					BeginVertical(spacing: new Size(4, 2));
 					{
 						BeginHorizontal();
 						{
-							Add(new Label {Text = "From", VerticalAlignment = VerticalAlignment.Center});
+							Add(new Label {Text = "從", VerticalAlignment = VerticalAlignment.Center});
 							Add(startDateTimePicker);
 							Add(null, xscale: true);
 						}
 						EndHorizontal();
 						BeginHorizontal();
 						{
-							Add(new Label {Text = "To", VerticalAlignment = VerticalAlignment.Center});
+							Add(new Label {Text = "到", VerticalAlignment = VerticalAlignment.Center});
 							Add(endDateTimePicker);
 							Add(null, xscale: true);
 						}
@@ -179,7 +179,7 @@ namespace GW2Scratch.ArcdpsLogManager.Controls.Filters
 					EndVertical();
 				}
 				EndGroup();
-				BeginGroup("Favorites", new Padding(4, 0, 4, 2), spacing: new Size(6, 4));
+				BeginGroup("最愛", new Padding(4, 0, 4, 2), spacing: new Size(6, 4));
 				{
 					BeginHorizontal();
 					{
@@ -189,7 +189,7 @@ namespace GW2Scratch.ArcdpsLogManager.Controls.Filters
 					EndHorizontal();
 				}
 				EndGroup();
-				BeginGroup("Tags (comma-separated)", new Padding(4, 0, 4, 2), spacing: new Size(6, 4));
+				BeginGroup("標籤 (逗號分隔)", new Padding(4, 0, 4, 2), spacing: new Size(6, 4));
 				{
 					BeginVertical();
 					{

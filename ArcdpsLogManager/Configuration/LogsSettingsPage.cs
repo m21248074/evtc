@@ -17,11 +17,11 @@ namespace GW2Scratch.ArcdpsLogManager.Configuration
 
 		public LogsSettingsPage()
 		{
-			Text = "Logs";
+			Text = "日誌";
 
 			minDurationCheckBox = new CheckBox
 			{
-				Text = "Exclude short logs",
+				Text = "排除短日誌",
 				Checked = Settings.MinimumLogDurationSeconds.HasValue,
 				ThreeState = false
 			};
@@ -40,26 +40,25 @@ namespace GW2Scratch.ArcdpsLogManager.Configuration
 
 			var durationLabel = new Label
 			{
-				Text = "Minimum duration in seconds:", VerticalAlignment = VerticalAlignment.Center
+				Text = "最短戰鬥時間(以秒為單位):", VerticalAlignment = VerticalAlignment.Center
 			};
 
 			var layout = new DynamicLayout();
 			layout.BeginVertical(spacing: new Size(5, 5), padding: new Padding(10));
 			{
-				layout.BeginGroup("Log directories", new Padding(5), new Size(5, 5));
+				layout.BeginGroup("日誌目錄", new Padding(5), new Size(5, 5));
 				{
 					layout.AddRow(new Label
 					{
-						Text = "The directories in which your arcdps logs are stored. Subdirectories " +
-						       "are also searched, do not choose a parent directory containing more " +
-						       "irrelevant files unless you like extra waiting.",
+						Text = "儲存 arcdps 日誌的目錄。 子目錄也會被搜索，" +
+							   "不要選擇包含更多不相關文件的父目錄，除非你喜歡額外的等待。",
 						Wrap = WrapMode.Word,
 						Height = 70
 					});
 					layout.AddRow(directoryList);
 				}
 				layout.EndGroup();
-				layout.BeginGroup("Log filters", new Padding(5), new Size(5, 5));
+				layout.BeginGroup("日誌篩選", new Padding(5), new Size(5, 5));
 				{
 					layout.AddRow(minDurationCheckBox);
 					layout.AddRow(durationLabel, minDurationTextBox, null);

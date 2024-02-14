@@ -82,7 +82,7 @@ namespace GW2Scratch.ArcdpsLogManager.Controls.Filters
 		private Control ConstructApplyButton(LogFilters filters, CompositionFilters filterSnapshot)
 		{
 			var applyButton = new Button {
-				Text = "Apply",
+				Text = "確定",
 				Enabled = !Equals(filters.CompositionFilters, filterSnapshot)
 			};
 
@@ -101,7 +101,7 @@ namespace GW2Scratch.ArcdpsLogManager.Controls.Filters
 		private Button ConstructResetButton(CompositionFilters filterSnapshot)
 		{
 			var resetButton = new Button {
-				Text = "Reset composition",
+				Text = "重置陣容",
 				Enabled = !Equals(new CompositionFilters(), filterSnapshot)
 			};
 			

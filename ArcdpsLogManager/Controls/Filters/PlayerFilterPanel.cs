@@ -32,7 +32,7 @@ public class PlayerFilterPanel : DynamicLayout
 
 		BeginVertical(spacing: new Size(5, 5));
 		{
-			BeginGroup("Required players", new Padding(5), new Size(5, 5));
+			BeginGroup("所需玩家", new Padding(5), new Size(5, 5));
 			{
 				AddRow(typeRadios);
 				BeginVertical();
@@ -47,10 +47,10 @@ public class PlayerFilterPanel : DynamicLayout
 				EndVertical();
 			}
 			EndGroup();
-			BeginGroup("Player counts", new Padding(5), new Size(5, 5));
+			BeginGroup("玩家數量", new Padding(5), new Size(5, 5));
 			{
-				AddRow("Minimum players", ConstructMinCountStepper(filters));
-				AddRow("Maximum players", ConstructMaxCountStepper(filters));
+				AddRow("最少玩家數", ConstructMinCountStepper(filters));
+				AddRow("最多玩家數", ConstructMaxCountStepper(filters));
 			}
 			EndGroup();
 		}
@@ -91,7 +91,7 @@ public class PlayerFilterPanel : DynamicLayout
 		grid.DataStore = filters.RequiredPlayers;
 		grid.Columns.Add(new GridColumn
 		{
-			HeaderText = "Account name",
+			HeaderText = "帳號名",
 			DataCell = new TextBoxCell
 			{
 				Binding = new DelegateBinding<RequiredPlayerFilter, string>(x => x.AccountName[1..])
@@ -119,7 +119,7 @@ public class PlayerFilterPanel : DynamicLayout
 		UploadProcessor uploadProcessor, ImageProvider imageProvider, ILogNameProvider logNameProvider,
 		PlayerFilters filters)
 	{
-		var addPlayerButton = new Button { Text = "Add player" };
+		var addPlayerButton = new Button { Text = "新增玩家" };
 		addPlayerButton.Click += (sender, args) =>
 		{
 			var dialog = new PlayerSelectDialog(logCache, apiData, logProcessor, uploadProcessor, imageProvider,
@@ -136,7 +136,7 @@ public class PlayerFilterPanel : DynamicLayout
 
 	private Button ConstructRemoveButton(GridView<RequiredPlayerFilter> grid, PlayerFilters filters)
 	{
-		var removeButton = new Button { Text = "Remove selected players", Enabled = grid.SelectedItems.Any() };
+		var removeButton = new Button { Text = "移除所選玩家", Enabled = grid.SelectedItems.Any() };
 		removeButton.Click += (_, _) =>
 		{
 			// We need to save the items in ToList() first as we are modifying the collection the grid is bound to.
@@ -159,9 +159,9 @@ public class PlayerFilterPanel : DynamicLayout
 			Spacing = new Size(5, 5),
 			GetText = type => type switch
 			{
-				PlayerFilters.FilterType.All => "All of these",
-				PlayerFilters.FilterType.Any => "Any of these",
-				PlayerFilters.FilterType.None => "None of these",
+				PlayerFilters.FilterType.All => "包含全部所選",
+				PlayerFilters.FilterType.Any => "任一個所選",
+				PlayerFilters.FilterType.None => "排除全部所選",
 				_ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
 			},
 		};

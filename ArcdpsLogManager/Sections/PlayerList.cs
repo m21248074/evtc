@@ -99,7 +99,7 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 				BeginHorizontal();
 				{
 					Add(new Label
-						{Text = "Filter by character or account name", VerticalAlignment = VerticalAlignment.Center});
+						{Text = "按角色或帳號名稱篩選", VerticalAlignment = VerticalAlignment.Center});
 					Add(playerFilterBox);
 					Add(null, true);
 					Add(accountCountLabel, true, true);
@@ -173,8 +173,8 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 
 		private void UpdateCountLabels(int accountCount, int characterCount)
 		{
-			accountCountLabel.Text = $"{accountCount} accounts";
-			characterCountLabel.Text = $"{characterCount} characters";
+			accountCountLabel.Text = $"{accountCount} 個帳號";
+			characterCountLabel.Text = $"{characterCount} 個角色";
 		}
 
 		private bool FilterPlayerData(PlayerData playerData)
@@ -203,12 +203,12 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 		{
 			var gridView = new GridView<PlayerData>();
 			gridView.Columns.Add(new GridColumn {
-				HeaderText = "Account name",
+				HeaderText = "帳號名",
 				DataCell = new TextBoxCell
 					{Binding = new DelegateBinding<PlayerData, string>(x => x.AccountName.Substring(1))}
 			});
 			gridView.Columns.Add(new GridColumn {
-				HeaderText = "Log count",
+				HeaderText = "日誌數",
 				DataCell = new TextBoxCell
 					{Binding = new DelegateBinding<PlayerData, string>(x => x.Logs.Count.ToString())}
 			});

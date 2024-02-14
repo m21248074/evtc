@@ -62,12 +62,12 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 				{
 					EncounterMode.Unknown => "",
 					EncounterMode.Normal => "",
-					EncounterMode.Challenge => "Challenge Mode",
-					EncounterMode.Emboldened1 => "Emboldened 1",
-					EncounterMode.Emboldened2 => "Emboldened 2",
-					EncounterMode.Emboldened3 => "Emboldened 3",
-					EncounterMode.Emboldened4 => "Emboldened 4",
-					EncounterMode.Emboldened5 => "Emboldened 5",
+					EncounterMode.Challenge => "挑戰模式",
+					EncounterMode.Emboldened1 => "膽量模式 1層",
+					EncounterMode.Emboldened2 => "膽量模式 2層",
+					EncounterMode.Emboldened3 => "膽量模式 3層",
+					EncounterMode.Emboldened4 => "膽量模式 4層",
+					EncounterMode.Emboldened5 => "膽量模式 5層",
 					_ => throw new ArgumentOutOfRangeException()
 				};
 
@@ -77,7 +77,7 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 					{
 						modeLabel.Text += ", ";
 					}
-					modeLabel.Text += $"Scale {logData.LogExtras.FractalExtras.FractalScale}";
+					modeLabel.Text += $"碎層難度係數 {logData.LogExtras.FractalExtras.FractalScale}";
 				}
 				
 				modeLabel.Visible = !String.IsNullOrWhiteSpace(modeLabel.Text);
@@ -86,28 +86,28 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 				switch (logData.EncounterResult)
 				{
 					case EncounterResult.Success:
-						result = "Success";
+						result = "成功";
 						break;
 					case EncounterResult.Failure:
 						result = logData.HealthPercentage.HasValue
-							? $"Failure ({logData.HealthPercentage * 100:0.00}% health)"
-							: "Failure";
+							? $"失敗 ({logData.HealthPercentage * 100:0.00}% 生命值)"
+							: "失敗";
 						break;
 					case EncounterResult.Unknown:
-						result = "Unknown";
+						result = "未知";
 						break;
 					default:
 						throw new ArgumentOutOfRangeException();
 				}
 
 				double seconds = logData.EncounterDuration.TotalSeconds;
-				string duration = $"{(int) seconds / 60:0}m {seconds % 60:0.0}s";
+				string duration = $"{(int) seconds / 60:0}分 {seconds % 60:0.0}秒";
 
 				fileNameButton.Text = System.IO.Path.GetFileName(logData.FileName);
 
-				resultLabel.Text = $"{result} in {duration}";
+				resultLabel.Text = $"{duration} {result}";
 
-				parseTimeLabel.Text = $"{logData.ParseMilliseconds} ms";
+				parseTimeLabel.Text = $"{logData.ParseMilliseconds} 毫秒";
 				parseStatusLabel.Text = logData.ParsingStatus.ToString();
 
 				instabilityList.MistlockInstabilities = logData.LogExtras?.FractalExtras?.MistlockInstabilities;
@@ -161,8 +161,8 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 			tagControl = new TagControl {ReadOnly = readOnly};
 
 			DynamicGroup debugSection;
-			var debugButton = new Button {Text = "Debug data"};
-			var reparseButton = new Button {Text = "Reprocess"};
+			var debugButton = new Button {Text = "除錯資料"};
+			var reparseButton = new Button {Text = "重新處理"};
 
 			tagControl.TagAdded += (sender, args) =>
 			{
@@ -225,14 +225,14 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 					}
 					EndVertical();
 
-					debugSection = BeginGroup("Debug data", new Padding(5));
+					debugSection = BeginGroup("除錯資料", new Padding(5));
 					{
 						BeginHorizontal();
 						{
 							BeginVertical(xscale: true, spacing: new Size(5, 5));
 							{
-								AddRow("Time spent processing", parseTimeLabel);
-								AddRow("Processing status", parseStatusLabel);
+								AddRow("處理所花費的時間", parseTimeLabel);
+								AddRow("處理狀態", parseStatusLabel);
 							}
 							EndVertical();
 							BeginVertical(spacing: new Size(5, 5));
@@ -258,13 +258,13 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 					else
 					{
 						// The height is not working correctly on Gtk, and the icon may have clashing colors depending on the Gtk theme.
-						copyButton = new Button { Text = "Copy" };
+						copyButton = new Button { Text = "複製" };
 					}
 					dpsReportUploadButton = new Button();
 					dpsReportTextBox = new TextBox {ReadOnly = true};
-					dpsReportOpenButton = new Button {Text = "Open"};
+					dpsReportOpenButton = new Button {Text = "打開"};
 
-					BeginGroup("Upload to dps.report (Elite Insights)", new Padding(5), new Size(0, 5));
+					BeginGroup("上傳到 dps.report (Elite Insights)", new Padding(5), new Size(0, 5));
 					{
 						BeginVertical(spacing: new Size(5, 5));
 						{
@@ -323,7 +323,7 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 			debugButton.Click += (sender, args) =>
 			{
 				var debugData = new DebugData {LogData = LogData};
-				var dialog = new Form {Content = debugData, Width = 500, Title = "Debug data"};
+				var dialog = new Form {Content = debugData, Width = 500, Title = "除錯資料" };
 				dialog.Show();
 				debugData.InspectorOpened += (_, _) => dialog.Close();
 			};
@@ -394,7 +394,7 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 				return;
 			}
 
-			const string reuploadButtonText = "Reupload";
+			const string reuploadButtonText = "重新上傳";
 
 			bool uploadEnabled = false;
 			bool openEnabled = false;
@@ -405,22 +405,22 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 			switch (upload.UploadState)
 			{
 				case UploadState.NotUploaded:
-					uploadButtonText = "Upload";
+					uploadButtonText = "上傳";
 					uploadEnabled = true;
 					break;
 				case UploadState.Queued:
 				case UploadState.Uploading:
-					uploadButtonText = "Uploading...";
+					uploadButtonText = "上傳中...";
 					break;
 				case UploadState.UploadError:
 					uploadButtonText = reuploadButtonText;
 					uploadEnabled = true;
-					text = $"Upload failed: {upload.UploadError ?? "No error"}";
+					text = $"上傳失敗: {upload.UploadError ?? "沒有錯誤"}";
 					break;
 				case UploadState.ProcessingError:
 					uploadButtonText = reuploadButtonText;
 					uploadEnabled = true;
-					text = $"dps.report error: {upload.ProcessingError ?? "No error"}";
+					text = $"dps.report 錯誤: {upload.ProcessingError ?? "沒有錯誤"}";
 					break;
 				case UploadState.Uploaded:
 					uploadButtonText = reuploadButtonText;

@@ -24,7 +24,7 @@ public class PlayerSelectDialog : Dialog
 		IEnumerable<LogData> logs
 	)
 	{
-		Title = "Select a player";
+		Title = "選擇一個玩家";
 		ShowInTaskbar = true;
 		Padding = new Padding(10);
 		Size = new Size(800, 600);
@@ -32,7 +32,7 @@ public class PlayerSelectDialog : Dialog
 		var layout = new DynamicLayout();
 		Content = layout;
 
-		var confirmButton = new Button { Text = "Select" };
+		var confirmButton = new Button { Text = "選擇" };
 		PositiveButtons.Add(confirmButton);
 		confirmButton.Click += (_, _) =>
 		{
@@ -40,7 +40,7 @@ public class PlayerSelectDialog : Dialog
 			Close();
 		};
 
-		AbortButton = new Button { Text = "Cancel" };
+		AbortButton = new Button { Text = "取消" };
 		NegativeButtons.Add(AbortButton);
 		AbortButton.Click += (_, _) =>
 		{

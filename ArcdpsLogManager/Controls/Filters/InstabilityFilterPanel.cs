@@ -19,9 +19,9 @@ namespace GW2Scratch.ArcdpsLogManager.Controls.Filters
 					Spacing = new Size(5, 5),
 					GetText = type => type switch
 					{
-						InstabilityFilters.FilterType.All => "All of these",
-						InstabilityFilters.FilterType.Any => "Any of these",
-						InstabilityFilters.FilterType.None => "None of these",
+						InstabilityFilters.FilterType.All => "包含全部所選",
+						InstabilityFilters.FilterType.Any => "任一個所選",
+						InstabilityFilters.FilterType.None => "排除全部所選",
 						_ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
 					},
 				};
@@ -70,12 +70,11 @@ namespace GW2Scratch.ArcdpsLogManager.Controls.Filters
 					EndHorizontal();
 				}
 				EndVertical();
-				BeginGroup("Tip", new Padding(10, 5));
+				BeginGroup("提示", new Padding(10, 5));
 				{
 					Add(new Label
 					{
-						Text = "You can enable the Mistlock Instabilities column in the log list by right-clicking " +
-						       "the log list header and checking the related checkbox.",
+						Text = "您可以透過右鍵日誌清單標頭並勾選 霧鎖異變 來啟用日誌清單中的 霧鎖異變 欄位。",
 						Wrap = WrapMode.Word,
 						// This prevents the label to expanding the entire window just to fit everything on one line.
 						// It will still fully expand to the fill the group.

@@ -18,8 +18,8 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 			encounters = new EncounterStatistics(nameProvider);
 
 			var tabs = new TabControl();
-			tabs.Pages.Add(new TabPage {Text = "Encounters", Content = encounters, Padding = new Padding(10)});
-			tabs.Pages.Add(new TabPage {Text = "Specializations", Content = specializations, Padding = new Padding(10)});
+			tabs.Pages.Add(new TabPage {Text = "¾D¹J¾Ô", Content = encounters, Padding = new Padding(10)});
+			tabs.Pages.Add(new TabPage {Text = "¯S¤Æ", Content = specializations, Padding = new Padding(10)});
 			Content = tabs;
 		}
 

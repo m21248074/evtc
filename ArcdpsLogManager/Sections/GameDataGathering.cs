@@ -129,28 +129,28 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 				Value = Math.Min(Environment.ProcessorCount, 4),
 				MinValue = 1, Increment = 1.0
 			};
-			var gatherButton = new Button {Text = "Collect data"};
-			var cancelButton = new Button {Text = "Cancel"};
-			var exportSpeciesButton = new Button {Text = "Export species data to csv"};
-			var exportSkillsButton = new Button {Text = "Export skill data to csv"};
+			var gatherButton = new Button {Text = "收集資料"};
+			var cancelButton = new Button {Text = "取消"};
+			var exportSpeciesButton = new Button {Text = "將物種資料匯出到 csv" };
+			var exportSkillsButton = new Button {Text = "將技能資料匯出到 csv" };
 			var progressBar = new ProgressBar();
 			var progressLabel = new Label {Text = ""};
 			var speciesGridView = new GridView<SpeciesData>();
 			var skillGridView = new GridView<SkillData>();
 
 			var dataTabs = new TabControl();
-			dataTabs.Pages.Add(new TabPage {Text = "Species", Content = speciesGridView});
-			dataTabs.Pages.Add(new TabPage {Text = "Skills", Content = skillGridView});
+			dataTabs.Pages.Add(new TabPage {Text = "物種", Content = speciesGridView});
+			dataTabs.Pages.Add(new TabPage {Text = "技能", Content = skillGridView});
 
 			BeginVertical(new Padding(5), new Size(5, 5));
 			{
 				AddCentered(
-					"Collects a list of all different agent species and skills found in logs (uses current filters).");
-				AddCentered("Requires all logs to be processed again as this data is not cached.");
+					"收集日誌中找到的所有不同物種和技能的清單(使用目前篩選器)。");
+				AddCentered("需要重新處理所有日誌，因為此資料未快取。");
 				AddSpace(yscale: false);
 				BeginCentered(spacing: new Size(5, 5));
 				{
-					var label = new Label { Text = "Threads to use for parallel processing", VerticalAlignment = VerticalAlignment.Center };
+					var label = new Label { Text = "用於平行處理的線程數", VerticalAlignment = VerticalAlignment.Center };
 					AddRow(label, threadCountStepper);
 				}
 				EndCentered();
@@ -179,7 +179,7 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 
 			speciesGridView.Columns.Add(new GridColumn
 			{
-				HeaderText = "Species ID",
+				HeaderText = "物種 ID",
 				DataCell = new TextBoxCell()
 				{
 					Binding = new DelegateBinding<SpeciesData, string>(x => x.SpeciesId.ToString())
@@ -187,7 +187,7 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 			});
 			speciesGridView.Columns.Add(new GridColumn
 			{
-				HeaderText = "Name",
+				HeaderText = "名稱",
 				DataCell = new TextBoxCell()
 				{
 					Binding = new DelegateBinding<SpeciesData, string>(x => x.Name)
@@ -195,7 +195,7 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 			});
 			speciesGridView.Columns.Add(new GridColumn
 			{
-				HeaderText = "Times seen",
+				HeaderText = "所見次數",
 				DataCell = new TextBoxCell()
 				{
 					Binding = new DelegateBinding<SpeciesData, string>(x => x.Logs.Count.ToString())
@@ -204,10 +204,10 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 
 			var speciesLogsColumn = new GridColumn
 			{
-				HeaderText = "Logs",
+				HeaderText = "日誌",
 				DataCell = new TextBoxCell()
 				{
-					Binding = new DelegateBinding<SpeciesData, string>(x => $"{x.Logs.Count}, click me to open log list"),
+					Binding = new DelegateBinding<SpeciesData, string>(x => $"{x.Logs.Count}, 點我打開日誌列表"),
 				}
 			};
 			speciesGridView.Columns.Add(speciesLogsColumn);
@@ -227,7 +227,7 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 							},
 							Width = 900,
 							Height = 700,
-							Title = $"arcdps Log Manager: logs containing species {speciesData.Name} (ID {speciesData.SpeciesId})"
+							Title = $"arcdps 日誌管理器: 日誌包含物種 {speciesData.Name} (ID {speciesData.SpeciesId})"
 						};
 						form.Show();
 					}
@@ -236,7 +236,7 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 			
 			skillGridView.Columns.Add(new GridColumn
 			{
-				HeaderText = "Skill ID",
+				HeaderText = "技能 ID",
 				DataCell = new TextBoxCell()
 				{
 					Binding = new DelegateBinding<SkillData, string>(x => x.SkillId.ToString())
@@ -244,7 +244,7 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 			});
 			skillGridView.Columns.Add(new GridColumn
 			{
-				HeaderText = "Name",
+				HeaderText = "名稱",
 				DataCell = new TextBoxCell()
 				{
 					Binding = new DelegateBinding<SkillData, string>(x => x.Name)
@@ -252,7 +252,7 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 			});
 			skillGridView.Columns.Add(new GridColumn
 			{
-				HeaderText = "Type",
+				HeaderText = "種類",
 				DataCell = new TextBoxCell()
 				{
 					Binding = new DelegateBinding<SkillData, string>(x => x.Type.ToString())
@@ -260,7 +260,7 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 			});
 			skillGridView.Columns.Add(new GridColumn
 			{
-				HeaderText = "Times seen",
+				HeaderText = "所見次數",
 				DataCell = new TextBoxCell()
 				{
 					Binding = new DelegateBinding<SkillData, string>(x => x.Logs.Count.ToString())
@@ -268,10 +268,10 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 			});
 			var skillLogsColumn = new GridColumn
 			{
-				HeaderText = "Logs",
+				HeaderText = "日誌",
 				DataCell = new TextBoxCell()
 				{
-					Binding = new DelegateBinding<SkillData, string>(x => $"{x.Logs.Count}, click me to open log list"),
+					Binding = new DelegateBinding<SkillData, string>(x => $"{x.Logs.Count}, 點我打開日誌列表"),
 				}
 			};
 			skillGridView.Columns.Add(skillLogsColumn);
@@ -291,7 +291,7 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 							},
 							Width = 900,
 							Height = 700,
-							Title = $"arcdps Log Manager: logs containing skill {skillData.Name} (ID {skillData.SkillId})"
+							Title = $"arcdps 日誌管理器: 日誌包含技能 {skillData.Name} (ID {skillData.SkillId})"
 						};
 						form.Show();
 					}
@@ -364,7 +364,7 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 					{
 						progressBar.MaxValue = totalLogs;
 						progressBar.Value = done;
-						progressLabel.Text = $"{done}/{totalLogs} ({failed} failed)";
+						progressLabel.Text = $"{done}/{totalLogs} ({failed} 失敗)";
 					});
 				})
 			).ContinueWith(task =>

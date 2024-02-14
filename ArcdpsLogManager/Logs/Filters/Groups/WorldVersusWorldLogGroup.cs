@@ -9,7 +9,7 @@ namespace GW2Scratch.ArcdpsLogManager.Logs.Filters.Groups
 	/// </summary>
 	public class WorldVersusWorldLogGroup : CategoryLogGroup
 	{
-		private const string GroupName = "World vs. World";
+		private const string GroupName = "世界之戰 (World vs. World, WvW)";
 
 		public override string Name => GroupName;
 		public override IEnumerable<LogGroup> Subgroups { get; } = new LogGroup[]

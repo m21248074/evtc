@@ -15,7 +15,7 @@ namespace GW2Scratch.ArcdpsLogManager.Configuration
 
 		public DpsReportUploadSettingsPage()
 		{
-			Text = "Uploads - dps.report";
+			Text = "上傳 - dps.report";
 
 			domainList = new RadioButtonList();
 			// The binding has to be set before the data store is as it's only used when the radio buttons are created.
@@ -57,7 +57,7 @@ namespace GW2Scratch.ArcdpsLogManager.Configuration
 
 			uploadDetailedWvwCheckbox = new CheckBox
 			{
-				Text = "Detailed WVW Reports (Beta)",
+				Text = "詳細的 WvW 日誌報告(測試版)",
 				Checked = Settings.DpsReportUploadDetailedWvw
 			};
 
@@ -68,13 +68,13 @@ namespace GW2Scratch.ArcdpsLogManager.Configuration
 				Enabled = false
 			};
 
-			var showUserTokenButton = new Button {Text = "Show"};
+			var showUserTokenButton = new Button {Text = "顯示"};
 			showUserTokenButton.Click += (sender, args) =>
 			{
 				userTokenTextBox.Text = Settings.DpsReportUserToken;
 				userTokenTextBox.Enabled = true;
 			};
-			var changeUserTokenButton = new Button {Text = "Change"};
+			var changeUserTokenButton = new Button {Text = "修改"};
 			changeUserTokenButton.Click += (_, _) =>
 			{
 				if (EditingUserToken)
@@ -86,7 +86,7 @@ namespace GW2Scratch.ArcdpsLogManager.Configuration
 					userTokenTextBox.Text = "************";
 					userTokenTextBox.Enabled = false;
 					
-					changeUserTokenButton.Text = "Change";
+					changeUserTokenButton.Text = "修改";
 					showUserTokenButton.Visible = true;
 				}
 				else
@@ -97,7 +97,7 @@ namespace GW2Scratch.ArcdpsLogManager.Configuration
 					userTokenTextBox.Text = Settings.DpsReportUserToken;
 					userTokenTextBox.Enabled = true;
 
-					changeUserTokenButton.Text = "Save";
+					changeUserTokenButton.Text = "保存";
 					showUserTokenButton.Visible = false;
 				}
 			};
@@ -105,26 +105,25 @@ namespace GW2Scratch.ArcdpsLogManager.Configuration
 			var layout = new DynamicLayout();
 			layout.BeginVertical(new Padding(10), new Size(5, 5));
 			{
-				layout.BeginGroup("Upload domain", new Padding(5), new Size(5, 5));
+				layout.BeginGroup("上傳域名", new Padding(5), new Size(5, 5));
 				{
 					layout.AddRow(domainList);
 					layout.AddRow(domainDescriptionLabel);
 				}
 				layout.EndGroup();
-				layout.BeginGroup("Upload Options", new Padding(5), new Size(5, 5));
+				layout.BeginGroup("上傳選項", new Padding(5), new Size(5, 5));
 				{
 					layout.AddRow(uploadDetailedWvwCheckbox);
 				}
 				layout.EndGroup();
 				
-				layout.BeginGroup("User token", new Padding(5), new Size(5, 5));
+				layout.BeginGroup("使用者令牌", new Padding(5), new Size(5, 5));
 				{
 					layout.BeginVertical();
 					{
 						layout.AddRow(new Label
 						{
-							Text = "The user token used for dps.report uploads. Treat is as a password, " +
-							       "it can be used to see all previous uploads.",
+							Text = "用於 dps.report 上傳的使用者令牌。 將其視為密碼，可用於查看之前所有上傳的內容。",
 							Wrap = WrapMode.Word,
 							Height = 50
 						});

@@ -129,7 +129,7 @@ namespace GW2Scratch.ArcdpsLogManager
 
 			// Form layout
 			Icon = Resources.GetProgramIcon();
-			Title = "arcdps Log Manager";
+			Title = "arcdps 日誌管理器";
 			ClientSize = new Size(1300, 768);
 			var formLayout = new DynamicLayout();
 			Content = formLayout;
@@ -288,17 +288,17 @@ namespace GW2Scratch.ArcdpsLogManager
 		{
 			// Log count label
 			var logCountLabel = new Label();
-			LogSearchStarted += (sender, args) => logCountLabel.Text = "Finding logs...";
-			LogSearchFinished += (sender, args) => logCountLabel.Text = $"{logs.Count} logs found.";
+			LogSearchStarted += (sender, args) => logCountLabel.Text = "找尋日誌中...";
+			LogSearchFinished += (sender, args) => logCountLabel.Text = $"找到 {logs.Count} 條日誌。";
 			FilteredLogsUpdated += (sender, args) =>
 			{
 				int fullCount = logs.Count;
 				int filteredCount = logsFiltered.Count;
 				if (filteredCount != fullCount)
 				{
-					logCountLabel.Text = $"{fullCount} logs found, {filteredCount} displayed.";
+					logCountLabel.Text = $"找到 {fullCount} 條日誌，顯示 {filteredCount} 條。";
 				} else {
-					logCountLabel.Text = $"{fullCount} logs found.";
+					logCountLabel.Text = $"找到 {fullCount} 條日誌。";
 				}
 			};
 			
@@ -389,7 +389,7 @@ namespace GW2Scratch.ArcdpsLogManager
 
 		private MenuBar ConstructMenuBar()
 		{
-			var updateMenuItem = new ButtonMenuItem {Text = "&Update logs with outdated data"};
+			var updateMenuItem = new ButtonMenuItem {Text = "&使用過期資料更新日誌" };
 			updateMenuItem.Click += (sender, args) =>
 			{
 				new ProcessingUpdateDialog(LogDataProcessor, LogDataUpdater.GetUpdates(logs).ToList()).ShowModal(this);
@@ -404,34 +404,34 @@ namespace GW2Scratch.ArcdpsLogManager
 				}
 			};
 
-			var compressLogsItem = new ButtonMenuItem {Text = "&Compress logs"};
+			var compressLogsItem = new ButtonMenuItem {Text = "&壓縮日誌" };
 			compressLogsItem.Click += (sender, args) => { new CompressDialog(logs.ToList(), LogCompressionProcessor).ShowModal(); };
 
-			var logCacheMenuItem = new ButtonMenuItem {Text = "&Log cache"};
+			var logCacheMenuItem = new ButtonMenuItem {Text = "&日誌快取"};
 			logCacheMenuItem.Click += (sender, args) => { new CacheDialog(this).ShowModal(this); };
 
-			var apiDataMenuItem = new ButtonMenuItem {Text = "&API cache"};
+			var apiDataMenuItem = new ButtonMenuItem {Text = "&API 快取"};
 			apiDataMenuItem.Click += (sender, args) => { new ApiDialog(ApiProcessor).ShowModal(this); };
 
-			var settingsFormMenuItem = new ButtonMenuItem {Text = "&Settings"};
+			var settingsFormMenuItem = new ButtonMenuItem {Text = "&設定"};
 			settingsFormMenuItem.Click += (sender, args) => { new SettingsForm().Show(); };
 
-			var debugDataMenuItem = new CheckMenuItem {Text = "Show &debug data"};
+			var debugDataMenuItem = new CheckMenuItem {Text = "顯示&除錯資料"};
 			debugDataMenuItem.Checked = Settings.ShowDebugData;
 			debugDataMenuItem.CheckedChanged += (sender, args) => { Settings.ShowDebugData = debugDataMenuItem.Checked; };
 
-			var showGuildTagsMenuItem = new CheckMenuItem {Text = "Show &guild tags in log details"};
+			var showGuildTagsMenuItem = new CheckMenuItem {Text = "在日誌詳細資料中顯示&公會標籤" };
 			showGuildTagsMenuItem.Checked = Settings.ShowGuildTagsInLogDetail;
 			showGuildTagsMenuItem.CheckedChanged += (sender, args) => { Settings.ShowGuildTagsInLogDetail = showGuildTagsMenuItem.Checked; };
 
-			var showFailurePercentagesMenuItem = new CheckMenuItem {Text = "Show failure health &percentages in log list"};
+			var showFailurePercentagesMenuItem = new CheckMenuItem {Text = "在日誌清單中顯示敗戰Boss&生命百分比" };
 			showFailurePercentagesMenuItem.Checked = Settings.ShowFailurePercentagesInLogList;
 			showFailurePercentagesMenuItem.CheckedChanged += (sender, args) =>
 			{
 				Settings.ShowFailurePercentagesInLogList = showFailurePercentagesMenuItem.Checked;
 			};
 
-			var showSidebarMenuItem = new CheckMenuItem {Text = "Show &filters in a sidebar"};
+			var showSidebarMenuItem = new CheckMenuItem {Text = "在側邊欄中顯示&篩選器" };
 			showSidebarMenuItem.Checked = Settings.ShowFilterSidebar;
 			Settings.ShowFilterSidebarChanged += (sender, args) => showSidebarMenuItem.Checked = Settings.ShowFilterSidebar;
 			showSidebarMenuItem.CheckedChanged += (sender, args) => { Settings.ShowFilterSidebar = showSidebarMenuItem.Checked; };
@@ -444,24 +444,24 @@ namespace GW2Scratch.ArcdpsLogManager
 			arcdpsMenuItem.Items.Add(arcdpsSettingsMenuItem);
 			*/
 
-			var dataMenuItem = new ButtonMenuItem {Text = "&Data"};
+			var dataMenuItem = new ButtonMenuItem {Text = "&資料"};
 			dataMenuItem.Items.Add(updateMenuItem);
 			dataMenuItem.Items.Add(compressLogsItem);
 			dataMenuItem.Items.Add(new SeparatorMenuItem());
 			dataMenuItem.Items.Add(logCacheMenuItem);
 			dataMenuItem.Items.Add(apiDataMenuItem);
 
-			var viewMenuItem = new ButtonMenuItem {Text = "&View"};
+			var viewMenuItem = new ButtonMenuItem {Text = "&檢視"};
 			viewMenuItem.Items.Add(showSidebarMenuItem);
 			viewMenuItem.Items.Add(showGuildTagsMenuItem);
 			viewMenuItem.Items.Add(showFailurePercentagesMenuItem);
 			viewMenuItem.Items.Add(new SeparatorMenuItem());
 			viewMenuItem.Items.Add(debugDataMenuItem);
 
-			var settingsMenuItem = new ButtonMenuItem {Text = "&Settings"};
+			var settingsMenuItem = new ButtonMenuItem {Text = "&設定"};
 			settingsMenuItem.Items.Add(settingsFormMenuItem);
 
-			var helpMenuItem = new ButtonMenuItem {Text = "Help"};
+			var helpMenuItem = new ButtonMenuItem {Text = "幫助"};
 			helpMenuItem.Items.Add(new About());
 
 			return new MenuBar(dataMenuItem, viewMenuItem, settingsMenuItem, helpMenuItem);
@@ -501,7 +501,7 @@ namespace GW2Scratch.ArcdpsLogManager
 			var gameDataCollecting = new GameDataCollecting(logList, LogCache, ApiData, LogDataProcessor, UploadProcessor, ImageProvider, LogNameProvider);
 			var gameDataPage = new TabPage
 			{
-				Text = "Game data", Content = gameDataCollecting, Visible = Settings.ShowDebugData
+				Text = "遊戲資料", Content = gameDataCollecting, Visible = Settings.ShowDebugData
 			};
 			Settings.ShowDebugDataChanged += (sender, args) => gameDataPage.Visible = Settings.ShowDebugData;
 
@@ -511,12 +511,12 @@ namespace GW2Scratch.ArcdpsLogManager
 			{
 				serviceStatus.Add(new GroupBox
 				{
-					Text = "Uploads",
+					Text = "上傳",
 					Content = new BackgroundProcessorDetail {BackgroundProcessor = UploadProcessor}
 				}, xscale: true);
 				serviceStatus.Add(new GroupBox
 				{
-					Text = "Guild Wars 2 API",
+					Text = "激戰2 API",
 					Content = new BackgroundProcessorDetail {BackgroundProcessor = ApiProcessor}
 				}, xscale: true);
 			}
@@ -525,12 +525,12 @@ namespace GW2Scratch.ArcdpsLogManager
 			{
 				serviceStatus.Add(new GroupBox
 				{
-					Text = "Log processing",
+					Text = "日誌處理",
 					Content = new BackgroundProcessorDetail {BackgroundProcessor = LogDataProcessor}
 				}, xscale: true);
 				serviceStatus.Add(new GroupBox
 				{
-					Text = "Log compression",
+					Text = "日誌壓縮",
 					Content = new BackgroundProcessorDetail {BackgroundProcessor = LogCompressionProcessor}
 				}, xscale: true);
 			}
@@ -538,15 +538,15 @@ namespace GW2Scratch.ArcdpsLogManager
 			serviceStatus.AddRow(null);
 			var servicePage = new TabPage
 			{
-				Text = "Services", Content = serviceStatus, Visible = Settings.ShowDebugData
+				Text = "服務", Content = serviceStatus, Visible = Settings.ShowDebugData
 			};
 			Settings.ShowDebugDataChanged += (sender, args) => servicePage.Visible = Settings.ShowDebugData;
 
 			var tabs = new TabControl();
-			tabs.Pages.Add(new TabPage {Text = "Logs", Content = logList});
-			tabs.Pages.Add(new TabPage {Text = "Players", Content = playerList});
-			tabs.Pages.Add(new TabPage {Text = "Guilds", Content = guildList});
-			tabs.Pages.Add(new TabPage {Text = "Statistics", Content = statistics});
+			tabs.Pages.Add(new TabPage {Text = "日誌", Content = logList});
+			tabs.Pages.Add(new TabPage {Text = "玩家", Content = playerList});
+			tabs.Pages.Add(new TabPage {Text = "公會", Content = guildList});
+			tabs.Pages.Add(new TabPage {Text = "統計數據", Content = statistics});
 			tabs.Pages.Add(gameDataPage);
 			tabs.Pages.Add(servicePage);
 

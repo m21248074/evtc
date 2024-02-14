@@ -39,7 +39,7 @@ public class DirectoryListControl : DynamicLayout
 			{
 				BeginHorizontal();
 				Add(new TextBox { Text = directory, ReadOnly = true }, true);
-				var removeButton = new Button { Text = "Remove" };
+				var removeButton = new Button { Text = "移除" };
 				removeButton.Click += (_, _) =>
 				{
 					directories.RemoveAt(i);
@@ -60,7 +60,7 @@ public class DirectoryListControl : DynamicLayout
 
 	private Button ConstructAddButton()
 	{
-		var button = new Button { Text = "Add a log directory" };
+		var button = new Button { Text = "新增日誌目錄" };
 		button.Click += (_, _) =>
 		{
 			var dialog = new SelectFolderDialog();

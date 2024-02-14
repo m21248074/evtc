@@ -9,21 +9,21 @@ namespace GW2Scratch.ArcdpsLogManager.Configuration
 
 		public ApiSettingsPage()
 		{
-			Text = "Guild Wars 2 API";
-			apiDataCheckbox = new CheckBox {Text = "Use the Guild Wars 2 API", Checked = Settings.UseGW2Api};
+			Text = "激戰2 API";
+			apiDataCheckbox = new CheckBox {Text = "使用激戰2 API", Checked = Settings.UseGW2Api};
 
 			var layout = new DynamicLayout();
 			layout.BeginVertical(new Padding(10), new Size(5, 5));
 			{
-				layout.BeginGroup("API Data", new Padding(5), new Size(5, 5));
+				layout.BeginGroup("API 資料", new Padding(5), new Size(5, 5));
 				{
 					layout.AddRow(new Label
 					{
-						Text = "The program can use the official Guild Wars 2 API to retrieve guild data and map names. " +
-						       "No API key is required. If this is not enabled, guild names and their " +
-						       "tags along with map names will not be available.",
+						Text = "該程式可以使用激戰2 官方API 來檢索公會資料和地圖名稱。 " +
+							   "不需要 API 金鑰。 " +
+							   "如果未啟用此功能，則公會名稱及其標籤以及地圖名稱將不可用。",
 						Wrap = WrapMode.Word,
-						Height = 50
+						Height = 60
 					});
 					layout.AddRow(apiDataCheckbox);
 				}

@@ -13,7 +13,7 @@ namespace GW2Scratch.ArcdpsLogManager.Logs.Filters.Groups
 	{
 		private readonly IReadOnlyList<LogGroup> subgroups;
 
-		public override string Name { get; } = "All logs";
+		public override string Name { get; } = "©Ò¦³¤é»x";
 		public override IEnumerable<LogGroup> Subgroups => subgroups;
 
 		public RootLogGroup(IReadOnlyList<LogData> logs, ILogNameProvider nameProvider)

@@ -69,7 +69,7 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 				if (PlayerData?.Logs == null) return;
 
 				logCountLabel.Text =
-					$"Appears in {PlayerData.Logs.Count} {(PlayerData.Logs.Count == 1 ? "log" : "logs")}";
+					$"出現在 {PlayerData.Logs.Count} 個日誌中";
 			};
 
 			var knownCharacters = new DynamicLayout();
@@ -84,10 +84,10 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 				{
 					knownCharacters.BeginVertical(spacing: new Size(5, 2));
 					{
-						knownCharacters.AddRow("", "Character name", "Log count", null);
+						knownCharacters.AddRow("", "角色名", "日誌數", null);
 						foreach (var character in PlayerData.FindCharacters().OrderByDescending(x => x.Logs.Count))
 						{
-							var showLogsButton = new LinkButton {Text = "Logs"};
+							var showLogsButton = new LinkButton {Text = "日誌"};
 							showLogsButton.Click += (o, eventArgs) =>
 							{
 								var form = new Form
@@ -96,7 +96,7 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 										{DataStore = new FilterCollection<LogData>(character.Logs)},
 									Width = 900,
 									Height = 700,
-									Title = $"arcdps Log Manager: logs with character {character.Name}"
+									Title = $"arcdps 日誌管理器: 帶有 {character.Name} 角色的日誌"
 								};
 								form.Show();
 							};
@@ -148,7 +148,7 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 
 				if (ShowLogListButtons)
 				{
-					var logListButton = new Button { Text = "Show logs with this player" };
+					var logListButton = new Button { Text = "顯示該玩家的日誌" };
 					logListButton.Click += (sender, args) =>
 					{
 						var form = new Form
@@ -157,7 +157,7 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 									logNameProvider) { DataStore = new FilterCollection<LogData>(PlayerData.Logs) },
 							Width = 900,
 							Height = 700,
-							Title = $"arcdps Log Manager: logs with {PlayerData.AccountName.Substring(1)}"
+							Title = $"arcdps 日誌管理器: 帶有 {PlayerData.AccountName.Substring(1)} 玩家的日誌"
 						};
 						form.Show();
 					};

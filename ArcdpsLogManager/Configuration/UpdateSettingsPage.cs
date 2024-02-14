@@ -9,18 +9,17 @@ namespace GW2Scratch.ArcdpsLogManager.Configuration
 
 		public UpdateSettingsPage()
 		{
-			Text = "Updates";
-			updateCheckbox = new CheckBox {Text = "Check for updates on launch", Checked = Settings.CheckForUpdates};
+			Text = "更新";
+			updateCheckbox = new CheckBox {Text = "啟動時檢查更新", Checked = Settings.CheckForUpdates};
 
 			var layout = new DynamicLayout();
 			layout.BeginVertical(new Padding(10), new Size(5, 5));
 			{
-				layout.BeginGroup("Log Manager updates", new Padding(5), new Size(5, 5));
+				layout.BeginGroup("日誌管理器更新", new Padding(5), new Size(5, 5));
 				{
 					layout.AddRow(new Label
 					{
-						Text = "The program can automatically look for updates on launch and inform you "  +
-						       "when there is a new release available.",
+						Text = "程式可以在啟動時自動尋找更新，並在有新版本可用時通知您。",
 						Wrap = WrapMode.Word,
 						Height = 50
 					});

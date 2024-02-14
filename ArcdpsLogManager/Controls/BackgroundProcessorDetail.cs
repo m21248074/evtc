@@ -56,11 +56,11 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 
 			BeginVertical(spacing: new Size(10, 10));
 			{
-				AddRow("Status:", statusLabel);
-				AddRow("In queue:", queuedLabel);
-				AddRow("Processed:", processedLabel);
-				AddRow("Queued (since start):", totalQueuedLabel);
-				AddRow("Maximum concurrent processes:", concurrencyLabel);
+				AddRow("狀態:", statusLabel);
+				AddRow("處理中:", queuedLabel);
+				AddRow("已處理:", processedLabel);
+				AddRow("共處理:", totalQueuedLabel);
+				AddRow("最大並發行程數:", concurrencyLabel);
 			}
 
 			PropertyChanged += (sender, args) =>
@@ -84,7 +84,7 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 				return;
 			}
 
-			statusLabel.Text = backgroundProcessor.BackgroundTaskRunning ? "Running" : "Stopped";
+			statusLabel.Text = backgroundProcessor.BackgroundTaskRunning ? "執行中" : "已停止";
 			queuedLabel.Text = backgroundProcessor.GetScheduledItemCount().ToString();
 			processedLabel.Text = backgroundProcessor.ProcessedItemCount.ToString();
 			totalQueuedLabel.Text = backgroundProcessor.TotalScheduledCount.ToString();

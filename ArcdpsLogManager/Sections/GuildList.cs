@@ -94,7 +94,7 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 				BeginHorizontal();
 				{
 					Add(new Label
-						{Text = "Filter by guild or member name", VerticalAlignment = VerticalAlignment.Center});
+						{Text = "按公會或成員名稱篩選", VerticalAlignment = VerticalAlignment.Center});
 					Add(playerFilterBox);
 					Add(null, true);
 					BeginVertical(xscale: true);
@@ -164,7 +164,7 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 
 		private void UpdateCountLabels()
 		{
-			guildCountLabel.Text = $"{filtered.Count} guilds";
+			guildCountLabel.Text = $"{filtered.Count} 個公會";
 		}
 
 		private bool FilterGuildData(GuildData data)
@@ -185,7 +185,7 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 		private string GetName(GuildData data)
 		{
 			if (data.Guid == null) return "null";
-			return ApiData.GetGuildName(data.Guid) ?? "(Unknown)";
+			return ApiData.GetGuildName(data.Guid) ?? "(未知)";
 		}
 
 		private string GetTag(GuildData data)
@@ -204,30 +204,30 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 			var gridView = new GridView<GuildData>();
 			gridView.Columns.Add(new GridColumn()
 			{
-				HeaderText = "Tag",
+				HeaderText = "標籤",
 				DataCell = new TextBoxCell
 					{Binding = new DelegateBinding<GuildData, string>(GetTag)}
 			});
 			gridView.Columns.Add(new GridColumn()
 			{
-				HeaderText = "Name",
+				HeaderText = "名稱",
 				DataCell = new TextBoxCell
 					{Binding = new DelegateBinding<GuildData, string>(GetName)}
 			});
 			gridView.Columns.Add(new GridColumn()
 			{
-				HeaderText = "Logs",
+				HeaderText = "日誌",
 				DataCell = new TextBoxCell {Binding = new DelegateBinding<GuildData, string>(x => $"{x.Logs.Count}")}
 			});
 			gridView.Columns.Add(new GridColumn()
 			{
-				HeaderText = "Players",
+				HeaderText = "玩家數",
 				DataCell = new TextBoxCell
 					{Binding = new DelegateBinding<GuildData, string>(x => $"{x.Accounts.Count}")}
 			});
 			gridView.Columns.Add(new GridColumn()
 			{
-				HeaderText = "Characters",
+				HeaderText = "角色數",
 				DataCell = new TextBoxCell
 					{Binding = new DelegateBinding<GuildData, string>(x => $"{x.Characters.Count}")}
 			});

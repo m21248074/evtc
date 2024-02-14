@@ -53,7 +53,7 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 			{
 				foreach (var group in playersByGroups)
 				{
-					BeginGroup($"Subgroup {group.Key}", new Padding(5), new Size(5, 5));
+					BeginGroup($"小隊 {group.Key}", new Padding(5), new Size(5, 5));
 					foreach (var player in group)
 					{
 						var icon = imageProvider.GetTinyProfessionIcon(player);
@@ -75,14 +75,14 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 
 						string guildName = player.GuildGuid != null
 							? apiData.GetGuildName(player.GuildGuid)
-							: "No guild data";
+							: "沒有公會資料";
 
 						var nameLabel = new Label {Text = $"{player.Name}{guildTagSuffix}", ToolTip = guildName};
 
 						if (anyPlayerTag)
 						{
 							Image tagIcon = player.Tag == PlayerTag.Commander ? imageProvider.GetTinyCommanderIcon() : null;
-							string tagToolTip = player.Tag == PlayerTag.Commander ? "Commander" : null;
+							string tagToolTip = player.Tag == PlayerTag.Commander ? "指揮官" : null;
 							var tagImageView = new ImageView
 							{
 								Image = tagIcon,

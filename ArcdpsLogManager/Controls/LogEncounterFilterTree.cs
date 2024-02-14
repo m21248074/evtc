@@ -84,7 +84,7 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 
 			Columns.Add(new GridColumn()
 			{
-				HeaderText = "Category",
+				HeaderText = "分類",
 				DataCell = new ImageTextCell
 				{
 					TextBinding = Binding.Property<GroupFilterTreeItem, string>(x => x.LogGroup.Name),
@@ -94,7 +94,7 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 
 			Columns.Add(new GridColumn()
 			{
-				HeaderText = "Count",
+				HeaderText = "計數",
 				DataCell = new ImageTextCell
 				{
 					TextBinding = Binding.Property<GroupFilterTreeItem, string>(x => x.LogCount.ToString())
@@ -108,7 +108,7 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 				Filters.LogGroups = SelectedItems.Select(x => ((GroupFilterTreeItem) x).LogGroup).ToList();
 			};
 
-			var expandAll = new ButtonMenuItem {Text = "Expand all"};
+			var expandAll = new ButtonMenuItem {Text = "全部展開 all"};
 			expandAll.Click += (sender, args) =>
 			{
 				DoForAllItems(item =>
@@ -117,7 +117,7 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 				});
 				ReloadData();
 			};
-			var collapseAll = new ButtonMenuItem {Text = "Collapse all"};
+			var collapseAll = new ButtonMenuItem {Text = "全部折疊"};
 			collapseAll.Click += (sender, args) =>
 			{
 				DoForAllItems(item =>

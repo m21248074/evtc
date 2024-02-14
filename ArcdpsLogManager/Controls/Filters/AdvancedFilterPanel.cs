@@ -25,31 +25,31 @@ namespace GW2Scratch.ArcdpsLogManager.Controls.Filters
 
 			var compositionTab = new TabPage
 			{
-				Text = "Squad composition",
+				Text = "團隊陣容",
 				Content = ConstructSquadComposition(imageProvider, filters),
 				Padding = new Padding(5),
 			};
 			var instabilityTab = new TabPage
 			{
-				Text = "Mistlock Instabilities",
+				Text = "霧鎖異變",
 				Content = ConstructMistlockInstabilities(imageProvider, filters),
 				Padding = new Padding(5),
 			};
 			var playerTab = new TabPage
 			{
-				Text = "Players", Content = playerFilterPanel, Padding = new Padding(5),
+				Text = "玩家", Content = playerFilterPanel, Padding = new Padding(5),
 			};
 			var processingTab = new TabPage
 			{
-				Text = "Processing status", Content = ConstructProcessingStatus(), Padding = new Padding(5),
+				Text = "處理狀態", Content = ConstructProcessingStatus(), Padding = new Padding(5),
 			};
 
 			void UpdateTabNames()
 			{
-				compositionTab.Text = "Squad composition" + (filters.CompositionFilters.IsDefault ? "" : " •");
-				instabilityTab.Text = "Mistlock Instabilities" + (filters.InstabilityFilters.IsDefault ? "" : " •");
-				playerTab.Text = "Players" + (filters.PlayerFilters.IsDefault ? "" : " •");
-				processingTab.Text = "Processing status" + (AreProcessingFiltersDefault(filters) ? "" : " •");
+				compositionTab.Text = "團隊陣容" + (filters.CompositionFilters.IsDefault ? "" : " •");
+				instabilityTab.Text = "霧鎖異變" + (filters.InstabilityFilters.IsDefault ? "" : " •");
+				playerTab.Text = "玩家" + (filters.PlayerFilters.IsDefault ? "" : " •");
+				processingTab.Text = "處理狀態" + (AreProcessingFiltersDefault(filters) ? "" : " •");
 			}
 
 			var tabs = new TabControl();
@@ -83,13 +83,13 @@ namespace GW2Scratch.ArcdpsLogManager.Controls.Filters
 
 		private Control ConstructProcessingStatus()
 		{
-			var unparsedCheckBox = new CheckBox { Text = "Unprocessed" };
+			var unparsedCheckBox = new CheckBox { Text = "未處理" };
 			unparsedCheckBox.CheckedBinding.Bind(this, x => x.Filters.ShowParseUnparsedLogs);
-			var parsingCheckBox = new CheckBox { Text = "Processing" };
+			var parsingCheckBox = new CheckBox { Text = "處理中" };
 			parsingCheckBox.CheckedBinding.Bind(this, x => x.Filters.ShowParseParsingLogs);
-			var parsedCheckBox = new CheckBox { Text = "Processed" };
+			var parsedCheckBox = new CheckBox { Text = "已處理" };
 			parsedCheckBox.CheckedBinding.Bind(this, x => x.Filters.ShowParseParsedLogs);
-			var failedCheckBox = new CheckBox { Text = "Failed" };
+			var failedCheckBox = new CheckBox { Text = "處理失敗" };
 			failedCheckBox.CheckedBinding.Bind(this, x => x.Filters.ShowParseFailedLogs);
 			var layout = new DynamicLayout();
 			layout.BeginVertical(spacing: new Size(5, 5));

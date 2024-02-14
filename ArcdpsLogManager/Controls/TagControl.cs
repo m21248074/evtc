@@ -95,7 +95,7 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 			Clear();
 			BeginVertical();
 			{
-				BeginGroup("Tags", new Padding(5), new Size(5, 5));
+				BeginGroup("º–≈“", new Padding(5), new Size(5, 5));
 				{
 					foreach (var tag in tags.OrderBy(x => x.Name))
 					{
@@ -125,7 +125,7 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 							{
 								BeginHorizontal();
 								{
-									Add(new Label { Text = "New tag: ", VerticalAlignment = VerticalAlignment.Center });
+									Add(new Label { Text = "∑sº–≈“: ", VerticalAlignment = VerticalAlignment.Center });
 									Add(tagTextBox, xscale: true);
 								}
 								EndHorizontal();
