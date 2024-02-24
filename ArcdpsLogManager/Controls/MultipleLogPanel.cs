@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -36,8 +36,8 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 		private readonly Label dpsReportUploadFailedLabel = new Label();
 		private readonly TextArea dpsReportLinkTextArea = new TextArea {ReadOnly = true};
 		private readonly Button dpsReportUploadButton = new Button();
-		private readonly Button dpsReportCancelButton = new Button {Text = "Cancel"};
-		private readonly Button dpsReportOpenButton = new Button {Text = "Open uploaded logs in a browser", Enabled = false};
+		private readonly Button dpsReportCancelButton = new Button {Text = "取消"};
+		private readonly Button dpsReportOpenButton = new Button {Text = "在瀏覽器中開啟已上傳的日誌", Enabled = false};
 		private readonly Button copyButton;
 		private readonly ProgressBar dpsReportUploadProgressBar = new ProgressBar();
 		private readonly DynamicTable dpsReportUploadFailedRow;
@@ -60,12 +60,12 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 
 				Visible = true;
 
-				countLabel.Text = $"{logData.Length} logs selected";
+				countLabel.Text = $"已選擇 {logData.Length} 條日誌";
 				var totalDuration = logData.Where(x => x.ParsingStatus == ParsingStatus.Parsed).Aggregate(TimeSpan.Zero, (x, y) => x + y.EncounterDuration);
 				totalDurationLabel.Text = FormatTimeSpan(totalDuration);
 				successCountLabel.Text = logData.Count(x => x.ParsingStatus == ParsingStatus.Parsed && x.EncounterResult == EncounterResult.Success).ToString();
 				failureCountLabel.Text = logData.Count(x => x.ParsingStatus == ParsingStatus.Parsed && x.EncounterResult == EncounterResult.Failure).ToString();
-				parseTimeLabel.Text = $"{logData.Select(x => x.ParseMilliseconds).Sum()} ms";
+				parseTimeLabel.Text = $"{logData.Select(x => x.ParseMilliseconds).Sum()} 毫秒";
 
 				UpdateDpsReportUploadStatus();
 
@@ -111,7 +111,7 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 			dpsReportUploadProgressBar.Value = finished;
 			dpsReportUploadButton.Enabled = notUploaded + uploadsFailed > 0;
 			dpsReportCancelButton.Enabled = queued > 0;
-			dpsReportUploadButton.Text = $"Upload missing logs ({notUploaded + uploadsFailed})";
+			dpsReportUploadButton.Text = $"上傳缺少的日誌 ({notUploaded + uploadsFailed})";
 			dpsReportNotUploadedLabel.Text = notUploaded.ToString();
 			dpsReportUploadingLabel.Text = (uploading + queued).ToString();
 			dpsReportUploadedLabel.Text = uploaded.ToString();
@@ -168,8 +168,8 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 				if (uploadedLogs.Count > 5)
 				{
 					var result = MessageBox.Show(
-						$"Are you sure you want to open {uploadedLogs.Count} logs at once in a browser?",
-						"Open uploaded logs in a browser",
+						$"您確定要在瀏覽器中一次開啟 {uploadedLogs.Count} 個日誌嗎?",
+						"在瀏覽器中開啟上傳的日誌",
 						MessageBoxButtons.YesNo,
 						MessageBoxType.Question);
 
@@ -232,7 +232,7 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 			else
 			{
 				// The height is not working correctly on Gtk, and the icon may have clashing colors depending on the Gtk theme.
-				copyButton = new Button { Text = "Copy" };
+				copyButton = new Button { Text = "複製" };
 			}
 
 			copyButton.Click += (sender, args) =>
@@ -261,16 +261,16 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 					Add(countLabel);
 				}
 				EndVertical();
-				BeginGroup("Statistics", new Padding(5), new Size(5, 5));
+				BeginGroup("統計數據", new Padding(5), new Size(5, 5));
 				{
-					AddRow("Success logs: ", successCountLabel);
-					AddRow("Failure logs: ", failureCountLabel);
-					AddRow("Total duration: ", totalDurationLabel);
+					AddRow("戰勝日誌數: ", successCountLabel);
+					AddRow("戰敗日誌數: ", failureCountLabel);
+					AddRow("總持續時間: ", totalDurationLabel);
 				}
 				EndGroup();
-				debugSection = BeginGroup("Debug data", new Padding(5), new Size(5, 5));
+				debugSection = BeginGroup("除錯資料", new Padding(5), new Size(5, 5));
 				{
-					AddRow("Time spent processing", parseTimeLabel);
+					AddRow("處理所花費的時間: ", parseTimeLabel);
 					Add(reparseButton);
 				}
 				EndGroup();
@@ -281,21 +281,21 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 				}
 				EndHorizontal();
 
-				BeginGroup("Upload to dps.report (Elite Insights)", padding: new Padding(5), spacing: new Size(0, 5), yscale: true);
+				BeginGroup("上傳至 dps.report (Elite Insights)", padding: new Padding(5), spacing: new Size(0, 5), yscale: true);
 				{
 					BeginVertical(spacing: new Size(5, 5));
 					{
-						AddRow("Not uploaded:", dpsReportNotUploadedLabel);
-						AddRow("Uploading:", dpsReportUploadingLabel);
-						AddRow("Uploaded:", dpsReportUploadedLabel);
+						AddRow("尚未上傳:", dpsReportNotUploadedLabel);
+						AddRow("上傳中:", dpsReportUploadingLabel);
+						AddRow("已上傳:", dpsReportUploadedLabel);
 						dpsReportUploadFailedRow = BeginVertical(spacing: new Size(5, 5));
 						{
-							AddRow("Upload failed:", dpsReportUploadFailedLabel);
+							AddRow("上傳失敗:", dpsReportUploadFailedLabel);
 						}
 						EndVertical();
 						dpsReportProcessingFailedRow = BeginVertical(spacing: new Size(5, 5));
 						{
-							AddRow("dps.report error:", dpsReportProcessingFailedLabel);
+							AddRow("dps.report 錯誤:", dpsReportProcessingFailedLabel);
 						}
 						EndVertical();
 					}
@@ -361,12 +361,12 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 		
 		private string FormatTimeSpan(TimeSpan time)
 		{
-			var str = $@"{time:hh\h\ mm\m\ ss\s}";
+			var hour = time.ToString("hh") == "00" ? "" : time.ToString("hh") + "小時 ";
+			var str = hour + time.ToString("mm") + "分 " + time.ToString("ss") + "秒";
 			if (time.Days > 0)
 			{
 				str = $@"{time:%d\d} " + str;
 			}
-
 			return str;
 		}
 

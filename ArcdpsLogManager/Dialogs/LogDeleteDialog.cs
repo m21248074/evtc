@@ -24,8 +24,8 @@ namespace GW2Scratch.ArcdpsLogManager.Dialogs
 		private readonly ILogNameProvider nameProvider;
 		private readonly FilterCollection<LogData> dataStore;
 
-		private readonly Button confirmDeleteButton = new Button { Text = "Delete listed logs permanently" };
-		private readonly Button abortButton = new Button { Text = "Cancel" };
+		private readonly Button confirmDeleteButton = new Button { Text = "永久刪除所列的日誌" };
+		private readonly Button abortButton = new Button { Text = "取消" };
 		private readonly Label savedSpaceLabel = new Label { Text = "..." };
 
 		public LogDeleteDialog(IEnumerable<LogData> files, LogCache logCache, ApiData apiData,
@@ -37,7 +37,7 @@ namespace GW2Scratch.ArcdpsLogManager.Dialogs
 			var layout = new DynamicLayout();
 
 			Icon = Resources.GetProgramIcon();
-			Title = "Confirm deletion - arcdps Log Manager";
+			Title = "刪除確認 - arcdps 日誌管理器";
 			ClientSize = new Size(750, 500);
 			Resizable = true;
 			Content = layout;
@@ -56,14 +56,14 @@ namespace GW2Scratch.ArcdpsLogManager.Dialogs
 			var standardFontSize = SystemFonts.Bold().Size;
 			var topWarningLabel = new Label
 			{
-				Text = "Are you sure you want to permanently delete the following logs?",
+				Text = "您確定要永久刪除以下日誌嗎？",
 				Font = SystemFonts.Bold(standardFontSize * 1.5f),
 				TextAlignment = TextAlignment.Center
 			};
 
 			var warningLabel = new Label
 			{
-				Text = "This cannot be undone and statistics from these logs will be lost.",
+				Text = "此操作無法撤消，並且這些日誌的統計資料將會遺失。",
 				Wrap = WrapMode.Word,
 				TextAlignment = TextAlignment.Center
 			};
@@ -124,8 +124,8 @@ namespace GW2Scratch.ArcdpsLogManager.Dialogs
 				{
 					layout.BeginCentered(spacing: new Size(5, 5));
 					{
-						layout.AddRow("Total files:", $"{dataStore.Count}");
-						layout.AddRow("Total file size:", savedSpaceLabel);
+						layout.AddRow("檔案總數:", $"{dataStore.Count}");
+						layout.AddRow("檔案總大小:", savedSpaceLabel);
 					}
 					layout.EndCentered();
 				}
