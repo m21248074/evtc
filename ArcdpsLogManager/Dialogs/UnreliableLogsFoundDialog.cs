@@ -21,12 +21,12 @@ namespace GW2Scratch.ArcdpsLogManager.Dialogs
 
 		public UnreliableLogsFoundDialog(IEnumerable<LogData> logs, ILogNameProvider nameProvider)
 		{
-			Title = "Warning: Unreliable log results";
+			Title = "警告: 不可靠的日誌結果";
 			ShowInTaskbar = true;
 			var layout = new DynamicLayout();
 			Content = layout;
 
-			var confirmButton = new Button { Text = "Delete anyway" };
+			var confirmButton = new Button { Text = "執意刪除" };
 			PositiveButtons.Add(confirmButton);
 
 			confirmButton.Click += (_, _) =>
@@ -35,7 +35,7 @@ namespace GW2Scratch.ArcdpsLogManager.Dialogs
 				Close();
 			};
 
-			AbortButton = new Button { Text = "Cancel" };
+			AbortButton = new Button { Text = "取消" };
 			NegativeButtons.Add(AbortButton);
 			AbortButton.Click += (_, _) =>
 			{
@@ -46,12 +46,12 @@ namespace GW2Scratch.ArcdpsLogManager.Dialogs
 			layout.Spacing = new Size(5, 5);
 			layout.AddRow(new Label
 			{
-				Text = "Some of the selected logs currently have unreliable success detection in rare scenarios. " +
-				       "The logs may rarely display a failure even when they are successful. ",
+				Text = "目前，有些選定的日誌在極少數情況下的成功檢測並不可靠。\n" +
+					   "即使成功，日誌也很可能會顯示失敗。",
 				Wrap = WrapMode.Word,
 				Width = 500,
 			});
-			layout.BeginGroup("Affected encounters", padding: new Padding(5));
+			layout.BeginGroup("受影響的遭遇戰", padding: new Padding(5));
 			{
 				foreach (var encounter in GetUnreliableEncounterNames(logs, nameProvider))
 				{
