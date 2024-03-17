@@ -50,7 +50,7 @@ public class WeeklyClears : DynamicLayout
 
 	private static readonly List<EncounterGroup> EncounterGroups =
 	[
-		new EncounterGroup(EncounterCategory.Raids, "Raids", [
+		new EncounterGroup(EncounterCategory.Raids, "大型地下城 Raids", [
 			new EncounterRow("Spirit Woods (W1)", [
 				new NormalEncounter(Encounter.ValeGuardian, normalModeSince: W1Release, challengeModeSince: null),
 				new UnsupportedEncounter("Spirit Woods"),
@@ -101,8 +101,8 @@ public class WeeklyClears : DynamicLayout
 				new NormalEncounter(Encounter.QadimThePeerless, normalModeSince: W7Release, challengeModeSince: W7Release),
 			]),
 		]),
-		new EncounterGroup(EncounterCategory.StrikeIcebroodSaga, "Icebrood Saga", [
-			new EncounterRow("Icebrood Saga", [
+		new EncounterGroup(EncounterCategory.StrikeIcebroodSaga, "冰巢傳說 IBS SM", [
+			new EncounterRow("冰巢傳說", [
 				new NormalEncounter(Encounter.ShiverpeaksPass, normalModeSince: ShiverpeaksPassRelease, challengeModeSince: null),
 				new NormalEncounter(Encounter.VoiceAndClawOfTheFallen, normalModeSince: VoiceClawRelease, challengeModeSince: null),
 				new NormalEncounter(Encounter.FraenirOfJormag, normalModeSince: FraenirOfJormagRelease, challengeModeSince: null),
@@ -112,8 +112,8 @@ public class WeeklyClears : DynamicLayout
 				//new NormalEncounter(Encounter.VariniaStormsounder, normalModeSince: ColdWarRelease, challengeModeSince: null),
 			])
 		]),
-		new EncounterGroup(EncounterCategory.StrikeEndOfDragons, "End of Dragons", [
-			new EncounterRow("End of Dragons", [
+		new EncounterGroup(EncounterCategory.StrikeEndOfDragons, "巨龍絕境 EoD SM", [
+			new EncounterRow("巨龍絕境", [
 				new NormalEncounter(Encounter.AetherbladeHideout, normalModeSince: EoDRelease, challengeModeSince: AHCMRelease),
 				new NormalEncounter(Encounter.XunlaiJadeJunkyard, normalModeSince: EoDRelease, challengeModeSince: XJJCMRelease),
 				new NormalEncounter(Encounter.KainengOverlook, normalModeSince: EoDRelease, challengeModeSince: KOCMRelease),
@@ -124,8 +124,8 @@ public class WeeklyClears : DynamicLayout
 				new NormalEncounter(Encounter.OldLionsCourt, normalModeSince: OLCRelease, challengeModeSince: OLCCMRelease),
 			]),
 		]),
-		new EncounterGroup(EncounterCategory.StrikeSecretsOfTheObscure, "Secrets of the Obscure", [
-			new EncounterRow("Secrets of the Obscure", [
+		new EncounterGroup(EncounterCategory.StrikeSecretsOfTheObscure, "天界之謎 SotO SM", [
+			new EncounterRow("天界之謎", [
 				new NormalEncounter(Encounter.CosmicObservatory, normalModeSince: SotORelease,
 					challengeModeSince: COCMRelease),
 				new NormalEncounter(Encounter.TempleOfFebe, normalModeSince: SotORelease, challengeModeSince: ToFCMRelease),
@@ -245,8 +245,8 @@ public class WeeklyClears : DynamicLayout
 			DataUpdated?.Invoke(this, EventArgs.Empty);
 		};
 
-		addNewAccountButton = new Button { Text = "Add account" };
-		removeAccountButton = new Button { Text = "Remove", Enabled = accountFilterBox.SelectedIndex != -1 };
+		addNewAccountButton = new Button { Text = "新增帳號" };
+		removeAccountButton = new Button { Text = "移除", Enabled = accountFilterBox.SelectedIndex != -1 };
 		addNewAccountButton.Click += (_, _) =>
 		{
 			var dialog = new PlayerSelectDialog(null, null, null, null, imageProvider, null, logs);
@@ -307,7 +307,7 @@ public class WeeklyClears : DynamicLayout
 					void UpdateCheckbox(WeeklyCheckBox checkBox, bool isChallengeMode)
 					{
 						var availability = isChallengeMode ? encounter.GetChallengeModeAvailability(Reset) : encounter.GetNormalModeAvailability(Reset);
-						var standardLabelText = isChallengeMode ? "Challenge Mode" : "Normal Mode";
+						var standardLabelText = isChallengeMode ? "挑戰模式" : "普通模式";
 						switch (availability)
 						{
 							case EncounterAvailability.Available:
@@ -324,7 +324,7 @@ public class WeeklyClears : DynamicLayout
 								// We only want to show the unavailability within the normal mode row.
 								checkBox.Image = isChallengeMode ? null : imageProvider.GetGrayQuestionMarkIcon();
 								checkBox.Text = isChallengeMode ? "" : standardLabelText;
-								checkBox.Text = isChallengeMode ? "" : "No logs";
+								checkBox.Text = isChallengeMode ? "" : "沒有日誌";
 								break;
 							default:
 								throw new ArgumentOutOfRangeException();
@@ -344,11 +344,11 @@ public class WeeklyClears : DynamicLayout
 		weekGrid = new GridView<ResetWeek> { Height = 150 };
 		weekGrid.Columns.Add(new GridColumn
 		{
-			HeaderText = "Week", DataCell = new TextBoxCell { Binding = new DelegateBinding<ResetWeek, string>(x => x.Reset.ToString()) }
+			HeaderText = "周次", DataCell = new TextBoxCell { Binding = new DelegateBinding<ResetWeek, string>(x => x.Reset.ToString()) }
 		});
 		weekGrid.Columns.Add(new GridColumn
 		{
-			HeaderText = "NMs",
+			HeaderText = "普通",
 			DataCell = new TextBoxCell
 			{
 				Binding = new DelegateBinding<ResetWeek, string>(x => x.FinishedNormalModesByCategory.Values.Sum().ToString()),
@@ -357,7 +357,7 @@ public class WeeklyClears : DynamicLayout
 		});
 		weekGrid.Columns.Add(new GridColumn
 		{
-			HeaderText = "CMs",
+			HeaderText = "挑戰",
 			DataCell = new TextBoxCell
 			{
 				Binding = new DelegateBinding<ResetWeek, string>(x => x.FinishedChallengeModesByCategory.Values.Sum().ToString()),
@@ -367,15 +367,15 @@ public class WeeklyClears : DynamicLayout
 
 		foreach ((string name, EncounterCategory category, bool hasCMs) in (ReadOnlySpan<(string, EncounterCategory, bool)>)
 		         [
-			         ("Raid", EncounterCategory.Raids, true), ("IBS", EncounterCategory.StrikeIcebroodSaga, false),
-			         ("EoD", EncounterCategory.StrikeEndOfDragons, true),
-			         ("SotO", EncounterCategory.StrikeSecretsOfTheObscure, true)
+			         ("大型地下城", EncounterCategory.Raids, true), ("冰巢傳說", EncounterCategory.StrikeIcebroodSaga, false),
+			         ("巨龍絕境", EncounterCategory.StrikeEndOfDragons, true),
+			         ("天界之謎", EncounterCategory.StrikeSecretsOfTheObscure, true)
 		         ])
 		{
 			var visible = Settings.WeeklyClearGroups.Contains(category);
 			var nmCountColumn = new GridColumn
 			{
-				HeaderText = $"{name} NMs",
+				HeaderText = $"{name} 普通",
 				DataCell = new TextBoxCell
 				{
 					Binding = new DelegateBinding<ResetWeek, string>(week => week.FinishedNormalModesByCategory[category].ToString()),
@@ -385,7 +385,7 @@ public class WeeklyClears : DynamicLayout
 			};
 			var nmPercentageColumn = new GridColumn
 			{
-				HeaderText = $"{name} NMs",
+				HeaderText = $"{name} 普通",
 				DataCell = new ProgressCell
 				{
 					Binding = new DelegateBinding<ResetWeek, float?>(week =>
@@ -399,7 +399,7 @@ public class WeeklyClears : DynamicLayout
 			};
 			var cmCountColumn = new GridColumn
 			{
-				HeaderText = $"{name} CMs",
+				HeaderText = $"{name} 挑戰",
 				DataCell = new TextBoxCell
 				{
 					Binding = new DelegateBinding<ResetWeek, string>(week => week.FinishedChallengeModesByCategory[category].ToString()),
@@ -409,7 +409,7 @@ public class WeeklyClears : DynamicLayout
 			};
 			var cmPercentageColumn = new GridColumn
 			{
-				HeaderText = $"{name} CMs",
+				HeaderText = $"{name} 挑戰",
 				DataCell = new ProgressCell
 				{
 					Binding = new DelegateBinding<ResetWeek, float?>(week =>
@@ -534,7 +534,7 @@ public class WeeklyClears : DynamicLayout
 				{
 					new Label
 					{
-						Text = "To see weekly clears of encounters, select groups you are interested in by checking checkboxes above.",
+						Text = "若要查看每週的遭遇戰清除情況，請透過勾選上面的選項來選擇您感興趣的類型。",
 						Wrap = WrapMode.Word
 					}
 				},

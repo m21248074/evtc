@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
@@ -11,7 +11,7 @@ namespace GW2Scratch.ArcdpsLogManager.Dialogs
 	{
 		public ProcessingUpdateDialog(LogDataProcessor logProcessor, IReadOnlyList<LogUpdateList> updates)
 		{
-			Title = "Manager update - arcdps Log Manager";
+			Title = "管理器更新 - arcdps 日誌管理器";
 			ClientSize = new Size(500, -1);
 			var layout = new DynamicLayout();
 			Content = layout;
@@ -22,9 +22,9 @@ namespace GW2Scratch.ArcdpsLogManager.Dialogs
 				{
 					layout.AddRow(new Label
 					{
-						Text = "This new version of the log manager brings improvements for processing some of the logs. " +
-						       "They have to be processed again to correctly update the data. " +
-						       "Affected logs are listed below. Do you wish to do so now?",
+						Text = "新版本的日誌管理器改進了一些日誌的處理。 " +
+							   "必須再次處理它們才能正確更新資料。 " +
+							   "下面列出了受影響的日誌。 您想現在更新嗎?",
 						Wrap = WrapMode.Word
 					});
 					layout.AddRow(null);
@@ -34,8 +34,8 @@ namespace GW2Scratch.ArcdpsLogManager.Dialogs
 			}
 			layout.EndVertical();
 
-			var later = new Button {Text = "Later"};
-			var yes = new Button {Text = "Yes"};
+			var later = new Button {Text = "稍後"};
+			var yes = new Button {Text = "確認"};
 			later.Click += (sender, args) => Close();
 			yes.Click += (sender, args) =>
 			{
@@ -63,7 +63,7 @@ namespace GW2Scratch.ArcdpsLogManager.Dialogs
 			var grid = new GridView<LogUpdateList>();
 			grid.Columns.Add(new GridColumn
 			{
-				HeaderText = "Logs",
+				HeaderText = "日誌數",
 				DataCell = new TextBoxCell
 				{
 					Binding = new DelegateBinding<LogUpdateList, string>(x => x.UpdateableLogs.Count.ToString())
@@ -71,7 +71,7 @@ namespace GW2Scratch.ArcdpsLogManager.Dialogs
 			});
 			grid.Columns.Add(new GridColumn
 			{
-				HeaderText = "Reason",
+				HeaderText = "原因",
 				DataCell = new TextBoxCell
 				{
 					Binding = new DelegateBinding<LogUpdateList, string>(x => x.Update.Reason)
