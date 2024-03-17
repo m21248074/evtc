@@ -620,14 +620,23 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 				case Encounter.CosmicObservatory:
 				{
 					return GetDefaultBuilder(encounter, mainTarget)
-						.WithModes(new ConditionalModeDeterminer(
+						.WithResult(
+							new AnyCombinedResultDeterminer(
+								new AgentKilledDeterminer(mainTarget),
+								// The boss can stay alive for a long time, but it will be at zero health.
+								// This makes this method reliable enough:
+								new AgentBelowHealthThresholdDeterminer(mainTarget, 1e-6f)
+							)
+						).WithModes(new ConditionalModeDeterminer(
 							(gameBuild != null && gameBuild < GameBuilds.CosmicObservatoryCMRelease, new ConstantModeDeterminer(EncounterMode.Normal)),
 							(true, new AgentHealthModeDeterminer(mainTarget, 56_600_000))))
                         .Build();
 				}
 				case Encounter.TempleOfFebe:
 				{
-					return GetDefaultBuilder(encounter, mainTarget).Build();
+					return GetDefaultBuilder(encounter, mainTarget)
+						.WithModes(new AgentHealthModeDeterminer(mainTarget, 60_000_000))
+						.Build();
 				}
 				default:
 					return GetDefaultBuilder(encounter, mainTarget, mergeMainTarget: false).Build();

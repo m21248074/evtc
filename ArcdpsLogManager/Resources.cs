@@ -165,6 +165,10 @@ namespace GW2Scratch.ArcdpsLogManager
 		public static Image GetKainengOverlookIcon() => GetEncounterImage("Kaineng_Overlook");
 		public static Image GetHarvestTempleIcon() => GetEncounterImage("Harvest_Temple");
 		public static Image GetOldLionsCourtIcon() => GetEncounterImage("Mini_Vermillion_Assault_Knight");
+		
+		// STRIKES - SECRETS OF THE OBSCURE
+		public static Image GetCosmicObservatoryIcon() => GetEncounterImage("Mini_Dagda");
+		public static Image GetTempleOfFebeIcon() => GetEncounterImage("Mini_Cerus");
 
 		// FRACTALS
 		public static Image GetMAMAIcon() => GetEncounterImage("Mini_MAMA");
@@ -203,5 +207,9 @@ namespace GW2Scratch.ArcdpsLogManager
 		// MISC
 		public static Image GetCopyButtonEnabledIcon() => GetImage($"Misc.Copy_Black_36x36.png");
 		public static Image GetCopyButtonDisabledIcon() => GetImage($"Misc.Copy_Grey_36x36.png");
+		public static Image GetGreenCheckIcon() => GetImage($"Misc.green_check.png");
+		public static Image GetRedCrossIcon() => GetImage($"Misc.red_cross.png");
+		public static Image GetGrayQuestionMarkIcon() => GetImage($"Misc.gray_question_mark.png");
+		public static Image GetNotYetAvailableIcon() => GetImage($"Misc.not_yet_available.png");
 	}
 }

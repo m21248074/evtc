@@ -125,6 +125,10 @@ namespace GW2Scratch.ArcdpsLogManager
 		private Lazy<Image> KainengOverlookIcon { get; } = new Lazy<Image>(Resources.GetKainengOverlookIcon);
 		private Lazy<Image> HarvestTempleIcon { get; } = new Lazy<Image>(Resources.GetHarvestTempleIcon);
 		private Lazy<Image> OldLionsCourtIcon { get; } = new Lazy<Image>(Resources.GetOldLionsCourtIcon);
+		
+		// STRIKES - SECRETS OF THE OBSCURE
+		private Lazy<Image> CosmicObservatoryIcon { get; } = new Lazy<Image>(Resources.GetCosmicObservatoryIcon);
+		private Lazy<Image> TempleOfFebeIcon { get; } = new Lazy<Image>(Resources.GetTempleOfFebeIcon);
 
 		// FRACTALS
 		private Lazy<Image> MAMAIcon { get; } = new Lazy<Image>(Resources.GetMAMAIcon);
@@ -182,6 +186,10 @@ namespace GW2Scratch.ArcdpsLogManager
 		// MISC
 		private Lazy<Image> CopyButtonEnabledIcon { get; } = new Lazy<Image>(Resources.GetCopyButtonEnabledIcon);
 		private Lazy<Image> CopyButtonDisabledIcon { get; } = new Lazy<Image>(Resources.GetCopyButtonDisabledIcon);
+		private Lazy<Image> GreenCheckIcon { get; } = new Lazy<Image>(Resources.GetGreenCheckIcon);
+		private Lazy<Image> RedCrossIcon { get; } = new Lazy<Image>(Resources.GetRedCrossIcon);
+		private Lazy<Image> GrayQuestionMarkIcon { get; } = new Lazy<Image>(Resources.GetGrayQuestionMarkIcon);
+		private Lazy<Image> NotYetAvailableIcon { get; } = new Lazy<Image>(Resources.GetNotYetAvailableIcon);
 
 		public Image GetTinyLogIcon() => TinyIconLog.Value;
 		public Image GetTinyFractalsIcon() => TinyIconFractals.Value;
@@ -198,6 +206,10 @@ namespace GW2Scratch.ArcdpsLogManager
 		public Image GetTinyInstanceIcon() => TinyIconInstance.Value;
 		public Image GetCopyButtonEnabledImage() => CopyButtonEnabledIcon.Value;
 		public Image GetCopyButtonDisabledImage() => CopyButtonDisabledIcon.Value;
+		public Image GetGreenCheckIcon() => GreenCheckIcon.Value;
+		public Image GetRedCrossIcon() => RedCrossIcon.Value;
+		public Image GetGrayQuestionMarkIcon() => GrayQuestionMarkIcon.Value;
+		public Image GetNotYetAvailableIcon() => NotYetAvailableIcon.Value;
 
 		public Image GetTinyProfessionIcon(Profession profession)
 		{
@@ -313,6 +325,9 @@ namespace GW2Scratch.ArcdpsLogManager
 				Encounter.KainengOverlook => KainengOverlookIcon.Value,
 				Encounter.HarvestTemple => HarvestTempleIcon.Value,
 				Encounter.OldLionsCourt => OldLionsCourtIcon.Value,
+				// STRIKES - SECRETS OF THE OBSCURE
+				Encounter.CosmicObservatory => CosmicObservatoryIcon.Value,
+				Encounter.TempleOfFebe => TempleOfFebeIcon.Value,
 				// FRACTALS
 				Encounter.MAMA => MAMAIcon.Value,
 				Encounter.SiaxTheCorrupted => SiaxTheCorruptedIcon.Value,
