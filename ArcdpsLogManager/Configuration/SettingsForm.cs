@@ -12,7 +12,7 @@ namespace GW2Scratch.ArcdpsLogManager.Configuration
 		{
 			Title = "設定 - arcdps 日誌管理器";
 			ClientSize = new Size(400, -1);
-			MinimumSize = new Size(400, 300);
+			MinimumSize = new Size(400, 500);
 
 			var pages = new SettingsPage[]
 			{

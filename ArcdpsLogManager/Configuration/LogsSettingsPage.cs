@@ -50,10 +50,8 @@ namespace GW2Scratch.ArcdpsLogManager.Configuration
 				{
 					layout.AddRow(new Label
 					{
-						Text = "儲存 arcdps 日誌的目錄。 子目錄也會被搜索，" +
-							   "不要選擇包含更多不相關文件的父目錄，除非你喜歡額外的等待。",
+						Text = "儲存 arcdps 日誌的目錄。 子目錄也會被搜索。",
 						Wrap = WrapMode.Word,
-						Height = 70
 					});
 					layout.AddRow(directoryList);
 				}
@@ -65,6 +63,7 @@ namespace GW2Scratch.ArcdpsLogManager.Configuration
 				}
 				layout.EndGroup();
 			}
+			layout.Add(null);
 			layout.EndVertical();
 
 			Content = layout;

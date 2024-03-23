@@ -61,15 +61,18 @@ namespace GW2Scratch.ArcdpsLogManager.Controls.Filters
 			unknownCheckBox.CheckedBinding.Bind(this, x => x.Filters.ShowUnknownLogs);
 			BindEnabled(unknownCheckBox);
 
-			var normalModeCheckBox = new CheckBox {Text = "普通"};
+			var normalModeCheckBox = new CheckBox {Text = "普通", ToolTip = "普通模式"};
 			normalModeCheckBox.CheckedBinding.Bind(this, x => x.Filters.ShowNormalModeLogs);
 			BindEnabled(normalModeCheckBox);
-			var challengeModeCheckBox = new CheckBox {Text = "挑戰"};
-			challengeModeCheckBox.CheckedBinding.Bind(this, x => x.Filters.ShowChallengeModeLogs);
-			BindEnabled(challengeModeCheckBox);
-			var emboldenedCheckBox = new CheckBox {Text = "膽量"};
+			var emboldenedCheckBox = new CheckBox {Text = "膽量", ToolTip = "膽量模式，無論疊了多少層的膽量"};
 			emboldenedCheckBox.CheckedBinding.Bind(this, x => x.Filters.ShowEmboldenedModeLogs);
 			BindEnabled(emboldenedCheckBox);
+			var challengeModeCheckBox = new CheckBox {Text = "挑戰", ToolTip = "挑戰模式" };
+			challengeModeCheckBox.CheckedBinding.Bind(this, x => x.Filters.ShowChallengeModeLogs);
+			BindEnabled(challengeModeCheckBox);
+			var legendaryModeCheckBox = new CheckBox {Text = "傳奇", ToolTip = "傳奇挑戰模式 (Temple of Febe...)"};
+			legendaryModeCheckBox.CheckedBinding.Bind(this, x => x.Filters.ShowLegendaryChallengeModeLogs);
+			BindEnabled(legendaryModeCheckBox);
 
 			var nonFavoritesCheckBox = new CheckBox {Text = "☆ 非最愛"};
 			nonFavoritesCheckBox.CheckedBinding.Bind(this, x => x.Filters.ShowNonFavoriteLogs);
@@ -179,8 +182,13 @@ namespace GW2Scratch.ArcdpsLogManager.Controls.Filters
 					BeginHorizontal();
 					{
 						Add(normalModeCheckBox);
-						Add(challengeModeCheckBox);
 						Add(emboldenedCheckBox);
+					}
+					EndHorizontal();
+					BeginHorizontal();
+					{
+						Add(challengeModeCheckBox);
+						Add(legendaryModeCheckBox);
 					}
 					EndHorizontal();
 				}

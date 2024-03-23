@@ -16,6 +16,8 @@ namespace GW2Scratch.ArcdpsLogManager.Sections;
 
 public class WeeklyClears : DynamicLayout
 {
+	private readonly ImageProvider imageProvider;
+
 	// Note that these are reset dates (Mondays) preceding the release,
 	// not necessarily the exact date of release (those tend to be Tuesdays).
 	private static readonly DateOnly W1Release = new DateOnly(2015, 11, 16);
@@ -223,7 +225,10 @@ public class WeeklyClears : DynamicLayout
 
 	public WeeklyClears(ImageProvider imageProvider)
 	{
+		this.imageProvider = imageProvider;
 		accountFilterBox = new DropDown { Width = 350 };
+		addNewAccountButton = new Button { Text = "新增帳號" };
+		removeAccountButton = new Button { Text = "移除", Enabled = accountFilterBox.SelectedIndex != -1 };
 		accountFilterBox.DataStore = Settings.PlayerAccountNames.Select(x => x.TrimStart(':'));
 		if (Settings.PlayerAccountNames.Count != 0)
 		{
@@ -242,11 +247,10 @@ public class WeeklyClears : DynamicLayout
 			accountFilterBox.SelectedIndex = -1;
 			accountFilterBox.DataStore = Settings.PlayerAccountNames.Select(x => x.TrimStart(':'));
 			accountFilterBox.SelectedIndex = Settings.PlayerAccountNames.Count > 0 ? 0 : -1;
+			removeAccountButton.Enabled = accountFilterBox.SelectedIndex != -1;
 			DataUpdated?.Invoke(this, EventArgs.Empty);
 		};
 
-		addNewAccountButton = new Button { Text = "新增帳號" };
-		removeAccountButton = new Button { Text = "移除", Enabled = accountFilterBox.SelectedIndex != -1 };
 		addNewAccountButton.Click += (_, _) =>
 		{
 			var dialog = new PlayerSelectDialog(null, null, null, null, imageProvider, null, logs);
@@ -258,9 +262,13 @@ public class WeeklyClears : DynamicLayout
 				if (!Settings.PlayerAccountNames.Contains(selectedAccount))
 				{
 					Settings.PlayerAccountNames = Settings.PlayerAccountNames.Append(selectedAccount).ToList();
+					accountFilterBox.SelectedIndex = Settings.PlayerAccountNames.Count - 1;
+				}
+				else
+				{
+					accountFilterBox.SelectedIndex = Settings.PlayerAccountNames.ToList().IndexOf(selectedAccount);
 				}
 
-				accountFilterBox.SelectedIndex = Settings.PlayerAccountNames.Count - 1;
 				AccountFilter = selectedAccount;
 				removeAccountButton.Enabled = true;
 				DataUpdated?.Invoke(this, EventArgs.Empty);
@@ -490,14 +498,49 @@ public class WeeklyClears : DynamicLayout
 		Control middleControl;
 		if (enabledGroups.Count > 0)
 		{
-			var table = new TableLayout(enabledGroups.Max(group => group.Rows.Max(row => row.Encounters.Count)), enabledGroups.Sum(group => group.Rows.Count));
-			table.Spacing = new Size(15, 8);
+			// We use the first column for an image identifying the row
+			var cols = enabledGroups.Max(group => group.Rows.Max(row => row.Encounters.Count)) + 1;
+			var rows = enabledGroups.Sum(group => group.Rows.Count);
+			var table = new TableLayout(cols, rows);
+			table.Spacing = new Size(10, 6);
 
 			int rowIndex = 0;
+			int raidWing = 0;
 			foreach (var group in enabledGroups)
 			{
 				foreach (var row in group.Rows)
 				{
+					if (group.Category == EncounterCategory.Raids)
+					{
+						raidWing++;
+					}
+
+					// An image at the start of the row
+					var rowImage = new ImageView
+					{
+						Size = new Size(48, 32),
+						Image = group.Category switch
+						{
+							EncounterCategory.Raids => raidWing switch
+							{
+								1 => imageProvider.GetWideRaidWing1Icon(),
+								2 => imageProvider.GetWideRaidWing2Icon(),
+								3 => imageProvider.GetWideRaidWing3Icon(),
+								4 => imageProvider.GetWideRaidWing4Icon(),
+								5 => imageProvider.GetWideRaidWing5Icon(),
+								6 => imageProvider.GetWideRaidWing6Icon(),
+								7 => imageProvider.GetWideRaidWing7Icon(),
+								_ => throw new ArgumentOutOfRangeException()
+							},
+							EncounterCategory.StrikeIcebroodSaga => imageProvider.GetWideIcebroodSagaIcon(),
+							EncounterCategory.StrikeEndOfDragons => imageProvider.GetWideEndOfDragonsIcon(),
+							EncounterCategory.StrikeSecretsOfTheObscure => imageProvider.GetWideSecretsOfTheObscureIcon(),
+							_ => throw new ArgumentOutOfRangeException()
+						}
+					};
+					table.Add(rowImage, 0, rowIndex);
+
+					// Checkboxes for encounters
 					for (int col = 0; col < row.Encounters.Count; col++)
 					{
 						var encounter = row.Encounters[col];
@@ -513,10 +556,14 @@ public class WeeklyClears : DynamicLayout
 						};
 
 						var (normalModeCheckbox, challengeModeCheckbox) = encounterCheckboxes[encounter];
-						var layout = new StackLayout { Items = { normalModeCheckbox, challengeModeCheckbox }, Spacing = 6 };
+
+						// Setting Spacing of the Stack Layout results in a trailing gap which we cannot really afford here,
+						// we instead use this image view without an image to create a spacer of a specific height.
+						var spacer = new ImageView { Size = new Size(6, 6) };
+						var layout = new StackLayout { Items = { normalModeCheckbox, spacer, challengeModeCheckbox } };
 						var box = new GroupBox { Text = name, Content = layout, Padding = new Padding(4, 2) };
 
-						table.Add(box, col, rowIndex);
+						table.Add(box, col + 1, rowIndex);
 					}
 
 					rowIndex++;
@@ -556,16 +603,26 @@ public class WeeklyClears : DynamicLayout
 			Add(null);
 			EndHorizontal();
 		}
-		EndBeginVertical(spacing: new Size(10, 10));
+		EndBeginVertical(spacing: new Size(10, 10), yscale: true);
 		{
-			BeginScrollable();
-			AddRow(middleControl, null);
-			Add(null);
-			EndScrollable();
+			Add(new Splitter
+			{
+				Panel1 = new Scrollable
+				{
+					Content = middleControl,
+					ExpandContentWidth = false,
+					ExpandContentHeight = false,
+					Padding = new Padding(10, 0, 0, 0),
+					MinimumSize = new Size(0, 0)
+				},
+				Panel2 = weekGrid,
+				Orientation = Orientation.Vertical,
+				Panel1MinimumSize = 0,
+				Panel2MinimumSize = 0,
+				FixedPanel = SplitterFixedPanel.Panel2,
+			});
 		}
 		EndVertical();
-		AddSeparateRow(controls: [weekGrid]);
-
 		Create();
 		ResumeLayout();
 	}

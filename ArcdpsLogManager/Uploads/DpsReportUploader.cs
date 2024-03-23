@@ -1,4 +1,3 @@
-using GW2Scratch.ArcdpsLogManager.Configuration;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,9 +6,11 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using GW2Scratch.ArcdpsLogManager.Logs;
+using GW2Scratch.ArcdpsLogManager.Updates;
 using GW2Scratch.EVTCAnalytics.GameData.Encounters;
 using Newtonsoft.Json;
 using System.Net;
+using System.Net.Http.Headers;
 
 namespace GW2Scratch.ArcdpsLogManager.Uploads
 {
@@ -22,7 +23,7 @@ namespace GW2Scratch.ArcdpsLogManager.Uploads
 			"Imperva. 僅支援 HTTP。 相當可靠，作為最後手段。");
 
 		private static readonly DpsReportDomain DomainB = new DpsReportDomain("https://b.dps.report",
-			"Stackpath. 支援 HTTPS。 支援 HTTPS 的替代服務網域。");
+			"Sucuri. 支援 HTTPS。 支援 HTTPS 的替代服務網域。");
 
 		public static IReadOnlyList<DpsReportDomain> AvailableDomains { get; } = new[]
 		{
@@ -33,7 +34,15 @@ namespace GW2Scratch.ArcdpsLogManager.Uploads
 
 		private readonly HttpClient httpClient = new HttpClient
 		{
-			Timeout = Timeout.InfiniteTimeSpan
+			Timeout = Timeout.InfiniteTimeSpan,
+			DefaultRequestHeaders =
+			{
+				UserAgent =
+				{
+					new ProductInfoHeaderValue("arcdpsLogManager", typeof(ProgramUpdateChecker).Assembly.GetName().Version?.ToString())
+				}
+			}
+			
 		};
 
 		public string Domain { get; set; }

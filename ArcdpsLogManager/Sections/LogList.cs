@@ -158,13 +158,16 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 			
 			gridView.Columns.Add(new GridColumn()
 			{
-				HeaderText = "CM",
+				HeaderText = "Mode",
 				DataCell = new TextBoxCell
 				{
+					TextAlignment = TextAlignment.Center,
 					Binding = new DelegateBinding<LogData, string>(x =>
 					{
 						switch (x.EncounterMode)
 						{
+							case EncounterMode.LegendaryChallenge:
+								return "LM";
 							case EncounterMode.Challenge:
 								return "CM";
 							case EncounterMode.Normal:
@@ -470,6 +473,11 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 				logDetailPanel.LogData = null;
 				multipleLogPanel.LogData = null;
 			}
+		}
+
+		public void ClearSelection()
+		{
+			logGridView.SelectedRows = [];
 		}
 
 		private ContextMenu ConstructLogGridViewContextMenu(GridView<LogData> gridView)

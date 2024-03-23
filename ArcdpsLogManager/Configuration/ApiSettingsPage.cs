@@ -23,7 +23,7 @@ namespace GW2Scratch.ArcdpsLogManager.Configuration
 							   "不需要 API 金鑰。 " +
 							   "如果未啟用此功能，則公會名稱及其標籤以及地圖名稱將不可用。",
 						Wrap = WrapMode.Word,
-						Height = 60
+						//Height = 60
 					});
 					layout.AddRow(apiDataCheckbox);
 				}

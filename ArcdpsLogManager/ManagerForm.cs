@@ -29,6 +29,7 @@ using GW2Scratch.EVTCAnalytics.Events;
 using GW2Scratch.EVTCAnalytics.GameData;
 using GW2Scratch.EVTCAnalytics.Processing;
 using Gw2Sharp;
+using System.Diagnostics;
 
 namespace GW2Scratch.ArcdpsLogManager
 {
@@ -238,14 +239,33 @@ namespace GW2Scratch.ArcdpsLogManager
 					Application.Instance.AsyncInvoke(logsFiltered.Refresh);
 				}
 			};
+			LogDataProcessor.Processed += (sender, args) =>
+			{
+				if (Settings.DpsReportAutoUpload)
+				{
+					var age = DateTimeOffset.Now - args.Item.EncounterStartTime;
+					if (age < TimeSpan.FromDays(1))
+					{
+						UploadProcessor.ScheduleDpsReportEIUpload(args.Item);
+					}
+				}
+			};
 
 			Shown += (sender, args) => ReloadLogs();
 			Shown += (sender, args) => CheckUpdates();
 			Shown += (_, _) =>
 			{
-				if (this.Screen.WorkingArea.Size.Height > 1000f)
+				int? newHeight = this.Screen.WorkingArea.Size.Height switch
 				{
-					ClientSize = new Size(1300, 1000);
+					> 1300f => 1000,
+					> 1000f => 900,
+					_ => null
+				};
+
+				if (newHeight != null)
+				{
+					ClientSize = new Size(1300, newHeight.Value);
+					Location = new Point(Location.X, (int) (this.Screen.WorkingArea.Size.Height - newHeight) / 2);
 				}
 			};
 		}
@@ -364,7 +384,7 @@ namespace GW2Scratch.ArcdpsLogManager
 			// Processing label
 			var processingLabel = new Label();
 
-			void UpdateProcessingLabel(object sender, BackgroundProcessorEventArgs args)
+			void UpdateProcessingLabel(object sender, BackgroundProcessorEventArgs<LogData> args)
 			{
 				Application.Instance.AsyncInvoke(() =>
 				{
@@ -382,7 +402,7 @@ namespace GW2Scratch.ArcdpsLogManager
 			// Upload state label
 			var uploadLabel = new Label();
 
-			void UpdateUploadLabel(object sender, BackgroundProcessorEventArgs args)
+			void UpdateUploadLabel(object sender, BackgroundProcessorEventArgs<UploadProcessor.QueuedUpload> args)
 			{
 				Application.Instance.AsyncInvoke(() =>
 				{
@@ -400,7 +420,7 @@ namespace GW2Scratch.ArcdpsLogManager
 			// API state label
 			var apiLabel = new Label();
 
-			void UpdateApiLabel(object sender, BackgroundProcessorEventArgs args)
+			void UpdateApiLabel(object sender, BackgroundProcessorEventArgs<string> args)
 			{
 				Application.Instance.AsyncInvoke(() =>
 				{
@@ -520,7 +540,26 @@ namespace GW2Scratch.ArcdpsLogManager
 			var settingsMenuItem = new ButtonMenuItem {Text = "&設定"};
 			settingsMenuItem.Items.Add(settingsFormMenuItem);
 
-			var helpMenuItem = new ButtonMenuItem {Text = "幫助"};
+			var helpMenuItem = new ButtonMenuItem {Text = "關於"};
+			helpMenuItem.Items.Add(new Command((_, _) =>
+			{
+				var processInfo = new ProcessStartInfo
+				{
+					FileName = "https://ko-fi.com/sejsel",
+					UseShellExecute = true
+				};
+				Process.Start(processInfo);
+			}) { MenuText = "贊助" });
+			helpMenuItem.Items.Add(new SeparatorMenuItem());
+			helpMenuItem.Items.Add(new Command((_, _) =>
+			{
+				var processInfo = new ProcessStartInfo
+				{
+					FileName = "https://gw2scratch.com/",
+					UseShellExecute = true
+				};
+				Process.Start(processInfo);
+			}) { MenuText = "網站" });
 			helpMenuItem.Items.Add(new About());
 
 			return new MenuBar(dataMenuItem, viewMenuItem, settingsMenuItem, helpMenuItem);
@@ -578,12 +617,12 @@ namespace GW2Scratch.ArcdpsLogManager
 				serviceStatus.Add(new GroupBox
 				{
 					Text = "上傳",
-					Content = new BackgroundProcessorDetail {BackgroundProcessor = UploadProcessor}
+					Content = new BackgroundProcessorDetail<UploadProcessor.QueuedUpload> {BackgroundProcessor = UploadProcessor}
 				}, xscale: true);
 				serviceStatus.Add(new GroupBox
 				{
 					Text = "激戰2 API",
-					Content = new BackgroundProcessorDetail {BackgroundProcessor = ApiProcessor}
+					Content = new BackgroundProcessorDetail<string> {BackgroundProcessor = ApiProcessor}
 				}, xscale: true);
 			}
 			serviceStatus.EndHorizontal();
@@ -592,12 +631,12 @@ namespace GW2Scratch.ArcdpsLogManager
 				serviceStatus.Add(new GroupBox
 				{
 					Text = "日誌處理",
-					Content = new BackgroundProcessorDetail {BackgroundProcessor = LogDataProcessor}
+					Content = new BackgroundProcessorDetail<LogData> {BackgroundProcessor = LogDataProcessor}
 				}, xscale: true);
 				serviceStatus.Add(new GroupBox
 				{
 					Text = "日誌壓縮",
-					Content = new BackgroundProcessorDetail {BackgroundProcessor = LogCompressionProcessor}
+					Content = new BackgroundProcessorDetail<LogData> {BackgroundProcessor = LogCompressionProcessor}
 				}, xscale: true);
 			}
 			serviceStatus.EndHorizontal();
@@ -619,6 +658,14 @@ namespace GW2Scratch.ArcdpsLogManager
 
 			// This is needed to avoid a Gtk platform issue where the tab is changed to the last one.
 			Shown += (sender, args) => tabs.SelectedIndex = 1;
+
+			KeyUp += (_, args) =>
+			{
+				if (args.Key == Keys.Escape)
+				{
+					logList.ClearSelection();
+				}
+			};
 
 			return tabs;
 		}

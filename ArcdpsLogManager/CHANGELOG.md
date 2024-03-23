@@ -2,9 +2,22 @@
 
 This is the full changelog of the arcdps Log Manager.
 
+## Log Manager v1.11.1
+
+#### New features
+- Added dps.report upload status to Advanced filters
+
+#### Changes
+- Pressing ESC now closes the log detail pane
+
+#### Fixes
+- Fixed NM detection for Temple of Febe since health fix
+- Fixed weekly clears account selection dropdown selecting wrong account when adding a duplicate account
+
 ## Log Manager v1.11
 
 #### New features
+- Added an option to automatically upload new logs to dps.report (Settings; dps.report tab)
 - Added a "Weekly clears" tab with a table of encounters finished since weekly reset
   - yes, it does Strike Missions
   - yes, it does CMs
@@ -12,7 +25,8 @@ This is the full changelog of the arcdps Log Manager.
   - oh, and it has a detailed history
   - relies on your logs, does not use the API
 - Added Cosmic Observatory CM detection
-- Added Temple of Febe CM detection
+- Added Temple of Febe CM/LM detection
+- Added filtering for Legendary Challenge Mode encounters (Temple of Febe)
 
 #### Fixes
 - Fixed dps.report uploads failing when hitting the rate limit

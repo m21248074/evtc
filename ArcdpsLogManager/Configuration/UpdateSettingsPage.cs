@@ -21,7 +21,6 @@ namespace GW2Scratch.ArcdpsLogManager.Configuration
 					{
 						Text = "程式可以在啟動時自動尋找更新，並在有新版本可用時通知您。",
 						Wrap = WrapMode.Word,
-						Height = 50
 					});
 					layout.AddRow(updateCheckbox);
 				}

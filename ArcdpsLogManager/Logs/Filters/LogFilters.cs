@@ -17,6 +17,11 @@ namespace GW2Scratch.ArcdpsLogManager.Logs.Filters
 		private bool showParseParsingLogs = true;
 		private bool showParseParsedLogs = true;
 		private bool showParseFailedLogs = true;
+		private bool showDpsReportUnuploadedLogs = true;
+		private bool showDpsReportQueuedLogs = true;
+		private bool showDpsReportUploadedLogs = true;
+		private bool showDpsReportUploadErrorLogs = true;
+		private bool showDpsReportProcessingErrorLogs = true;
 		private IReadOnlyList<LogGroup> logGroups;
 		private IReadOnlyList<string> requiredTags = new List<string>();
 		private bool showSuccessfulLogs = true;
@@ -25,6 +30,7 @@ namespace GW2Scratch.ArcdpsLogManager.Logs.Filters
 		private bool showEmboldenedLogs = true;
 		private bool showNormalModeLogs = true;
 		private bool showChallengeModeLogs = true;
+		private bool showLegendaryChallengeModeLogs = true;
 		private bool showNonFavoriteLogs = true;
 		private bool showFavoriteLogs = true;
 		private DateTime? minDateTime = null;
@@ -74,6 +80,61 @@ namespace GW2Scratch.ArcdpsLogManager.Logs.Filters
 			{
 				if (value == showParseFailedLogs) return;
 				showParseFailedLogs = value;
+				OnPropertyChanged();
+			}
+		}
+		
+		public bool ShowDpsReportUnuploadedLogs
+		{
+			get => showDpsReportUnuploadedLogs;
+			set
+			{
+				if (value == showDpsReportUnuploadedLogs) return;
+				showDpsReportUnuploadedLogs = value;
+				OnPropertyChanged();
+			}
+		}
+		
+		public bool ShowDpsReportQueuedLogs
+		{
+			get => showDpsReportQueuedLogs;
+			set
+			{
+				if (value == showDpsReportQueuedLogs) return;
+				showDpsReportQueuedLogs = value;
+				OnPropertyChanged();
+			}
+		}
+		
+		public bool ShowDpsReportUploadedLogs
+		{
+			get => showDpsReportUploadedLogs;
+			set
+			{
+				if (value == showDpsReportUploadedLogs) return;
+				showDpsReportUploadedLogs = value;
+				OnPropertyChanged();
+			}
+		}
+		
+		public bool ShowDpsReportUploadErrorLogs
+		{
+			get => showDpsReportUploadErrorLogs;
+			set
+			{
+				if (value == showDpsReportUploadErrorLogs) return;
+				showDpsReportUploadErrorLogs = value;
+				OnPropertyChanged();
+			}
+		}
+		
+		public bool ShowDpsReportProcessingErrorLogs
+		{
+			get => showDpsReportProcessingErrorLogs;
+			set
+			{
+				if (value == showDpsReportProcessingErrorLogs) return;
+				showDpsReportProcessingErrorLogs = value;
 				OnPropertyChanged();
 			}
 		}
@@ -161,6 +222,17 @@ namespace GW2Scratch.ArcdpsLogManager.Logs.Filters
 			{
 				if (value == showChallengeModeLogs) return;
 				showChallengeModeLogs = value;
+				OnPropertyChanged();
+			}
+		}
+		
+		public bool ShowLegendaryChallengeModeLogs
+		{
+			get => showLegendaryChallengeModeLogs;
+			set
+			{
+				if (value == showLegendaryChallengeModeLogs) return;
+				showLegendaryChallengeModeLogs = value;
 				OnPropertyChanged();
 			}
 		}
@@ -267,6 +339,7 @@ namespace GW2Scratch.ArcdpsLogManager.Logs.Filters
 			return FilterByEncounterName(log)
 			       && FilterByResult(log)
 			       && FilterByParsingStatus(log)
+			       && FilterByDpsReportUploadStatus(log)
 			       && FilterByTime(log)
 			       && FilterByEncounterMode(log)
 			       && FilterByFavoriteStatus(log)
@@ -274,6 +347,16 @@ namespace GW2Scratch.ArcdpsLogManager.Logs.Filters
 			       && FilterByComposition(log)
 			       && FilterByInstabilities(log)
 			       && FilterByPlayers(log);
+		}
+
+		private bool FilterByDpsReportUploadStatus(LogData log)
+		{
+			return (ShowDpsReportUnuploadedLogs || log.DpsReportEIUpload.UploadState != UploadState.NotUploaded) &&
+			       (ShowDpsReportQueuedLogs || (log.DpsReportEIUpload.UploadState != UploadState.Queued ||
+			                                    log.DpsReportEIUpload.UploadState == UploadState.Uploading)) &&
+			       (ShowDpsReportUploadedLogs || log.DpsReportEIUpload.UploadState != UploadState.Uploaded) &&
+			       (ShowDpsReportUploadErrorLogs || log.DpsReportEIUpload.UploadState != UploadState.UploadError) &&
+			       (ShowDpsReportProcessingErrorLogs || log.DpsReportEIUpload.UploadState != UploadState.ProcessingError);
 		}
 
 		private bool FilterByParsingStatus(LogData log)
@@ -322,6 +405,7 @@ namespace GW2Scratch.ArcdpsLogManager.Logs.Filters
 			return (log.EncounterMode == EncounterMode.Normal && ShowNormalModeLogs) ||
 			       (log.EncounterMode == EncounterMode.Unknown && ShowNormalModeLogs) ||
 			       (log.EncounterMode == EncounterMode.Challenge && ShowChallengeModeLogs) ||
+			       (log.EncounterMode == EncounterMode.LegendaryChallenge && ShowLegendaryChallengeModeLogs) ||
 			       (log.EncounterMode.IsEmboldened() && ShowEmboldenedModeLogs);
 		}
 

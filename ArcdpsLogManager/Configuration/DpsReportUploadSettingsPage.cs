@@ -10,7 +10,8 @@ namespace GW2Scratch.ArcdpsLogManager.Configuration
 	{
 		private readonly RadioButtonList domainList;
 		private readonly CheckBox uploadDetailedWvwCheckbox;
-		
+		private readonly CheckBox autoUploadCheckbox;
+
 		private bool EditingUserToken { get; set; }
 
 		public DpsReportUploadSettingsPage()
@@ -43,49 +44,37 @@ namespace GW2Scratch.ArcdpsLogManager.Configuration
 			int domainIndex = domainList.DataStore.TakeWhile(element => element != currentDomain).Count();
 			domainList.SelectedIndex = domainIndex;
 
-			var domainDescriptionLabel = new Label
-			{
-				Wrap = WrapMode.Word,
-				Height = 50,
-				Text = ((DpsReportDomain) domainList.SelectedValue).Description
-			};
+			var domainDescriptionLabel = new Label { Wrap = WrapMode.Word, Height = 50, Text = ((DpsReportDomain) domainList.SelectedValue).Description };
 
 			domainList.SelectedValueChanged += (sender, args) =>
 			{
 				domainDescriptionLabel.Text = ((DpsReportDomain) domainList.SelectedValue).Description;
 			};
 
-			uploadDetailedWvwCheckbox = new CheckBox
-			{
-				Text = "詳細的 WvW 日誌報告(測試版)",
-				Checked = Settings.DpsReportUploadDetailedWvw
-			};
+			uploadDetailedWvwCheckbox = new CheckBox { Text = "詳細的 WvW 日誌報告 (大檔案可能會失敗)", Checked = Settings.DpsReportUploadDetailedWvw };
 
-			var userTokenTextBox = new TextBox
-			{
-				ReadOnly = true,
-				Text = "************",
-				Enabled = false
-			};
+			autoUploadCheckbox = new CheckBox { Text = "自動上傳日誌", Checked = Settings.DpsReportAutoUpload };
 
-			var showUserTokenButton = new Button {Text = "顯示"};
+			var userTokenTextBox = new TextBox { ReadOnly = true, Text = "************", Enabled = false };
+
+			var showUserTokenButton = new Button { Text = "顯示" };
 			showUserTokenButton.Click += (sender, args) =>
 			{
 				userTokenTextBox.Text = Settings.DpsReportUserToken;
 				userTokenTextBox.Enabled = true;
 			};
-			var changeUserTokenButton = new Button {Text = "修改"};
+			var changeUserTokenButton = new Button { Text = "修改" };
 			changeUserTokenButton.Click += (_, _) =>
 			{
 				if (EditingUserToken)
 				{
 					EditingUserToken = false;
-					
+
 					Settings.DpsReportUserToken = userTokenTextBox.Text;
 					userTokenTextBox.ReadOnly = true;
 					userTokenTextBox.Text = "************";
 					userTokenTextBox.Enabled = false;
-					
+
 					changeUserTokenButton.Text = "修改";
 					showUserTokenButton.Visible = true;
 				}
@@ -105,18 +94,30 @@ namespace GW2Scratch.ArcdpsLogManager.Configuration
 			var layout = new DynamicLayout();
 			layout.BeginVertical(new Padding(10), new Size(5, 5));
 			{
+				layout.BeginGroup("自動上傳", new Padding(5), new Size(5, 5));
+				{
+					layout.AddRow(new Label
+					{
+						Text = "如果啟用，新發現的日誌如果產生時間不到一天，將會自動排隊等待上傳。",
+						Wrap = WrapMode.Word,
+					});
+					layout.AddRow(autoUploadCheckbox);
+				}
+				layout.EndGroup();
+
+				layout.BeginGroup("上傳選項", new Padding(5), new Size(5, 5));
+				{
+					layout.AddRow(uploadDetailedWvwCheckbox);
+				}
+				layout.EndGroup();
+
 				layout.BeginGroup("上傳域名", new Padding(5), new Size(5, 5));
 				{
 					layout.AddRow(domainList);
 					layout.AddRow(domainDescriptionLabel);
 				}
 				layout.EndGroup();
-				layout.BeginGroup("上傳選項", new Padding(5), new Size(5, 5));
-				{
-					layout.AddRow(uploadDetailedWvwCheckbox);
-				}
-				layout.EndGroup();
-				
+
 				layout.BeginGroup("使用者令牌", new Padding(5), new Size(5, 5));
 				{
 					layout.BeginVertical();
@@ -125,7 +126,6 @@ namespace GW2Scratch.ArcdpsLogManager.Configuration
 						{
 							Text = "用於 dps.report 上傳的使用者令牌。 將其視為密碼，可用於查看之前所有上傳的內容。",
 							Wrap = WrapMode.Word,
-							Height = 50
 						});
 					}
 					layout.EndVertical();
@@ -155,6 +155,11 @@ namespace GW2Scratch.ArcdpsLogManager.Configuration
 			if (uploadDetailedWvwCheckbox.Checked.HasValue)
 			{
 				Settings.DpsReportUploadDetailedWvw = uploadDetailedWvwCheckbox.Checked.Value;
+			}
+
+			if (autoUploadCheckbox.Checked.HasValue)
+			{
+				Settings.DpsReportAutoUpload = autoUploadCheckbox.Checked.Value;
 			}
 		}
 	}
