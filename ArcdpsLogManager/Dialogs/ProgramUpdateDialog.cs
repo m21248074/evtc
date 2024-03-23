@@ -1,4 +1,4 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Linq;
 using Eto.Drawing;
 using Eto.Forms;
@@ -11,21 +11,21 @@ namespace GW2Scratch.ArcdpsLogManager.Dialogs
 	{
 		public ProgramUpdateDialog(Release release)
 		{
-			Title = $"Update available";
+			Title = $"可用更新";
 			ClientSize = new Size(-1, -1);
 			var layout = new DynamicLayout();
 			Content = layout;
 
-			var changelog = new Button {Text = "View changes"};
-			var later = new Button {Text = "Later"};
-			var ignore = new Button {Text = "Ignore"};
-			var download = new Button {Text = "Download"};
+			var changelog = new Button {Text = "查看更新內容"};
+			var later = new Button {Text = "稍後"};
+			var ignore = new Button {Text = "忽略"};
+			var download = new Button {Text = "下載"};
 
 			layout.BeginVertical(new Padding(10), new Size(10, 10));
 			{
 				layout.AddRow(new Label
 				{
-					Text = $"Log Manager {release.Version} is available for download."
+					Text = $"日誌管理器 {release.Version} 可供下載。"
 				});
 				layout.AddRow(changelog);
 			}
