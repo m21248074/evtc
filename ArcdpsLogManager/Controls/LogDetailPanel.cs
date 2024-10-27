@@ -102,7 +102,7 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 				}
 
 				double seconds = logData.EncounterDuration.TotalSeconds;
-				string duration = $"{(int) seconds / 60:0}¤À {seconds % 60:0.0}¬í";
+				string duration = logData.ShortDurationString;
 
 				fileNameButton.Text = System.IO.Path.GetFileName(logData.FileName);
 
@@ -306,12 +306,15 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 			dpsReportUploadButton.Click += (sender, args) => { UploadProcessor.ScheduleDpsReportEIUpload(logData); };
 			dpsReportOpenButton.Click += (sender, args) =>
 			{
-				var processInfo = new ProcessStartInfo()
+				try
 				{
-					FileName = logData.DpsReportEIUpload.Url,
-					UseShellExecute = true
-				};
-				Process.Start(processInfo);
+					var processInfo = new ProcessStartInfo() { FileName = logData.DpsReportEIUpload.Url, UseShellExecute = true };
+					Process.Start(processInfo);
+				}
+				catch (Exception e)
+				{
+					MessageBox.Show(this, $"Failed to open the URL: {e.Message}. Please try again.", "Error", MessageBoxButtons.OK, MessageBoxType.Error);
+				}
 			};
 			copyButton.Click += (sender, args) =>
 			{
@@ -347,7 +350,7 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 					
 					var dbusArgs = "--session --dest=org.freedesktop.FileManager1 " +
 						"--type=method_call /org/freedesktop/FileManager1 org.freedesktop.FileManager1.ShowItems " +
-						$"array:string:\"{logData.FileName}\" string:\"\"";
+						$"array:string:\"file://{logData.FileName}\" string:\"\"";
 					var dbusProcessInfo = new ProcessStartInfo()
 					{
 						FileName = "dbus-send",

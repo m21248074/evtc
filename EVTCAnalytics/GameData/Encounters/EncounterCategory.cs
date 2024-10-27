@@ -22,6 +22,11 @@ namespace GW2Scratch.EVTCAnalytics.GameData.Encounters
 		RaidWing5 = 105,
 		RaidWing6 = 106,
 		RaidWing7 = 107,
+		FractalNightmare = 301,
+		FractalShatteredObservatory = 302,
+		FractalSunquaPeak = 303,
+		FractalSilentSurf = 304,
+		FractalLonelyTower = 305,
 		Map = 2000,
 	}
 }

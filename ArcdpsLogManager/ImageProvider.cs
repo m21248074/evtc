@@ -70,6 +70,9 @@ namespace GW2Scratch.ArcdpsLogManager
 		// RAIDS
 		private Lazy<Image> GenericRaidWing { get; } = new Lazy<Image>(Resources.GetGenericRaidWingIcon);
 
+		// FRACTALS
+		private Lazy<Image> GenericFractalMap { get; } = new Lazy<Image>(Resources.GetGenericFractalMapIcon);
+
 		// RAID BOSSES
 		// WING 1
 		private Lazy<Image> ValeGuardianIcon { get; } = new Lazy<Image>(Resources.GetValeGuardianIcon);
@@ -102,7 +105,7 @@ namespace GW2Scratch.ArcdpsLogManager
 		private Lazy<Image> DhuumIcon { get; } = new Lazy<Image>(Resources.GetDhuumIcon);
 
 		// WING 6
-		private Lazy<Image> ConjuredAmalgamatedIcon { get; } = new Lazy<Image>(Resources.GetConjuredAmalgamatedIcon);
+		private Lazy<Image> ConjuredAmalgamateIcon { get; } = new Lazy<Image>(Resources.GetConjuredAmalgamateIcon);
 		private Lazy<Image> TwinLargosIcon { get; } = new Lazy<Image>(Resources.GetTwinLargosIcon);
 		private Lazy<Image> QadimIcon { get; } = new Lazy<Image>(Resources.GetQadimIcon);
 
@@ -142,6 +145,7 @@ namespace GW2Scratch.ArcdpsLogManager
 		private Lazy<Image> DarkAiKeeperOfThePeakIcon { get; } = new Lazy<Image>(Resources.GetDarkAiKeeperOfThePeakIcon);
 		private Lazy<Image> BothPhasesAiKeeperOfThePeakIcon { get; } = new Lazy<Image>(Resources.GetBothPhasesAiKeeperOfThePeakIcon);
 		private Lazy<Image> KanaxaiIcon { get; } = new Lazy<Image>(Resources.GetKanaxaiIcon);
+		private Lazy<Image> EparchIcon { get; } = new Lazy<Image>(Resources.GetEparchIcon);
 
 		// FESTIVALS
 		private Lazy<Image> FreezieIcon { get; } = new Lazy<Image>(Resources.GetFreezieIcon);
@@ -327,7 +331,7 @@ namespace GW2Scratch.ArcdpsLogManager
 				Encounter.Eyes => EyesIcon.Value,
 				Encounter.Dhuum => DhuumIcon.Value,
 				// W6
-				Encounter.ConjuredAmalgamate => ConjuredAmalgamatedIcon.Value,
+				Encounter.ConjuredAmalgamate => ConjuredAmalgamateIcon.Value,
 				Encounter.TwinLargos => TwinLargosIcon.Value,
 				Encounter.Qadim => QadimIcon.Value,
 				// W7
@@ -364,6 +368,7 @@ namespace GW2Scratch.ArcdpsLogManager
 				Encounter.AiKeeperOfThePeakNightOnly => DarkAiKeeperOfThePeakIcon.Value,
 				Encounter.AiKeeperOfThePeakDayAndNight => BothPhasesAiKeeperOfThePeakIcon.Value,
 				Encounter.Kanaxai => KanaxaiIcon.Value,
+				Encounter.Eparch => EparchIcon.Value,
 				// FESTIVALS
 				Encounter.Freezie => FreezieIcon.Value,
 				// TRAINING AREA
@@ -378,6 +383,11 @@ namespace GW2Scratch.ArcdpsLogManager
 		public Image GetRaidWingIcon()
 		{
 			return GenericRaidWing.Value;
+		}
+
+		public Image GetFractalMapIcon()
+		{
+			return GenericFractalMap.Value;
 		}
 
 		public Image GetWvWMapIcon(int? mapId)

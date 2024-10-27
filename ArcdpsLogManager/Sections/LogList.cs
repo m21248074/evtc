@@ -12,6 +12,7 @@ using GW2Scratch.ArcdpsLogManager.Gw2Api;
 using GW2Scratch.ArcdpsLogManager.Logs;
 using GW2Scratch.ArcdpsLogManager.Logs.Naming;
 using GW2Scratch.ArcdpsLogManager.Processing;
+using GW2Scratch.EVTCAnalytics.GameData.Encounters;
 using GW2Scratch.EVTCAnalytics.Model;
 using GW2Scratch.EVTCAnalytics.Processing.Encounters.Modes;
 using GW2Scratch.EVTCAnalytics.Processing.Encounters.Results;
@@ -43,6 +44,7 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 			{ "CM", "挑戰或膽量模式" },
 			{ "霧鎖異變", "迷霧碎層, FotM" },
 			{ "碎層難度係數", "迷霧碎層, FotM)" },
+			{ "", "遭遇戰圖示" },
 		};
 		
 		public bool ReadOnly { get; init; }
@@ -138,6 +140,45 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 			};
 
 			gridView.Columns.Add(favoritesColumn);
+
+			var encounterIconCell = new DrawableCell();
+			encounterIconCell.Paint += (sender, args) =>
+			{
+				if (!(args.Item is LogData log)) return;
+				if (log.ParsingStatus != ParsingStatus.Parsed) return;
+
+				// On Gtk, the images look rather distorted without this interpolation settings.
+				// On WPF, rendering breaks with this interpolation setting, so we do not use it there.
+				if (Application.Instance.Platform.IsGtk)
+				{
+					args.Graphics.ImageInterpolation = ImageInterpolation.High;
+				}
+
+				var origin = args.ClipRectangle.Location;
+				var rectangle = new RectangleF(origin, new SizeF(PlayerIconSize, PlayerIconSize));
+
+				// If the log has no corresponding icon it will not be drawn.
+				var wvwIcon = imageProvider.GetWvWMapIcon(log.MapId);
+				var encounterIcon = imageProvider.GetTinyEncounterIcon(log.Encounter);
+				if (encounterIcon != null)
+				{
+					args.Graphics.DrawImage(encounterIcon, rectangle);
+				}
+				else if (wvwIcon != null)
+				{
+					args.Graphics.DrawImage(wvwIcon, rectangle);
+				}
+				else if (log.Encounter == Encounter.Map)
+				{
+					args.Graphics.DrawImage(imageProvider.GetTinyInstanceIcon(), rectangle);
+				}
+			};
+
+			gridView.Columns.Add(new GridColumn()
+			{
+				HeaderText = "",
+				DataCell = encounterIconCell,
+			});
 
 			gridView.Columns.Add(new GridColumn()
 			{
@@ -286,17 +327,7 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 				HeaderText = "戰鬥時間",
 				DataCell = new TextBoxCell
 				{
-					Binding = new DelegateBinding<LogData, string>(x =>
-					{
-						if (x.ParsingStatus is ParsingStatus.Unparsed or ParsingStatus.Parsing)
-						{
-							// We don't want to make this wider than actual times.
-							return "?";
-						}
-
-						var seconds = x.EncounterDuration.TotalSeconds;
-						return $"{(int) seconds / 60:0}分 {seconds % 60:00.0}秒";
-					})
+					Binding = new DelegateBinding<LogData, string>(x => x.ShortDurationString)
 				}
 			};
 			gridView.Columns.Add(durationColumn);
@@ -307,6 +338,15 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 				DataCell = new TextBoxCell
 				{
 					Binding = new DelegateBinding<LogData, string>(x => x.PointOfView?.CharacterName ?? "未知")
+				}
+			});
+
+			gridView.Columns.Add(new GridColumn
+			{
+				HeaderText = "Account",
+				DataCell = new TextBoxCell
+				{
+					Binding = new DelegateBinding<LogData, string>(x => x.PointOfView?.AccountName.TrimStart(':') ?? "Unknown")
 				}
 			});
 
@@ -493,7 +533,7 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 
 				if (Abbreviations.TryGetValue(menuItem.Text, out string fullName))
 				{
-					menuItem.Text = $"{menuItem.Text} ({fullName})";
+					menuItem.Text = string.IsNullOrWhiteSpace(menuItem.Text) ? $"{fullName}" : $"{menuItem.Text} ({fullName})";
 				}
 
 				menuItem.CheckedChanged += (item, args) =>

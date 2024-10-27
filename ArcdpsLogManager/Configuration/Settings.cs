@@ -18,11 +18,11 @@ namespace GW2Scratch.ArcdpsLogManager.Configuration
 
 		private static readonly object WriteLock = new object();
 
-		private static readonly List<ISettingsMigration> Migrations = new List<ISettingsMigration>()
-		{
-			// Null version is pre-1.4.0.0
-			new NullVersionSettingsMigration(settings => settings.HiddenLogListColumns.Add("Instabilities"))
-		};
+		private static readonly List<ISettingsMigration> Migrations =
+		[
+			new NullVersionSettingsMigration(settings => settings.HiddenLogListColumns.Add("Instabilities")),
+			new MaxVersionSettingsMigration(new Version(1, 11, 1, 2), settings => settings.HiddenLogListColumns.Add("Account"))
+		];
 
 		private static StoredSettings Values => Stored.Value;
 

@@ -22,6 +22,7 @@ namespace GW2Scratch.ArcdpsLogManager.Dialogs
 				{
 					layout.AddRow(new Label
 					{
+						Width = 600,
 						Text = "新版本的日誌管理器改進了一些日誌的處理。 " +
 							   "必須再次處理它們才能正確更新資料。 " +
 							   "下面列出了受影響的日誌。 您想現在更新嗎?",

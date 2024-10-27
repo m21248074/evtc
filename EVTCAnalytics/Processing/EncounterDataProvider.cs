@@ -205,7 +205,9 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 				// Raids - Wing 5
 				case Encounter.SoullessHorror:
 				{
-					return GetDefaultBuilder(encounter, mainTarget)
+					// It is fairly common for a failure to record long enough to include the respawned boss, especially
+					// if the fight resets with some players still alive (a common bug after someone leaves an instance mid-fight).
+					return GetDefaultBuilder(encounter, mainTarget, mergeMainTarget: false)
 						.WithResult(new AgentBuffGainedDeterminer(mainTarget, SkillIds.SoullessHorrorDetermined))
 						// Necrosis is applied faster in Challenge Mode. It is first removed and then reapplied
 						// so we check the remaining time of the removed buff.
@@ -286,13 +288,17 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 				// Raids - Wing 7
 				case Encounter.Adina:
 				{
-					return GetDefaultBuilder(encounter, mainTarget)
+					// We need to explicitly find Adina as this may be a Sabir main target log.
+					var adina = GetTargetBySpeciesId(agents, SpeciesIds.CardinalAdina);
+					return GetDefaultBuilder(encounter, adina ?? mainTarget)
 						.WithModes(new AgentHealthModeDeterminer(mainTarget, 24_000_000))
 						.Build();
 				}
 				case Encounter.Sabir:
 				{
-					return GetDefaultBuilder(encounter, mainTarget)
+					// We need to explicitly find Sabir this may be an Adina main target log.
+					var sabir = GetTargetBySpeciesId(agents, SpeciesIds.CardinalSabir);
+					return GetDefaultBuilder(encounter, sabir ?? mainTarget)
 						.WithModes(new AgentHealthModeDeterminer(mainTarget, 32_000_000))
 						.Build();
 				}
@@ -308,6 +314,9 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 					// Skorvald the Shattered is the same species in Challenge and Normal mode,
 					// unlike most other fractal CM encounters
 					return GetDefaultBuilder(encounter, mainTarget)
+						.WithResult(new AnyCombinedResultDeterminer(
+								new AgentKillingBlowDeterminer(mainTarget),
+								new AgentBuffGainedDeterminer(mainTarget, SkillIds.Determined895)))
 						.WithModes(new AgentHealthModeDeterminer(mainTarget, 5_550_000))
 						.Build();
 				}
@@ -653,6 +662,27 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 								new AgentHealthModeDeterminer(mainTarget, 107_000_000, EncounterMode.LegendaryChallenge),
 								new AgentHealthModeDeterminer(mainTarget, 60_000_000, EncounterMode.Challenge),
 								finalFallbackMode: null))))
+						.Build();
+				}
+				case Encounter.Eparch:
+				{
+					// Normal Mode Release: 31.771.528
+					// Challenge Mode Release: 32.618.906
+					// Challenge Mode Release (Normal Mode T4): 19.857.206
+					// HP Nerfs Patch (Challenge Mode): 22.833.236 
+					// HP Nerfs Patch (Normal Mode T4): 13.900.044
+					return GetDefaultBuilder(encounter, mainTarget)
+						.WithResult(new AnyCombinedResultDeterminer(
+								new AgentKillingBlowDeterminer(mainTarget),
+								new BuffAppliedBelowHealthThresholdDeterminer(mainTarget, 0.2f, SkillIds.Determined)))
+						.WithModes(new ConditionalModeDeterminer(
+							(gameBuild != null && gameBuild < GameBuilds.LonelyTowerCMRelease,
+								new ConstantModeDeterminer(EncounterMode.Normal)),
+							(gameBuild != null && gameBuild >= GameBuilds.LonelyTowerCMRelease && gameBuild < GameBuilds.LonelyTowerHPNerf2,
+								new AgentHealthModeDeterminer(mainTarget, 31_000_000)),
+							(gameBuild != null && gameBuild >= GameBuilds.LonelyTowerHPNerf2,
+								new AgentHealthModeDeterminer(mainTarget, 21_000_000))
+							))
 						.Build();
 				}
 				default:

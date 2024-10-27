@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Timers;
 using EncounterCategory = GW2Scratch.ArcdpsLogManager.Sections.Clears.EncounterCategory;
 
 namespace GW2Scratch.ArcdpsLogManager.Sections;
@@ -135,7 +136,7 @@ public class WeeklyClears : DynamicLayout
 		])
 	];
 
-	private Dictionary<IFinishableEncounter, EncounterCategory> CategoriesByEncounter = EncounterGroups
+	private static readonly Dictionary<IFinishableEncounter, EncounterCategory> CategoriesByEncounter = EncounterGroups
 		.SelectMany(group => group.Rows.SelectMany(row => row.Encounters.Select(encounter => (encounter, Id: group.Category))))
 		.ToDictionary(x => x.encounter, x => x.Id);
 
@@ -222,6 +223,7 @@ public class WeeklyClears : DynamicLayout
 	private readonly Button removeAccountButton;
 	private readonly GridView<ResetWeek> weekGrid;
 	private readonly List<CheckBox> groupCheckboxes = [];
+	private readonly Timer timer = new Timer(TimeSpan.FromMinutes(1));
 
 	public WeeklyClears(ImageProvider imageProvider)
 	{
@@ -375,7 +377,8 @@ public class WeeklyClears : DynamicLayout
 
 		foreach ((string name, EncounterCategory category, bool hasCMs) in (ReadOnlySpan<(string, EncounterCategory, bool)>)
 		         [
-			         ("大型地下城", EncounterCategory.Raids, true), ("冰巢傳說", EncounterCategory.StrikeIcebroodSaga, false),
+			         ("大型地下城", EncounterCategory.Raids, true),
+			         ("冰巢傳說", EncounterCategory.StrikeIcebroodSaga, false),
 			         ("巨龍絕境", EncounterCategory.StrikeEndOfDragons, true),
 			         ("天界之謎", EncounterCategory.StrikeSecretsOfTheObscure, true)
 		         ])
@@ -448,7 +451,11 @@ public class WeeklyClears : DynamicLayout
 			};
 		}
 
-		weekGrid.DataStore = weeks;
+		var filteredWeeks = new FilterCollection<ResetWeek>(weeks);
+		filteredWeeks.Filter = week => week.Reset <= DateOnly.FromDateTime(DateTime.UtcNow);
+		timer.Elapsed += (_, _) => Application.Instance.Invoke(() => filteredWeeks.Refresh());
+		
+		weekGrid.DataStore = filteredWeeks;
 		weekGrid.SelectedRow = 0;
 
 		weekGrid.SelectionChanged += (_, _) =>
@@ -483,6 +490,9 @@ public class WeeklyClears : DynamicLayout
 		}
 
 		RecreateLayout();
+
+		Shown += (_, _) => timer.Start();
+		UnLoad += (_, _) => timer.Stop();
 	}
 
 	private void RecreateLayout()
@@ -629,11 +639,14 @@ public class WeeklyClears : DynamicLayout
 
 	public void UpdateDataFromLogs(IEnumerable<LogData> logs)
 	{
+		// We cache the logs to be able to select players from them later.
 		this.logs = logs.ToList();
+		// We need to store this specific list for the Task as a race condition could change this.logs before it is accessed.
+		var usedLogs = this.logs;
 		Task.Run(() =>
 		{
 			var logsByAccountNameWeek = new Dictionary<(string accountName, DateOnly resetDate), List<LogData>>();
-			foreach (var log in logs)
+			foreach (var log in usedLogs)
 			{
 				if (log.ParsingStatus != ParsingStatus.Parsed) continue;
 
@@ -680,10 +693,10 @@ public class WeeklyClears : DynamicLayout
 
 		var weekStart = time.ToUniversalTime();
 
-		if (time.DayOfWeek == DayOfWeek.Monday)
+		if (weekStart.DayOfWeek == DayOfWeek.Monday)
 		{
-			var reset = time.Date.AddHours(7.5);
-			if (time < reset)
+			var reset = weekStart.Date.AddHours(7.5);
+			if (weekStart < reset)
 			{
 				weekStart = weekStart.AddDays(-7);
 			}
@@ -713,7 +726,7 @@ public class WeeklyClears : DynamicLayout
 	private static List<DateOnly> GetAllResets()
 	{
 		var resets = new List<DateOnly>();
-		var now = DateTimeOffset.Now;
+		var now = DateTimeOffset.Now + TimeSpan.FromDays(365 * 10);
 		do
 		{
 			resets.Add(GetResetBefore(now));
