@@ -73,7 +73,7 @@ namespace GW2Scratch.ArcdpsLogManager.Controls.Filters
 			var legendaryModeCheckBox = new CheckBox {Text = "傳奇", ToolTip = "傳奇模式"};
 			legendaryModeCheckBox.CheckedBinding.Bind(this, x => x.Filters.ShowLegendaryChallengeModeLogs);
 			BindEnabled(legendaryModeCheckBox);
-			var quickplayCheckbox = new CheckBox {Text = "Quickplay", ToolTip = "Quickplay Mode"};
+			var quickplayCheckbox = new CheckBox {Text = "快速遊玩", ToolTip = "快速遊玩模式"};
 			quickplayCheckbox.CheckedBinding.Bind(this, x => x.Filters.ShowQuickplayModeLogs);
 			BindEnabled(quickplayCheckbox);
 

@@ -43,7 +43,7 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 			{ "★", "最愛" },
 			{ "CM", "挑戰或膽量模式" },
 			{ "霧鎖異變", "迷霧碎層, FotM" },
-			{ "碎層難度係數", "迷霧碎層, FotM)" },
+			{ "碎層難度係數", "迷霧碎層, FotM" },
 			{ "", "遭遇戰圖示" },
 		};
 		
@@ -199,7 +199,7 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 			
 			gridView.Columns.Add(new GridColumn()
 			{
-				HeaderText = "Mode",
+				HeaderText = "模式",
 				DataCell = new TextBoxCell
 				{
 					TextAlignment = TextAlignment.Center,
@@ -345,7 +345,7 @@ namespace GW2Scratch.ArcdpsLogManager.Sections
 
 			gridView.Columns.Add(new GridColumn
 			{
-				HeaderText = "Account",
+				HeaderText = "帳號",
 				DataCell = new TextBoxCell
 				{
 					Binding = new DelegateBinding<LogData, string>(x => x.PointOfView?.AccountName.TrimStart(':') ?? "Unknown")

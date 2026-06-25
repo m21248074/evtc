@@ -12,7 +12,7 @@ namespace GW2Scratch.ArcdpsLogManager.Logs.Filters.Groups
 	{
 		private readonly IReadOnlyList<LogGroup> subgroups;
 
-		public override string Name { get; } = "Fractals of the Mists";
+		public override string Name { get; } = "迷霧碎層 (FotM)";
 		public override IEnumerable<LogGroup> Subgroups => subgroups;
 
 		public FractalLogGroup()

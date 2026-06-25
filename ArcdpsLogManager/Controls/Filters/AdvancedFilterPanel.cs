@@ -45,7 +45,7 @@ namespace GW2Scratch.ArcdpsLogManager.Controls.Filters
 			};
 			var uploadTab = new TabPage
 			{
-				Text = "dps.report uploads", Content = ConstructUploadStatus(), Padding = new Padding(5),
+				Text = "dps.report 上傳", Content = ConstructUploadStatus(), Padding = new Padding(5),
 			};
 
 			void UpdateTabNames()
@@ -111,15 +111,15 @@ namespace GW2Scratch.ArcdpsLogManager.Controls.Filters
 		
 		private Control ConstructUploadStatus()
 		{
-			var notUploadedCheckBox = new CheckBox { Text = "Not uploaded" };
+			var notUploadedCheckBox = new CheckBox { Text = "未上傳" };
 			notUploadedCheckBox.CheckedBinding.Bind(this, x => x.Filters.ShowDpsReportUnuploadedLogs);
-			var queuedCheckBox = new CheckBox { Text = "Queued" };
+			var queuedCheckBox = new CheckBox { Text = "佇列中" };
 			queuedCheckBox.CheckedBinding.Bind(this, x => x.Filters.ShowDpsReportQueuedLogs);
-			var uploadedCheckBox = new CheckBox { Text = "Uploaded" };
+			var uploadedCheckBox = new CheckBox { Text = "已上傳" };
 			uploadedCheckBox.CheckedBinding.Bind(this, x => x.Filters.ShowDpsReportUploadedLogs);
-			var uploadFailedCheckBox = new CheckBox { Text = "Upload failed (dps.report unreachable)" };
+			var uploadFailedCheckBox = new CheckBox { Text = "上傳失敗 (無法連線至 dps.report)" };
 			uploadFailedCheckBox.CheckedBinding.Bind(this, x => x.Filters.ShowDpsReportUploadErrorLogs);
-			var processingFailedCheckBox = new CheckBox { Text = "Processing failed (Elite Insights on dps.report failed)" };
+			var processingFailedCheckBox = new CheckBox { Text = "處理失敗 (dps.report 上的 Elite Insights 處理失敗)" };
 			processingFailedCheckBox.CheckedBinding.Bind(this, x => x.Filters.ShowDpsReportProcessingErrorLogs);
 			var layout = new DynamicLayout();
 			layout.BeginVertical(spacing: new Size(5, 5));
@@ -133,7 +133,7 @@ namespace GW2Scratch.ArcdpsLogManager.Controls.Filters
 				layout.Add(new Label
 				{
 					Width = 400,
-					Text = "Note: Currently, some logs in the processing failed state may have URLs when dps.report reports an error, but also provides an URL to the uploaded report.",
+					Text = "注意: 目前，當 dps.report 回報錯誤但同時提供了報告網址時，部分處於處理失敗狀態的日誌可能仍然會帶有網址。",
 					Wrap = WrapMode.Word,
 				});
 				layout.Add(null);

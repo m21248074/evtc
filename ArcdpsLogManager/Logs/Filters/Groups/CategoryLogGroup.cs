@@ -32,7 +32,7 @@ namespace GW2Scratch.ArcdpsLogManager.Logs.Filters.Groups
 			{EncounterCategory.FractalSunquaPeak, "桑泉峰" },
 			{EncounterCategory.FractalSilentSurf, "寂靜之浪" },
 			{EncounterCategory.FractalLonelyTower, "孤高尖塔" },
-			{EncounterCategory.FractalKinfall, "Kinfall" },
+			{EncounterCategory.FractalKinfall, "族親隕落" },
 			{EncounterCategory.SpecialForcesTrainingArea, "特種部隊訓練場"},
 			{EncounterCategory.Other, "未分類 (PvE)"},
 			{EncounterCategory.Festival, "節慶"},

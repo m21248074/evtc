@@ -144,8 +144,8 @@ public class WeeklyClears : DynamicLayout
 				new NormalEncounter(Encounter.TempleOfFebe, normalModeSince: SotORelease, challengeModeSince: ToFCMRelease),
 			]),
 		]),
-		new EncounterGroup(EncounterCategory.RaidEncountersVisionsOfEternity, "Visions of Eternity", [
-			new EncounterRow("Visions of Eternity", [
+		new EncounterGroup(EncounterCategory.RaidEncountersVisionsOfEternity, "Γロ�@뉴 VoE", [
+			new EncounterRow("Γロ�@뉴 VoE", [
 				new NormalEncounter(Encounter.GuardiansGlade, normalModeSince: GuardiansGladeRelease, challengeModeSince: GuardiansGladeCMRelease),
 			]),
 		])

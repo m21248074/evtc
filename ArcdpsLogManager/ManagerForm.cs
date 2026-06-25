@@ -430,7 +430,7 @@ namespace GW2Scratch.ArcdpsLogManager
 				Application.Instance.AsyncInvoke(() =>
 				{
 					bool finished = args.CurrentScheduledItems == 0;
-					apiLabel.Text = finished ? "" : $"Downloading guild data: {args.TotalProcessedItems}/{args.TotalScheduledItems}";
+					apiLabel.Text = finished ? "" : $"下載公會資料: {args.TotalProcessedItems}/{args.TotalScheduledItems}";
 				});
 			}
 
@@ -564,7 +564,7 @@ namespace GW2Scratch.ArcdpsLogManager
 					UseShellExecute = true
 				};
 				Process.Start(processInfo);
-			}) { MenuText = "Changelog" });
+			}) { MenuText = "更新日誌" });
 			helpMenuItem.Items.Add(new Command((_, _) =>
 			{
 				var processInfo = new ProcessStartInfo

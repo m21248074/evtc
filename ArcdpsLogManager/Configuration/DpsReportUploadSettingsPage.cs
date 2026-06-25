@@ -55,7 +55,7 @@ namespace GW2Scratch.ArcdpsLogManager.Configuration
 			uploadDetailedWvwCheckbox = new CheckBox { Text = "詳細的 WvW 日誌報告 (大檔案可能會失敗)", Checked = Settings.DpsReportUploadDetailedWvw };
 
 			autoUploadCheckbox = new CheckBox { Text = "自動上傳日誌", Checked = Settings.DpsReportAutoUpload };
-			autoUploadApplyFiltersCheckbox = new CheckBox { Text = "Only upload successful encounters", Checked = Settings.DpsReportAutoUploadApplyFilters, Enabled = Settings.DpsReportAutoUpload };
+			autoUploadApplyFiltersCheckbox = new CheckBox { Text = "僅上傳成功的遭遇戰紀錄", Checked = Settings.DpsReportAutoUploadApplyFilters, Enabled = Settings.DpsReportAutoUpload };
 			autoUploadCheckbox.CheckedChanged += (sender, args) =>
 			{
 				autoUploadApplyFiltersCheckbox.Enabled = autoUploadCheckbox.Checked.Value;

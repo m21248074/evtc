@@ -69,7 +69,7 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 					EncounterMode.Emboldened3 => "膽量模式 3 層",
 					EncounterMode.Emboldened4 => "膽量模式 4 層",
 					EncounterMode.Emboldened5 => "膽量模式 5 層",
-					EncounterMode.Quickplay => "Quickplay",
+					EncounterMode.Quickplay => "快速遊玩",
 					_ => throw new ArgumentOutOfRangeException()
 				};
 
