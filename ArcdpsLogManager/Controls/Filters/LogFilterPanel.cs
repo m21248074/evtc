@@ -20,9 +20,9 @@ namespace GW2Scratch.ArcdpsLogManager.Controls.Filters
 		private bool enabled = true;
 
 		private event EventHandler<IReadOnlyList<LogData>> LogsUpdated;
-		private event EventHandler EnabledChanged;
+		private new event EventHandler EnabledChanged;
 
-		public bool Enabled
+		public new bool Enabled
 		{
 			get => enabled;
 			set
@@ -64,15 +64,18 @@ namespace GW2Scratch.ArcdpsLogManager.Controls.Filters
 			var normalModeCheckBox = new CheckBox {Text = "普通", ToolTip = "普通模式"};
 			normalModeCheckBox.CheckedBinding.Bind(this, x => x.Filters.ShowNormalModeLogs);
 			BindEnabled(normalModeCheckBox);
-			var emboldenedCheckBox = new CheckBox {Text = "膽量", ToolTip = "膽量模式，無論疊了多少層的膽量"};
+			var emboldenedCheckBox = new CheckBox {Text = "膽量", ToolTip = "膽量模式 (無論疊了多少層)"};
 			emboldenedCheckBox.CheckedBinding.Bind(this, x => x.Filters.ShowEmboldenedModeLogs);
 			BindEnabled(emboldenedCheckBox);
 			var challengeModeCheckBox = new CheckBox {Text = "挑戰", ToolTip = "挑戰模式" };
 			challengeModeCheckBox.CheckedBinding.Bind(this, x => x.Filters.ShowChallengeModeLogs);
 			BindEnabled(challengeModeCheckBox);
-			var legendaryModeCheckBox = new CheckBox {Text = "傳奇", ToolTip = "傳奇挑戰模式 (Temple of Febe...)"};
+			var legendaryModeCheckBox = new CheckBox {Text = "傳奇", ToolTip = "傳奇模式"};
 			legendaryModeCheckBox.CheckedBinding.Bind(this, x => x.Filters.ShowLegendaryChallengeModeLogs);
 			BindEnabled(legendaryModeCheckBox);
+			var quickplayCheckbox = new CheckBox {Text = "Quickplay", ToolTip = "Quickplay Mode"};
+			quickplayCheckbox.CheckedBinding.Bind(this, x => x.Filters.ShowQuickplayModeLogs);
+			BindEnabled(quickplayCheckbox);
 
 			var nonFavoritesCheckBox = new CheckBox {Text = "☆ 非最愛"};
 			nonFavoritesCheckBox.CheckedBinding.Bind(this, x => x.Filters.ShowNonFavoriteLogs);
@@ -189,6 +192,11 @@ namespace GW2Scratch.ArcdpsLogManager.Controls.Filters
 					{
 						Add(challengeModeCheckBox);
 						Add(legendaryModeCheckBox);
+					}
+					EndHorizontal();
+					BeginHorizontal();
+					{
+						Add(quickplayCheckbox);
 					}
 					EndHorizontal();
 				}

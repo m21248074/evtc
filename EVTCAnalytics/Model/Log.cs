@@ -43,6 +43,26 @@ namespace GW2Scratch.EVTCAnalytics.Model
 		public IReadOnlyList<Marker> Markers { get; }
 
 		/// <summary>
+		/// Provides a list of all <see cref="Agents.Species"/>s that appear in the log.
+		/// </summary>
+		public IReadOnlyList<Species> Species { get; }
+
+		/// <summary>
+		/// Provides a list of all <see cref="Team"/>s that appear in the log.
+		/// </summary>
+		public IReadOnlyList<Team> Teams { get; }
+
+		/// <summary>
+		/// Provides a list of all <see cref="Emote"/>s that appear in the log.
+		/// </summary>
+		public IReadOnlyList<Emote> Emotes { get; }
+		
+		/// <summary>
+		/// Provides a list of all <see cref="Transformation"/>s that appear in the log.
+		/// </summary>
+		public IReadOnlyList<Transformation> Transformations { get; }
+
+		/// <summary>
 		/// Provides a string with the version of arcdps used to record this log, prefixed with "EVTC".
 		/// </summary>
 		public string EvtcVersion { get; }
@@ -105,7 +125,31 @@ namespace GW2Scratch.EVTCAnalytics.Model
 		/// Provides a numeric ID of the shard (server instance) the contents of the log occured in.
 		/// </summary>
 		public int? GameShardId { get; }
-		
+
+		/// <summary>
+		/// Second block of shard information.
+		/// </summary>
+		/// <remarks>
+		/// When inside an instance, upper shard should always be 0 and <see cref="GameShardId"/> is the world where the instance is.
+		/// </remarks>
+		public int? UpperShardId { get; }
+
+		/// <summary>
+		/// Provides a number ID of your home world.
+		/// </summary>
+		/// <remarks>
+		/// Deltaconnected saw two fields with the same value so he's dumping both in Id0 and Id1.
+		/// </remarks>
+		public int? UserWorldId0 { get; }
+
+		/// <summary>
+		/// Provides a number ID of your home world.
+		/// </summary>
+		/// <remarks>
+		/// Deltaconnected saw two fields with the same value so he's dumping both in Id0 and Id1.
+		/// </remarks>
+		public int? UserWorldId1 { get; }
+
 		/// <summary>
 		/// Provides a numeric ID of the map the encounter occured in.
 		/// </summary>
@@ -166,6 +210,9 @@ namespace GW2Scratch.EVTCAnalytics.Model
 			GameLanguage = state.GameLanguage;
 			GameBuild = state.GameBuild;
 			GameShardId = state.GameShardId;
+			UpperShardId = state.UpperShardId;
+			UserWorldId0 = state.UserWorldId0;
+			UserWorldId1 = state.UserWorldId1;
 			FractalScale = state.FractalScale;
 			MapId = state.MapId;
 			Events = state.Events;
@@ -173,6 +220,10 @@ namespace GW2Scratch.EVTCAnalytics.Model
 			Skills = state.Skills;
 			Effects = state.EffectsById.Values.OrderBy(x => x.Id).ToList();
 			Markers = state.MarkersById.Values.OrderBy(x => x.Id).ToList();
+			Species = state.SpeciesById.Values.OrderBy(x => x.Id).ToList();
+			Teams = state.TeamsById.Values.OrderBy(x => x.Id).ToList();
+			Emotes = state.EmotesById.Values.OrderBy(x => x.Id).ToList();
+			Transformations = state.TransformationsById.Values.OrderBy(x => x.Id).ToList();
 			Errors = state.Errors;
 			InstanceStart = state.InstanceStart;
 			ArcdpsBuild = state.ArcdpsBuild;
@@ -182,9 +233,12 @@ namespace GW2Scratch.EVTCAnalytics.Model
 		/// Creates a new instance of a <see cref="Log"/> without requiring a <see cref="LogProcessorState"/>.
 		/// </summary>
 		internal Log(Agent mainTarget, LogType logType, IEnumerable<Event> events, IEnumerable<Agent> agents,
-			IEnumerable<Skill> skills, IEnumerable<Effect> effects, IEnumerable<Marker> markers, IEnumerable<LogError> errors, string arcdpsBuild,
+			IEnumerable<Skill> skills, IEnumerable<Effect> effects, IEnumerable<Marker> markers, IEnumerable<Species> species,
+			IEnumerable<Team> teams, IEnumerable<Emote> emotes, IEnumerable<Transformation> transformations,
+			IEnumerable<LogError> errors, string arcdpsBuild,
 			IEncounterData encounterData, GameLanguage gameLanguage, string evtcVersion, LogTime startTime,
-			LogTime endTime, Player pointOfView, int? language, int? gameBuild, int? gameShardId, int? mapId,
+			LogTime endTime, Player pointOfView, int? language, int? gameBuild, 
+			int? gameShardId, int? upperShardId, int? userWorldId0, int? userWorldId1, int? mapId, 
 			InstanceStart instanceStart, int? fractalScale)
 		{
 			MainTarget = mainTarget;
@@ -198,6 +252,9 @@ namespace GW2Scratch.EVTCAnalytics.Model
 			LanguageId = language;
 			GameBuild = gameBuild;
 			GameShardId = gameShardId;
+			UpperShardId = upperShardId;
+			UserWorldId0 = userWorldId0;
+			UserWorldId1 = userWorldId1;
 			MapId = mapId;
 			InstanceStart = instanceStart;
 			FractalScale = fractalScale;
@@ -207,6 +264,10 @@ namespace GW2Scratch.EVTCAnalytics.Model
 			Skills = skills as Skill[] ?? skills.ToArray();
 			Effects = effects as Effect[] ?? effects.ToArray();
 			Markers = markers as Marker[] ?? markers.ToArray();
+			Species = species as Species[] ?? species.ToArray();
+			Teams = teams as Team[] ?? teams.ToArray();
+			Emotes = emotes as Emote[] ?? emotes.ToArray();
+			Transformations = transformations as Transformation[] ?? transformations.ToArray();
 			Errors = errors as LogError[] ?? errors.ToArray();
 		}
 	}

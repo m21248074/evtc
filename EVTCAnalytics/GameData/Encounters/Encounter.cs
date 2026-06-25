@@ -32,6 +32,7 @@ namespace GW2Scratch.EVTCAnalytics.GameData.Encounters
 
 		// Raids - Wing 1
 		ValeGuardian = 11,
+		SpiritRace = 12,
 		Gorseval = 13,
 		Sabetha = 14,
 
@@ -70,6 +71,11 @@ namespace GW2Scratch.EVTCAnalytics.GameData.Encounters
 		Sabir = 72,
 		QadimThePeerless = 73,
 
+		// Raids - Wing 8
+		Greer = 81,
+		Decima = 82,
+		Ura = 83,
+
 		// Fractals - Nightmare CM
 		MAMA = 10001,
 		SiaxTheCorrupted = 10002,
@@ -94,6 +100,9 @@ namespace GW2Scratch.EVTCAnalytics.GameData.Encounters
 		// Fractals - Lonely Tower
 		Eparch = 10041,
 
+		// Fractals - Kinfall
+		WhisperingShadow = 10051,
+
 		// Festivals - Wintersday
 		Freezie = 20001,
 
@@ -104,27 +113,30 @@ namespace GW2Scratch.EVTCAnalytics.GameData.Encounters
 		MassiveKittyGolem = 30004,
 		// TODO: Check if there are more golem types
 
-		// Strike Missions - Icebrood Saga
+		// Raid Encounters - Icebrood Saga
 		ShiverpeaksPass = 40001,
 		VoiceAndClawOfTheFallen = 40002,
 		FraenirOfJormag = 40003,
 		Boneskinner = 40004,
 		WhisperOfJormag = 40005,
-		VariniaStormsounder = 40006, // Last enemy in Strike Mission: Cold War
-		
-		// Strike Missions - End of Dragons
+		VariniaStormsounder = 40006, // Last enemy in Raid Encounter: Cold War
+
+		// Raid Encounters - End of Dragons
 		AetherbladeHideout = 41001,
 		XunlaiJadeJunkyard = 41002,
 		KainengOverlook = 41003,
 		HarvestTemple = 41004,
-		
-		// Strike Missions - End of Dragons - Living World Season 1
+
+		// Raid Encounters - End of Dragons - Living World Season 1
 		OldLionsCourt = 42001,
-			
-		// Strike Missions - Secrets of the Obscure
+
+		// Raid Encounters - Secrets of the Obscure
 		CosmicObservatory = 43001,
 		TempleOfFebe = 43002,
-		
+
+		// Raid Encounters - Visions of Eternity
+		GuardiansGlade = 44001,
+
 		// Story
 		Mordremoth = 50001,
 

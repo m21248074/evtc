@@ -2,10 +2,117 @@
 
 This is the full changelog of the arcdps Log Manager.
 
-## Log Manager v1.12.1 (unreleased)
+## Unreleased
+
+## Log Manager v1.16.0
+
+#### Fixes
+- Fixed parsing for the following encounters since EVTC20260430:
+- - Soulless Horror
+- - Aetherblade Hideout (NM & CM)
+- - Guardian Glade (NM & CM)
+- - Harvest Temple (NM & CM)
+- - Eparch
+- - Kanaxai
+- - Skorvald (when invulnerable)
+- - Light Ai
+- - Dark Ai
+- - Both Phases Ai
+- - Freezie
+- Fixed incorrect encounter detection for Dark Ai since EVTC20260430
+
+#### EVTC Inspector notes
+- Added EarlyExit events
+- Added AnimationStart events
+- Added AnimationEnd events
+- Added BuffApply events
+- Added BuffChange events
+- Added BuffRemoveSingle events
+- Added BuffRemoveAll events
+- Added Transformation events
+- Added WvWTeam events
+- Added WvWObjectiveStatus events
+- Added StealthChange events
+- Added GadgetAnimation events
+- Added GadgetName events
+- Added MissileEffect events
+- Added GadgetCaptureOutlineShow events
+- Added GadgetCaptureSplitPercent events
+- Added GadgetCaptureOutlineHide events
+- Added GadgetCaptureOutlinePoint events
+- Added Transformation GUIDs via CONTENTLOCAL_TRANSFORMATION
+- Updated Activation and Result enums for Skills
+- Updated BuffRemove enum for Buffs
+- Updated FriendOrFoe enum
+- Added AnimationStart, AnimationEnd, Moving and VisibilityState enums for related events
+- Added GadgetCapture enum
+
+#### Log Manager notes
+- Fixed Statistics/Specializations tab not displaying VoE elite specializations count
+
+## Log Manager v1.15.1
+
+#### Fixes
+- Fixed CM detection for 2026-04-14 game update
+- Renamed Strike Missions to Raid Encounters
+- Fixed Map/Instance logs failing to parse since EVTC20250315
+- Fixed incorrect main target name collision when a gadget rolled the same ID as the trigger ID
+
+#### EVTC Inspector notes
+- Added Team GUIDs via CONTENTLOCAL_TEAM
+- Added Emote GUIDs via CONTENTLOCAL_EMOTE
+- Added AttackTarget event
+- Added SkillInfo event to SkillData
+- Added Last90BeforeDown event
+- Added Ruleset event
+- Added MissileCreate, MissileLaunch and MissileRemove events
+- Added EffectGroundCreate and EffectGroundRemove events
+- Added EffectAgentCreate and EffectAgentRemove events
+- Added Padding (Emote / Gadget Interact) to SkillCastEvent
+
+## Log Manager v1.15
+
+#### New features
+- Added support for Spirit Race
+- Added support for Kinfall
+- Added support for Quickplay
+- Added support for Guardian's Glade
+- Added support for VoE elite specs
+- Added support to only upload successful logs
+
+#### Fixes
+- Fixed event filters
+- Fixed Decima emboldened detection
+
+#### EVTC Inspector notes
+- Added effect duration
+- Added StunBreak, NPC update, stat reset and map change events
+
+## Log Manager v1.14.1
+
+#### Fixes
+- Added W8 challenge modes to the weekly clears tab
+
+## Log Manager v1.14
+
+#### New features
+- Added support for Mount Balrior Challenge Modes
+
+## Log Manager v1.13.1
+
+#### Fixes
+- Fixed wing 8 logs not being reprocessed automatically
+
+## Log Manager v1.13
+
+#### New features
+- Added support for bosses of Mount Balrior, the eighth raid wing (thanks, @Linkaaaaa!)
 
 #### Fixes
 - Increased delay for detecting files without an extension, should hopefully fix issue with ghost logs appearing.
+
+#### EVTC Inspector notes
+- Paired EffectEnd events with their corresponding EffectStart events, they can now be filtered by agent.
 
 ## Log Manager v1.12
 

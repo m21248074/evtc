@@ -1,3 +1,4 @@
+using GW2Scratch.EVTCAnalytics.Processing.Encounters.Modes;
 using System;
 using System.Collections.Generic;
 
@@ -11,6 +12,7 @@ namespace GW2Scratch.EVTCAnalytics.GameData.Encounters
 		public static IReadOnlyDictionary<Encounter, string> EnglishNames { get; } = new Dictionary<Encounter, string>
 		{
 			{Encounter.ValeGuardian, "Vale Guardian"},
+			{Encounter.SpiritRace, "Spirit Race" },
 			{Encounter.Gorseval, "Gorseval the Multifarious"},
 			{Encounter.Sabetha, "Sabetha the Saboteur"},
 			{Encounter.Slothasor, "Slothasor"},
@@ -36,6 +38,9 @@ namespace GW2Scratch.EVTCAnalytics.GameData.Encounters
 			{Encounter.Adina, "Cardinal Adina"},
 			{Encounter.Sabir, "Cardinal Sabir"},
 			{Encounter.QadimThePeerless, "Qadim the Peerless"},
+			{Encounter.Greer, "Greer, the Blightbringer" },
+			{Encounter.Decima, "Decima, the Stormsinger" },
+			{Encounter.Ura, "Ura, the Steamshrieker" },
 			{Encounter.MAMA, "MAMA"},
 			{Encounter.SiaxTheCorrupted, "Siax the Corrupted"},
 			{Encounter.EnsolyssOfTheEndlessTorment, "Ensolyss of the Endless Torment"},
@@ -49,7 +54,8 @@ namespace GW2Scratch.EVTCAnalytics.GameData.Encounters
 			{Encounter.AiKeeperOfThePeakNightOnly, "Ai, Keeper of the Peak – Dark"},
 			{Encounter.AiKeeperOfThePeakDayAndNight, "Ai, Keeper of the Peak – Both Phases"},
 			{Encounter.Kanaxai, "Kanaxai, Scythe of House Aurkus"},
-			{Encounter.Eparch, "Eparch" },
+			{Encounter.Eparch, "Eparch"},
+			{Encounter.WhisperingShadow, "Whispering Shadow"},
 			{Encounter.Freezie, "Freezie"},
 			{Encounter.StandardKittyGolem, "Standard Kitty Golem"},
 			{Encounter.MediumKittyGolem, "Medium Kitty Golem"},
@@ -70,6 +76,14 @@ namespace GW2Scratch.EVTCAnalytics.GameData.Encounters
 			{Encounter.OldLionsCourt, "Old Lion's Court"},
 			{Encounter.CosmicObservatory, "Cosmic Observatory"},
 			{Encounter.TempleOfFebe, "Temple of Febe"},
+			{Encounter.GuardiansGlade, "Guardian's Glade" },
+		};
+
+		public static IReadOnlyDictionary<Encounter, string> EnglishChallengeModeOverrides { get; } = new Dictionary<Encounter, string>
+		{
+			{ Encounter.Greer, "Godspoil Greer" },
+			{ Encounter.Decima, "Godsquall Decima" },
+			{ Encounter.Ura, "Godscream Ura" },
 		};
 
 		/// <summary>
@@ -77,14 +91,16 @@ namespace GW2Scratch.EVTCAnalytics.GameData.Encounters
 		/// </summary>
 		/// <param name="language">The language of the encounter name.</param>
 		/// <param name="namesByEncounter">When this value returns, contains the name dictionary; otherwise, <see langword="null"/>.</param>
+		/// <param name="challengeModeOverrides">When this value returns, contains overrides for challenge mode versions of the encounters; otherwise, <see langword="null"/>.</param>
 		/// <returns><see langword="true" /> if there are names available; otherwise, <see langword="false" />.</returns>
-		public static bool TryGetNamesForLanguage(GameLanguage language, out IReadOnlyDictionary<Encounter, string> namesByEncounter)
+		public static bool TryGetNamesForLanguage(GameLanguage language, out IReadOnlyDictionary<Encounter, string> namesByEncounter, out IReadOnlyDictionary<Encounter, string> challengeModeOverrides)
 		{
 			// TODO: Add translated names for other languages as well
 			switch (language)
 			{
 				case GameLanguage.English:
 					namesByEncounter = EnglishNames;
+					challengeModeOverrides = EnglishChallengeModeOverrides;
 					return true;
 				case GameLanguage.French:
 				case GameLanguage.German:
@@ -92,6 +108,7 @@ namespace GW2Scratch.EVTCAnalytics.GameData.Encounters
 				case GameLanguage.Chinese:
 				case GameLanguage.Other:
 					namesByEncounter = null;
+					challengeModeOverrides = null;
 					return false;
 				default:
 					throw new ArgumentOutOfRangeException();
@@ -104,13 +121,23 @@ namespace GW2Scratch.EVTCAnalytics.GameData.Encounters
 		/// <param name="language">The language of the encounter name.</param>
 		/// <param name="encounter">The encounter.</param>
 		/// <param name="encounterName">When this value returns, contains the name; otherwise, <see langword="null"/>.</param>
+		/// <param name="mode">The encounter mode. If not set, defaults to Normal.</param>
 		/// <returns><see langword="true" /> if there is a name available; otherwise, <see langword="false" />.</returns>
-		public static bool TryGetEncounterNameForLanguage(GameLanguage language, Encounter encounter, out string encounterName)
+		public static bool TryGetEncounterNameForLanguage(out string encounterName, GameLanguage language, Encounter encounter, EncounterMode mode = EncounterMode.Normal)
 		{
-			if (TryGetNamesForLanguage(language, out var names) && names.TryGetValue(encounter, out string name))
+			if (TryGetNamesForLanguage(language, out var names, out var challengeModeOverrides))
 			{
-				encounterName = name;
-				return true;
+				if (mode is EncounterMode.Challenge or EncounterMode.LegendaryChallenge && challengeModeOverrides.TryGetValue(encounter, out string challengeName))
+				{
+					encounterName = challengeName;
+					return true;
+				} 
+				
+				if (names.TryGetValue(encounter, out string name))
+				{
+					encounterName = name;
+					return true;
+				}
 			}
 
 			encounterName = null;

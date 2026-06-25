@@ -243,8 +243,13 @@ namespace GW2Scratch.ArcdpsLogManager
 			{
 				if (Settings.DpsReportAutoUpload)
 				{
+					bool filtersMatch = true;
+					if (Settings.DpsReportAutoUploadApplyFilters)
+					{
+						filtersMatch = args.Item.EncounterResult == EVTCAnalytics.Processing.Encounters.Results.EncounterResult.Success;
+					}
 					var age = DateTimeOffset.Now - args.Item.EncounterStartTime;
-					if (age < TimeSpan.FromDays(1))
+					if (age < TimeSpan.FromDays(1) && filtersMatch)
 					{
 						UploadProcessor.ScheduleDpsReportEIUpload(args.Item);
 					}
@@ -265,7 +270,7 @@ namespace GW2Scratch.ArcdpsLogManager
 				if (newHeight != null)
 				{
 					ClientSize = new Size(1300, newHeight.Value);
-					Location = new Point(Location.X, (int) (this.Screen.WorkingArea.Size.Height - newHeight) / 2);
+					Location = new Point(Location.X, (int) (((this.Screen.WorkingArea.Size.Height - newHeight) / 2) + this.Screen.WorkingArea.Top));
 				}
 			};
 		}

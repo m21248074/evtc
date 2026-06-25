@@ -16,6 +16,7 @@ public static class MapIds
 	public const int RaidWing5 = 1264;
 	public const int RaidWing6 = 1303;
 	public const int RaidWing7 = 1323;
+	public const int RaidWing8 = 1564;
 
 	public const int XunlaiJadeJunkyard = 1451;
 	public const int OldLionsCourt = 1485;
@@ -24,9 +25,10 @@ public static class MapIds
 	public const int CosmicObservatory = 1515;
 	public const int TempleOfFebe = 1520;
 	public const int LonelyTower = 1538;
+	public const int GuardiansGlade = 1609;
 
 	public static bool IsRaidMap(int id)
 	{
-		return id is RaidWing1 or RaidWing2 or RaidWing3 or RaidWing4 or RaidWing5 or RaidWing6 or RaidWing7;
+		return id is RaidWing1 or RaidWing2 or RaidWing3 or RaidWing4 or RaidWing5 or RaidWing6 or RaidWing7 or RaidWing8;
 	}
 }

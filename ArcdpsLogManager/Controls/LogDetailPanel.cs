@@ -64,11 +64,12 @@ namespace GW2Scratch.ArcdpsLogManager.Controls
 					EncounterMode.Normal => "",
 					EncounterMode.Challenge => "珼驹家Α",
 					EncounterMode.LegendaryChallenge => "肚珼驹家Α",
-					EncounterMode.Emboldened1 => "義秖家Α 1糷",
-					EncounterMode.Emboldened2 => "義秖家Α 2糷",
-					EncounterMode.Emboldened3 => "義秖家Α 3糷",
-					EncounterMode.Emboldened4 => "義秖家Α 4糷",
-					EncounterMode.Emboldened5 => "義秖家Α 5糷",
+					EncounterMode.Emboldened1 => "義秖家Α 1 糷",
+					EncounterMode.Emboldened2 => "義秖家Α 2 糷",
+					EncounterMode.Emboldened3 => "義秖家Α 3 糷",
+					EncounterMode.Emboldened4 => "義秖家Α 4 糷",
+					EncounterMode.Emboldened5 => "義秖家Α 5 糷",
+					EncounterMode.Quickplay => "Quickplay",
 					_ => throw new ArgumentOutOfRangeException()
 				};
 

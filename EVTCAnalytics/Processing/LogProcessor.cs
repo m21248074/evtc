@@ -1,10 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using GW2Scratch.EVTCAnalytics.Events;
 using GW2Scratch.EVTCAnalytics.Exceptions;
 using GW2Scratch.EVTCAnalytics.GameData;
+using GW2Scratch.EVTCAnalytics.GameData.Encounters;
 using GW2Scratch.EVTCAnalytics.IO;
 using GW2Scratch.EVTCAnalytics.Model;
 using GW2Scratch.EVTCAnalytics.Model.Agents;
@@ -12,6 +9,10 @@ using GW2Scratch.EVTCAnalytics.Model.Effects;
 using GW2Scratch.EVTCAnalytics.Model.Skills;
 using GW2Scratch.EVTCAnalytics.Parsed;
 using GW2Scratch.EVTCAnalytics.Parsed.Enums;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Text;
 
 namespace GW2Scratch.EVTCAnalytics.Processing
@@ -60,6 +61,11 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 		public bool IgnoreUnknownEvents { get; set; } = true;
 
 		/// <summary>
+		/// The Arcdps version without the "EVTC" prefix.
+		/// </summary>
+		private int _evtcVersion = 0;
+
+		/// <summary>
 		/// Turn raw log data into easy-to-use objects.
 		/// </summary>
 		/// <remarks>
@@ -73,13 +79,19 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 		{
 			var state = new LogProcessorState();
 			state.EvtcVersion = log.LogVersion.BuildVersion;
+			_evtcVersion = int.Parse(log.LogVersion.BuildVersion.Replace("EVTC", ""));
 
 			state.Agents = GetAgents(log).ToList();
 			state.AgentsByAddress = new Dictionary<ulong, Agent>();
 			state.AgentsById = new Dictionary<int, List<Agent>>();
 			state.EffectsById = new Dictionary<uint, Effect>();
 			state.MarkersById = new Dictionary<uint, Marker>();
+			state.SpeciesById = new Dictionary<uint, Species>();
+			state.TeamsById = new Dictionary<uint, Team>();
+			state.EmotesById = new Dictionary<uint, Emote>();
+			state.TransformationsById = new Dictionary<uint, Transformation>();
 			state.Errors = new List<LogError>();
+			state.OngoingEffects = new Dictionary<uint, EffectStartEvent>();
 			foreach (var agent in state.Agents)
 			{
 				foreach (var origin in agent.AgentOrigin.OriginalAgentData)
@@ -98,14 +110,18 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 			}
 
 			state.Skills = GetSkills(log).ToList();
+
+			state.LogStartTimes = new List<LogTime>();
+			state.LogEndTimes = new List<LogTime>();
+
 			GetDataFromCombatItems(log, state);
 
-			SetLogTypeAndTarget(state, log.ParsedBossData);
+			SetLogType(state, log.ParsedBossData);
 
 			SetAgentAwareTimes(state);
 			AssignAgentMasters(log, state); // Has to be done after setting aware times
 
-			SetEncounterData(state);
+			SetEncounterData(state, log.ParsedBossData);
 
 			foreach (var step in state.EncounterData.ProcessingSteps)
 			{
@@ -114,7 +130,7 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 
 			// Post-processing steps might have changed the agents (e.g. by merging), which are not yet lazy within encounter data.
 			// For this reason, we need to regenerate the encounter data to update the referenced agents.
-			SetEncounterData(state);
+			SetEncounterData(state, log.ParsedBossData);
 
 			return new Log(state);
 		}
@@ -161,8 +177,9 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 				}
 			}
 			state.AgentsByAddress = agentsByAddress;
-			
-			SetLogTypeAndTarget(state, bossData);
+
+			state.LogStartTimes = new List<LogTime>();
+			state.LogEndTimes = new List<LogTime>();
 			
 			// Get data from skills.
 			var skillsById = new Dictionary<uint, Skill>();
@@ -192,6 +209,13 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 			state.Errors = new List<LogError>();
 			state.EffectsById = new Dictionary<uint, Effect>();
 			state.MarkersById = new Dictionary<uint, Marker>();
+			state.SpeciesById = new Dictionary<uint, Species>();
+			state.TeamsById = new Dictionary<uint, Team>();
+			state.EmotesById = new Dictionary<uint, Emote>();
+			state.TransformationsById = new Dictionary<uint, Transformation>();
+			state.OngoingEffects = new Dictionary<uint, EffectStartEvent>();
+
+			SetEncounterData(state, bossData);
 
 			var combatItemReader = reader.GetCombatItemReader(bossData, state.MainTarget, state.Agents, state.GameBuild, state.LogType, EncounterIdentifier, EncounterDataProvider);
 			ParsedCombatItem combatItem;
@@ -242,6 +266,9 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 				ProcessCombatItem(state, combatItem);
 			}
 
+			// Combat items need to be processed before this.
+			SetLogType(state, bossData);
+
 			// Set agent origins now that we have read combat items and have ids.
 			foreach ((ulong address, Agent agent) in agentsByAddress)
 			{
@@ -286,8 +313,6 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 			}
 			state.MastersAssigned = true;
 
-			SetEncounterData(state);
-
 			foreach (var step in state.EncounterData.ProcessingSteps)
 			{
 				step.Process(state);
@@ -295,7 +320,7 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 			
 			// Post-processing steps might have changed the agents (e.g. by merging), which are not yet lazy within encounter data.
 			// For this reason, we need to regenerate the encounter data to update the referenced agents.
-			SetEncounterData(state);
+			SetEncounterData(state, bossData);
 
 			return new Log(state);
 		}
@@ -341,10 +366,10 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 			}
 		}
 
-		private static void SetLogTypeAndTarget(LogProcessorState state, ParsedBossData bossData)
+		private static void SetLogType(LogProcessorState state, ParsedBossData bossData)
 		{
 			Debug.Assert(state.Agents != null);
-			
+
 			state.LogType = LogType.PvE;
 			if (bossData.ID == ArcdpsBossIds.WorldVersusWorld)
 			{
@@ -356,26 +381,20 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 			}
 			else
 			{
-				// The boss id may be either an NPC species id or a Gadget id.
-				// Conflicts may happen, in that case the first found agent is chosen,
-				// as they are more likely to be the trigger. It is also possible to have
-				// multiple agents with the same id if they are not unique, in that case
-				// we once again choose the first one.
-				foreach (var agent in state.Agents)
+				var firstCombatStart = state.LogStartTimes.FirstOrDefault();
+				if (firstCombatStart != null && firstCombatStart.LogType == ArcdpsBossIds.Map)
 				{
-					if (agent is NPC npc && npc.SpeciesId == bossData.ID ||
-					    agent is Gadget gadget && gadget.VolatileId == bossData.ID)
-					{
-						state.MainTarget = agent;
-						break;
-					}
+					state.LogType = LogType.Map;
 				}
 			}
 		}
 
-		private void SetEncounterData(LogProcessorState state)
+		private void SetEncounterData(LogProcessorState state, ParsedBossData bossData)
 		{
-			var encounter = EncounterIdentifier.IdentifyEncounter(state.MainTarget, state.Agents, state.Events, state.Skills);
+			(Encounter encounter, Agent target) = EncounterIdentifier.IdentifyEncounter(bossData.ID, state.Agents, state.Events, state.Skills);
+			// We set the main target after the encounter identification to prevent mislabeling.
+			// Gadgets can sometimes roll a volatile ID that matches the log trigger ID.
+			state.MainTarget = target;
 			state.EncounterData = EncounterDataProvider.GetEncounterData(encounter, state.MainTarget, state.Agents, state.GameBuild, state.LogType);
 		}
 
@@ -674,28 +693,32 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 		{
 			switch (item.IsStateChange)
 			{
-				case StateChange.LogStart when state.LogStartTime != null:
+				case StateChange.LogStart when state.LogStartTime != null && _evtcVersion < ArcdpsBuilds.LogStartLogEndPerCombatSequenceOnInstanceLogs && state.LogType != LogType.Map:
 					throw new LogProcessingException("Multiple log start combat items found");
 				case StateChange.LogStart:
 				{
 					var serverTime = DateTimeOffset.FromUnixTimeSeconds(item.Value);
 					var localTime = DateTimeOffset.FromUnixTimeSeconds(item.BuffDmg);
+					var logType = (int) item.DstAgent;
 
-					state.LogStartTime = new LogTime(localTime, serverTime, item.Time);
+					state.LogStartTime = new LogTime(localTime, serverTime, item.Time, logType);
+					state.LogStartTimes.Add(state.LogStartTime);
 					return;
 				}
 				case StateChange.LogEnd when item.Value == 0 && item.BuffDmg == 0:
 					// This is an erroneous extra log end without any data,
 					// we ignore it. Happened in every log with EVTC20200506.
 					return;
-				case StateChange.LogEnd when state.LogEndTime != null:
+				case StateChange.LogEnd when state.LogEndTime != null && _evtcVersion < ArcdpsBuilds.LogStartLogEndPerCombatSequenceOnInstanceLogs && state.LogType != LogType.Map:
 					throw new LogProcessingException("Multiple log end combat items found");
 				case StateChange.LogEnd:
 				{
 					var serverTime = DateTimeOffset.FromUnixTimeSeconds(item.Value);
 					var localTime = DateTimeOffset.FromUnixTimeSeconds(item.BuffDmg);
+					var logType = (int) item.DstAgent;
 
-					state.LogEndTime = new LogTime(localTime, serverTime, item.Time);
+					state.LogEndTime = new LogTime(localTime, serverTime, item.Time, logType);
+					state.LogEndTimes.Add(state.LogEndTime);
 					return;
 				}
 				case StateChange.PointOfView:
@@ -720,6 +743,9 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 					return;
 				case StateChange.ShardId:
 					state.GameShardId = (int)item.SrcAgent;
+					state.UpperShardId = (int)item.DstAgent;
+					state.UserWorldId0 = item.Value;
+					state.UserWorldId1 = item.BuffDmg;
 					return;
 				case StateChange.MapId:
 					state.MapId = (int)item.SrcAgent;
@@ -760,15 +786,11 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 
 					return;
 				}
-				case StateChange.AttackTarget:
-					// Only used for master assignment
-					// Contains if the attack target is targetable as the value.
-					return;
 				case StateChange.BuffInfo:
 				{
 					if (state.SkillsById.TryGetValue(item.SkillId, out var skill))
 					{
-						bool isResistanceAvailable = string.Compare(state.EvtcVersion, "EVTC20200428", StringComparison.OrdinalIgnoreCase) >= 0;
+						bool isResistanceAvailable = _evtcVersion >= ArcdpsBuilds.ResistanceAvailable;
 						
 						Span<byte> padding = stackalloc byte[4];
 						BitConverter.TryWriteBytes(padding, item.Padding);
@@ -786,6 +808,18 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 						
 					}
 
+					return;
+				}
+				case StateChange.BuffFormula:
+				{
+					// TODO implement buff formula
+
+					// (float*)&time[8]: type attr1 attr2 param1 param2 param3 trait_src trait_self,
+					// (float*)&src_instid[2] = buff_src buff_self,
+					// is_flanking = !npc,
+					// is_shields = !player,
+					// is_offcycle = break,
+					// overstack = value of type determined by pad61 (none/number/skill)
 					return;
 				}
 				case StateChange.SkillInfo:
@@ -808,31 +842,131 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 
 					return;
 				}
+				case StateChange.SkillTiming:
+				{
+					if (state.SkillsById.TryGetValue(item.SkillId, out var skill))
+					{
+						skill.SkillData.ActionByte = (byte)item.SrcAgent;
+						skill.SkillData.Action = skill.SkillData.GetSkillAction(skill.SkillData.ActionByte);
+						skill.SkillData.AtMillisecond = item.DstAgent;
+					}
+					return;
+				}
 				case StateChange.InstanceStart:
 					state.InstanceStart = new InstanceStart(item.SrcAgent);
 					return;
 				case StateChange.IdToGuid:
-					if (item.OverstackValue == 0)
+					switch (item.OverstackValue)
 					{
 						// Effect
-						if (state.EffectsById.TryGetValue(item.SkillId, out var effect))
+						case 0:
 						{
-							var guid = new byte[16];
-							effect.ContentGuid = guid;
-							BitConverter.GetBytes(item.SrcAgent).CopyTo(guid, 0);
-							BitConverter.GetBytes(item.DstAgent).CopyTo(guid, 8);
+							if (state.EffectsById.TryGetValue(item.SkillId, out var effect))
+							{
+								// Values from arcdps versions before 20220709 are wrong.
+								if (_evtcVersion >= ArcdpsBuilds.FunctionalIDToGUIDEvents)
+								{
+									var guid = new byte[16];
+									effect.ContentGuid = guid;
+									BitConverter.GetBytes(item.SrcAgent).CopyTo(guid, 0);
+									BitConverter.GetBytes(item.DstAgent).CopyTo(guid, 8);
+
+									var duration = BitConversions.ToSingle(item.BuffDmg);
+									effect.DefaultDuration = duration;
+								}
+							}
 						}
-					}
-					else if (item.OverstackValue == 1)
-					{
+						return;
 						// Marker
-						if (state.MarkersById.TryGetValue(item.SkillId, out var marker))
+						case 1:
 						{
+							if (state.MarkersById.TryGetValue(item.SkillId, out var marker))
+							{
+								var guid = new byte[16];
+								marker.ContentGuid = guid;
+								BitConverter.GetBytes(item.SrcAgent).CopyTo(guid, 0);
+								BitConverter.GetBytes(item.DstAgent).CopyTo(guid, 8);
+							}
+						}
+						return;
+						// Skill
+						case 2:
+						{
+							if (state.SkillsById.TryGetValue(item.SkillId, out var skill))
+							{
+								var guid = new byte[16];
+								skill.ContentGuid = guid;
+								BitConverter.GetBytes(item.SrcAgent).CopyTo(guid, 0);
+								BitConverter.GetBytes(item.DstAgent).CopyTo(guid, 8);
+							}
+						}
+						return;
+						// Species
+						case 3:
+						{
+                            if (!state.SpeciesById.TryGetValue(item.SkillId, out var specie))
+                            {
+                                specie = new Species(item.SkillId);
+                                state.SpeciesById[item.SkillId] = specie;
+                            }
+
 							var guid = new byte[16];
-							marker.ContentGuid = guid;
+							specie.ContentGuid = guid;
 							BitConverter.GetBytes(item.SrcAgent).CopyTo(guid, 0);
 							BitConverter.GetBytes(item.DstAgent).CopyTo(guid, 8);
 						}
+						return;
+						// Team
+						case 4:
+						{
+							if (!state.TeamsById.TryGetValue(item.SkillId, out var team))
+							{
+								team = new Team(item.SkillId);
+								state.TeamsById[item.SkillId] = team;
+							}
+
+							var guid = new byte[16];
+							team.ContentGuid = guid;
+							BitConverter.GetBytes(item.SrcAgent).CopyTo(guid, 0);
+							BitConverter.GetBytes(item.DstAgent).CopyTo(guid, 8);
+						}
+						return;
+						// Emote
+						case 5:
+						{
+							if (!state.EmotesById.TryGetValue(item.SkillId, out var emote))
+							{
+								emote = new Emote(item.SkillId);
+								state.EmotesById[item.SkillId] = emote;
+							}
+
+							var guid = new byte[16];
+							emote.ContentGuid = guid;
+							BitConverter.GetBytes(item.SrcAgent).CopyTo(guid, 0);
+							BitConverter.GetBytes(item.DstAgent).CopyTo(guid, 8);
+						}
+						return;
+						// Transformation
+						case 6:
+						{
+							// Id 0 is transformation back to the player character model, no GUID.
+							if (item.SkillId == 0)
+							{
+								return;
+							}
+
+							if (!state.TransformationsById.TryGetValue(item.SkillId, out var transformation))
+							{
+								transformation = new Transformation(item.SkillId);
+								state.TransformationsById[item.SkillId] = transformation;
+							}
+
+							var guid = new byte[16];
+							transformation.ContentGuid = guid;
+							BitConverter.GetBytes(item.SrcAgent).CopyTo(guid, 0);
+							BitConverter.GetBytes(item.DstAgent).CopyTo(guid, 8);
+						}
+						return;
 					}
 					return;
 				case StateChange.Error:
@@ -930,9 +1064,9 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 				return newSkill;
 			}
 			
-			bool isOldWeaponSetAvailable = string.Compare(state.EvtcVersion, "EVTC20240627", StringComparison.OrdinalIgnoreCase) >= 0;
-			bool isCommanderAvailable = string.Compare(state.EvtcVersion, "EVTC20220823", StringComparison.OrdinalIgnoreCase) >= 0;
-			bool isOldTeamAvailable = string.Compare(state.EvtcVersion, "EVTC20240612", StringComparison.OrdinalIgnoreCase) >= 0;
+			bool isOldWeaponSetAvailable = _evtcVersion >= ArcdpsBuilds.WeaponSwapValueIsPrevious_CrowdControlEvents_GliderEvents;
+			bool isCommanderAvailable = _evtcVersion >= ArcdpsBuilds.CommanderTagAvailable;
+			bool isOldTeamAvailable = _evtcVersion >= ArcdpsBuilds.TeamChangeOnDespawn;
 
 			if (item.IsStateChange != StateChange.Normal)
 			{
@@ -1046,6 +1180,12 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 							false => null,
 						};
 						return new TeamChangeEvent(item.Time, GetAgentByAddress(item.SrcAgent), item.DstAgent, oldTeam);
+					case StateChange.AttackTarget:
+						// Only used for master assignment
+						// Contains if the attack target is targetable as the value.
+						// src_agent: relates to agent, the attacktarget
+						// dst_agent: the gadget
+						return new AttackTargetEvent(item.Time, GetAgentByAddress(item.SrcAgent), GetAgentByAddress(item.DstAgent));
 					case StateChange.Targetable:
 					{
 						var agent = GetAgentByAddress(item.SrcAgent);
@@ -1059,6 +1199,7 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 						}
 					}
 					case StateChange.ReplInfo:
+						// Internal use. Not in logs.
 						return new UnknownEvent(item.Time, item);
 					case StateChange.StackActive:
 						return new ActiveBuffStackEvent(item.Time, GetAgentByAddress(item.SrcAgent), (uint) item.DstAgent);
@@ -1079,20 +1220,7 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 						// This encoding is inconsistent with the health update.
 						float breakbarHealthFraction = BitConversions.ToSingle(item.Value);
 						return new DefianceBarHealthUpdateEvent(item.Time, GetAgentByAddress(item.SrcAgent), breakbarHealthFraction);
-					case StateChange.BuffFormula:
-					{
-						// (float*)&time[8]: type attr1 attr2 param1 param2 param3 trait_src trait_self,
-						// (float*)&src_instid[2] = buff_src buff_self,
-						// is_flanking = !npc,
-						// is_shields = !player,
-						// is_offcycle = break,
-						// overstack = value of type determined by pad61 (none/number/skill)
-						return new UnknownEvent(item.Time, item);
-					}
-					case StateChange.SkillTiming:
-						// TODO: Figure out what the contents are
-						return new UnknownEvent(item.Time, item);
-					case StateChange.Tag:
+					case StateChange.TagMarker:
 						uint markerId = (uint) item.Value;
 						if (markerId == 0)
 						{
@@ -1117,9 +1245,9 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 						var barrierFraction = item.DstAgent / 10000f;
 						return new BarrierUpdateEvent(item.Time, GetAgentByAddress(item.SrcAgent), barrierFraction);
 					case StateChange.StatReset:
-						// Should not appear in logs
-						return new UnknownEvent(item.Time, item);
+						return new StatResetEvent(item.Time, item.SrcAgent);
 					case StateChange.Extension:
+						// TODO Implement healing meter extension
 						return new UnknownExtensionEvent(item.Time, item);
 					case StateChange.ApiDelayed:
 						// Should not appear in logs
@@ -1127,7 +1255,11 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 					case StateChange.TickRate:
 						return new RateHealthEvent(item.Time, item.SrcAgent);
 					case StateChange.Last90BeforeDown:
-						return new UnknownEvent(item.Time, item);
+						// Retired since EVTC20240529
+						// Waybackmachine documentation
+						// CBTS_LAST90BEFOREDOWN, // src_agent is enemy agent that went down, dst_agent is time in ms since last 90% (for downs contribution)
+
+						return new Last90BeforeDownEvent(item.Time, GetAgentByAddress(item.SrcAgent), item.DstAgent);
 					case StateChange.Effect:
 					{
 						// Note that the meaning of fields silently changed at some point (notably, is_flanking).
@@ -1162,7 +1294,7 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 
 						// iff + buff + result + is_activation = x orientation
 						Span<byte> xOrientationBytes = stackalloc byte[4];
-						xOrientationBytes[0] = (byte) item.Iff;
+						xOrientationBytes[0] = (byte)item.Iff;
 						xOrientationBytes[1] = item.Buff;
 						xOrientationBytes[2] = (byte) item.Result;
 						xOrientationBytes[3] = (byte) item.IsActivation;
@@ -1190,9 +1322,9 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 						return new EffectEvent(item.Time, master, effect, aroundAgent, position, orientation, zOrientationOnly, duration);
 					}
 					case StateChange.LogNPCUpdate:
-						// TODO: implement
-						return new UnknownEvent(item.Time, item);
+						return new LogNPCUpdateEvent(item.Time, item.SrcAgent, GetAgentByAddress(item.DstAgent), item.Value);
 					case StateChange.IdleEvent:
+						// Internal use. Not in logs.
 						return new UnknownEvent(item.Time, item);
 					case StateChange.ExtensionCombat:
 						// Same as StateChange.Extension, but skillid is treated as skill and added to the skill table.
@@ -1235,8 +1367,9 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 						}
 						else
 						{
-							// TODO: retrieve effect from a list of ongoing effects
-							return new EffectEndEvent(item.Time, trackableId);
+							EffectStartEvent effectStartEvent = state.OngoingEffects.GetValueOrDefault(trackableId);
+							state.OngoingEffects.Remove(trackableId);
+							return new EffectEndEvent(item.Time, effectStartEvent?.EffectOwner, effectStartEvent?.Effect, effectStartEvent?.AgentTarget, effectStartEvent?.Position, effectStartEvent?.Orientation, effectStartEvent?.Duration, trackableId);
 						}
 
 						// dst_agent if around dst,
@@ -1274,7 +1407,21 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 							orientation[i] = BitConverter.ToInt16(orientationBytes[(i*2)..(i*2+2)]);
 						}
 
-						return new EffectStartEvent(item.Time, master, effect, aroundAgent, position, orientation, duration, trackableId);
+						var startEvent = new EffectStartEvent(item.Time, master, effect, aroundAgent, position, orientation, duration, trackableId);
+						state.OngoingEffects[trackableId] = startEvent;
+						return startEvent;
+					}
+					case StateChange.Ruleset:
+					{
+						// ruleset for self
+						// src_agent: bit0: pve, bit1: wvw, bit2: pvp
+						return (byte) item.SrcAgent switch
+						{
+							1 => new RulesetEvent(item.Time, RulesetEvent.RulesetBit.PvE),
+							2 => new RulesetEvent(item.Time, RulesetEvent.RulesetBit.WvW),
+							4 => new RulesetEvent(item.Time, RulesetEvent.RulesetBit.PvP),
+							_ => new UnknownEvent(item.Time, item),
+						};
 					}
 					case StateChange.SquadMarker:
 					{
@@ -1322,6 +1469,475 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 							_ => new UnknownEvent(item.Time, item)
 						};
 					}
+					case StateChange.StunBreak:
+					{
+						return new AgentStunBreakEvent(item.Time, GetAgentByAddress(item.SrcAgent), item.Value);
+					}
+					case StateChange.MissileCreate:
+					{
+						// src_agent: related to agent
+						// value: (int16*)&value is int16[3], location x/y/z, divided by 10
+						// overstack_value: skin id (player only)
+						// skillid: missile skill id
+						// pad61: (uint32_t*)&pad61 is uint32[1], trackable id
+
+						// Off-website documentation:
+						// i16[0] = float_to_int16_nonprecise(xyz_origin[0], 10.0f); // 10 is the multiplier to use to get the original value eg. 50,000 in game data would be 5,000 in the i16
+
+						Span<byte> positionBytes = stackalloc byte[4 * sizeof(short)];
+						BitConverter.GetBytes(item.Value).CopyTo(positionBytes[0..4]);
+						BitConverter.GetBytes(item.BuffDmg).CopyTo(positionBytes[4..8]);
+
+						float[] position =
+						[
+							BitConverter.ToInt16(positionBytes[0..2]) * 10.0f,
+							BitConverter.ToInt16(positionBytes[2..4]) * 10.0f,
+							BitConverter.ToInt16(positionBytes[4..6]) * 10.0f,
+						];
+
+						uint skinId = item.OverstackValue;
+						uint trackableId = item.Padding;
+						return new MissileCreateEvent(item.Time, GetAgentByAddress(item.SrcAgent), position, skinId, GetSkillById(item.SkillId), trackableId);
+					}
+					case StateChange.MissileLaunch:
+					{
+						// src_agent: related to agent
+						// dst_agent: at agent, if set and in range
+						// value: (int16*)&value is int16[6], target x/y/z, current x/y/z, divided by 10
+						// skillid: missile skill id
+						// iff: (uint8_t*)&iff is uint8_t[1], launch motion. unknown, from client
+						// result: (int16_t*)&result is int16[1], motion radius
+						// is_buffremove: (uint32_t*)&is_buffremove is uint32_t[1], launch flags. unknown, from client
+						// is_src_flanking: non-zero if first launch
+						// is_shields: (int16_t*)&is_shields is int16[1], missile speed
+						// pad61: (uint32_t*)&pad61 is uint32[1], trackable id
+
+						// Off-website documentation:
+						// i16[0] = float_to_int16_nonprecise(xyz_origin[0], 10.0f); // 10 is the multiplier to use to get the original value eg. 50,000 in game data would be 5,000 in the i16
+
+						Span<byte> positionBytes = stackalloc byte[6 * sizeof(short)];
+						BitConverter.GetBytes(item.Value).CopyTo(positionBytes[0..4]);
+						BitConverter.GetBytes(item.BuffDmg).CopyTo(positionBytes[4..8]);
+						BitConverter.GetBytes(item.OverstackValue).CopyTo(positionBytes[8..12]);
+
+						float[] targetPosition =
+						[
+							BitConverter.ToInt16(positionBytes[0..2]) * 10.0f,
+							BitConverter.ToInt16(positionBytes[2..4]) * 10.0f,
+							BitConverter.ToInt16(positionBytes[4..6]) * 10.0f,
+						];
+						float[] launchPosition =
+						[
+							BitConverter.ToInt16(positionBytes[6..8]) * 10.0f,
+							BitConverter.ToInt16(positionBytes[8..10]) * 10.0f,
+							BitConverter.ToInt16(positionBytes[10..12]) * 10.0f,
+						];
+
+						uint launchMotionType = (byte) item.Iff;
+
+						Span<byte> motionRadius = stackalloc byte[sizeof(short)];
+						motionRadius[0] = (byte) item.Result;
+						motionRadius[1] = (byte) item.IsActivation;
+						short result = BitConverter.ToInt16(motionRadius);
+
+						Span<byte> flags = stackalloc byte[sizeof(uint)];
+						flags[0] = (byte) item.IsBuffRemove;
+						flags[1] = item.IsNinety;
+						flags[2] = item.IsFifty;
+						flags[3] = item.IsMoving;
+						uint launchFlags = BitConverter.ToUInt32(flags);
+
+						// 1 is first, 0 is reflect.
+						bool isFirstLaunch = item.IsFlanking > 0;
+
+						// Speed is in inch/s so we divide it by 1000 to get inch/ms.
+						Span<byte> missileSpeed = stackalloc byte[sizeof(short)];
+						missileSpeed[0] = item.IsShields;
+						missileSpeed[1] = item.IsOffCycle;
+						float speed = BitConverter.ToInt16(missileSpeed) / 1000.0f;
+
+						uint trackableId = item.Padding;
+						return new MissileLaunchEvent(item.Time, GetAgentByAddress(item.SrcAgent), GetAgentByAddress(item.DstAgent), targetPosition, launchPosition, GetSkillById(item.SkillId), launchMotionType, result, launchFlags, isFirstLaunch, speed, trackableId);
+					}
+					case StateChange.MissileRemove:
+					{
+						// src_agent: related to agent
+						// value: friendly fire damage total
+						// skillid: missile skill id
+						// is_src_flanking: hit at least one enemy along the way
+						// pad61: (uint32_t*)&pad61 is uint32[1], trackable id
+
+						uint trackableId = item.Padding;
+						return new MissileRemoveEvent(item.Time, GetAgentByAddress(item.SrcAgent), item.Value, GetSkillById(item.SkillId), item.IsFlanking, trackableId);
+					}
+					case StateChange.EffectGroundCreate:
+					{
+						// // src_agent: related to agent
+						// dst_agent: (int16*)&dst_agent is int16[6], origin x/y/z divided by 10, orient x/y/z multiplied by 1000
+						// skillid: effect id (prefer using an id to guid map via n_contentlocal)
+						// iff: (uint32_t*)&iff is uint32_t[1], effect duration. if duration is zero, it may be a fixed length duration (see n_contentlocal)
+						// is_buffremove: flags
+						// is_flanking: effect is on a non-static platform
+						// is_shields: (int16_t*)&is_shields is int16[1], scale (if zero, assume 1) multiplied by 1000
+						// pad61: (uint32_t*)&pad61 is uint32[1], trackable id
+
+						// Undocumented:
+						// is_fifty is int16_t[1] scale of something multiplied by 1000
+
+						Span<byte> originOrientBytes = stackalloc byte[6 * sizeof(short)];
+						BitConverter.GetBytes(item.DstAgent).CopyTo(originOrientBytes[0..8]);
+						BitConverter.GetBytes(item.Value).CopyTo(originOrientBytes[8..12]);
+
+						float[] originPosition =
+						[
+							BitConverter.ToInt16(originOrientBytes[0..2]) * 10.0f,
+							BitConverter.ToInt16(originOrientBytes[2..4]) * 10.0f,
+							BitConverter.ToInt16(originOrientBytes[4..6]) * 10.0f,
+						];
+						float[] orientPosition =
+						[
+							BitConverter.ToInt16(originOrientBytes[6..8]) / 1000.0f,
+							BitConverter.ToInt16(originOrientBytes[8..10]) / 1000.0f,
+							BitConverter.ToInt16(originOrientBytes[10..12]) / 1000.0f,
+						];
+
+						uint effectId = item.SkillId;
+						if (!state.EffectsById.TryGetValue(effectId, out Effect effect))
+						{
+							effect = new Effect(effectId);
+							state.EffectsById[effectId] = effect;
+						}
+						
+						Span<byte> effectDurationBytes = stackalloc byte[sizeof(uint)];
+						effectDurationBytes[0] = (byte) item.Iff;
+						effectDurationBytes[1] = item.Buff;
+						effectDurationBytes[2] = (byte) item.Result;
+						effectDurationBytes[3] = (byte) item.IsActivation;
+						uint effectDuration = BitConverter.ToUInt32(effectDurationBytes);
+
+						byte flags = (byte) item.IsBuffRemove;
+						bool onNonStaticPlatform = item.IsFlanking > 0;
+
+						Span<byte> scaleBytes = stackalloc byte[sizeof(short)];
+						scaleBytes[0] = item.IsShields;
+						scaleBytes[1] = item.IsOffCycle;
+						float scale = BitConverter.ToInt16(scaleBytes) / 1000.0f;
+						if (scale == 0)
+						{
+							scale = 1.0f;
+						}
+
+						Span<byte> scaleSomethingBytes = stackalloc byte[sizeof(short)];
+						scaleSomethingBytes[0] = item.IsFifty;
+						scaleSomethingBytes[1] = item.IsMoving;
+						float scaleSomething = BitConverter.ToInt16(scaleSomethingBytes) / 1000.0f;
+						// Default to 1 if 0
+						if (scaleSomething == 0)
+						{
+							scaleSomething = 1.0f;
+						}
+
+						uint trackableId = item.Padding;
+						return new EffectGroundCreateEvent(item.Time, GetAgentByAddress(item.SrcAgent), originPosition, orientPosition, effect, effectDuration, flags, onNonStaticPlatform, scale, scaleSomething, trackableId);
+					}
+					case StateChange.EffectGroundRemove:
+					{
+						// pad61: (uint32_t*)&pad61 is uint32[1], trackable id
+
+						uint trackableId = item.Padding;
+						return new EffectGroundRemoveEvent(item.Time, null, trackableId);
+					}
+					case StateChange.EffectAgentCreate:
+					{
+						// src_agent: related to agent
+						// skillid: effect id (prefer using an id to guid map via n_contentlocal)
+						// iff: (uint32_t*)&iff is uint32_t[1], effect duration. if duration is zero, it may be a fixed length duration (see n_contentlocal)
+						// pad61: (uint32_t*)&pad61 is uint32[1], trackable id
+
+						uint effectId = item.SkillId;
+						if (!state.EffectsById.TryGetValue(effectId, out Effect effect))
+						{
+							effect = new Effect(effectId);
+							state.EffectsById[effectId] = effect;
+						}
+
+						Span<byte> effectDurationBytes = stackalloc byte[sizeof(uint)];
+						effectDurationBytes[0] = (byte) item.Iff;
+						effectDurationBytes[1] = item.Buff;
+						effectDurationBytes[2] = (byte) item.Result;
+						effectDurationBytes[3] = (byte) item.IsActivation;
+						uint effectDuration = BitConverter.ToUInt32(effectDurationBytes);
+
+						uint trackableId = item.Padding;
+						return new EffectAgentCreateEvent(item.Time, GetAgentByAddress(item.SrcAgent), effect, effectDuration, trackableId);
+					}
+					case StateChange.EffectAgentRemove:
+					{
+						// src_agent: related to agent
+						// pad61: (uint32_t*)&pad61 is uint32[1], trackable id
+
+						uint trackableId = item.Padding;
+						return new EffectAgentRemoveEvent(item.Time, GetAgentByAddress(item.SrcAgent), trackableId);
+					}
+					case StateChange.IIDChange:
+					{
+						return new IIDChangeEvent(item.Time, item.SrcAgent, item.DstAgent);
+					}
+					case StateChange.MapChange:
+					{
+						return new MapChangeEvent(item.Time, item.SrcAgent, item.DstAgent);
+					}
+					case StateChange.EarlyExit:
+					{
+						// Internal use.
+						return new UnknownEvent(item.Time, item);
+					}
+					case StateChange.AnimationStart:
+					{
+						// src_agent: agent beginning animation
+						// dst_agent: target agent if applicable
+						// value: ms duration until minimum of last significant trigger point and tooltip time
+						// buff_dmg: ms duration when control is returned to agent
+						// overstack_value: reference content id (emote id if CSK_EMOTE)
+						// skillid: skill id
+						// result: activation start source (debug)
+
+						return new AnimationStartEvent(item.Time, GetAgentByAddress(item.SrcAgent), GetAgentByAddress(item.DstAgent), item.Value, item.BuffDmg, item.OverstackValue, GetSkillById(item.SkillId), (AnimationStart)item.Result);
+					}
+					case StateChange.AnimationEnd:
+					{
+						// src_agent: agent beginning animation
+						// value: ms duration spent in animation scaled for speed
+						// buff_dmg: ms duration spent in animation not scaled
+						// skillid: skill id of previous animation start
+						// is_activation: simple progress check from cbtanimation
+						// result: activation stop source (debug)
+
+						return new AnimationEndEvent(item.Time, GetAgentByAddress(item.SrcAgent), item.Value, item.BuffDmg, item.IsActivation, (AnimationStop)item.Result, GetSkillById(item.SkillId));
+					}
+					case StateChange.BuffApply:
+					{
+						// src_agent: agent applying the stack
+						// dst_agent: agent the stack was applied to
+						// value: ms duration applied
+						// skillid: buff skill id
+						// iff: is friend foe of enum iff
+						// is_ninety: src is above 90% health
+						// is_fifty: dst is below 50% health
+						// is_moving: bit0 set if src is moving, bit1 set if dst is moving
+						// is_flanking: src is flanking dst
+						// is_shields: non-zero if buff is active when applied
+						// pad61: (uint32_t*)&pad61 is uint32[1], trackable id
+
+						Agent source = GetAgentByAddress(item.SrcAgent);
+						Agent target = GetAgentByAddress(item.DstAgent);
+						int durationApplied = item.Value;
+						Skill skill = GetSkillById(item.SkillId);
+						FriendOrFoe iff = item.Iff;
+						bool isNinety = item.IsNinety > 0;
+						bool isFifty = item.IsFifty > 0;
+						Moving moving = (Moving)item.IsMoving;
+						bool isFlanking = item.IsFlanking > 0;
+						bool isActive = item.IsShields != 0;
+						uint trackableId = item.Padding;
+
+						return new BuffApplyEvent(item.Time, source, skill, target, durationApplied, iff, isNinety, isFifty, moving, isFlanking, isActive, trackableId);
+					}
+					case StateChange.BuffChange:
+					{
+						// dst_agent: relates to agent
+						// value: duration difference
+						// overstack_value: new ms duration
+						// skillid: buff skill id
+						// pad61: (uint32_t*)&pad61 is uint32[1], trackable id
+
+						return new BuffChangeEvent(item.Time, GetAgentByAddress(item.DstAgent), GetSkillById(item.SkillId), GetAgentByAddress(item.SrcAgent), item.Value, item.OverstackValue, item.Padding);
+					}
+					case StateChange.BuffRemoveSingle:
+					{
+						// src_agent: agent with buff removed
+						// dst_agent: agent removing the buff
+						// value: ms duration removed
+						// skillid: buff skill id
+						// iff: is friend foe of enum iff
+						// is_buffremove: of enum cbtbuffremove
+						// is_ninety: src is above 90% health
+						// is_fifty: dst is below 50% health
+						// is_moving: bit0 set if src is moving, bit1 set if dst is moving
+						// is_flanking: src is flanking dst
+						// pad61: (uint32_t*)&pad61 is uint32[1], trackable id
+
+						Agent removalTarget = GetAgentByAddress(item.SrcAgent);
+						Agent removalSource = GetAgentByAddress(item.DstAgent);
+						int removedDuration = item.Value;
+						Skill skill = GetSkillById(item.SkillId);
+						BuffRemove buffRemove = item.IsBuffRemove;
+						bool isNinety = item.IsNinety > 0;
+						bool isFifty = item.IsFifty > 0;
+						Moving moving = (Moving) item.IsMoving;
+						bool isFlanking = item.IsFlanking > 0;
+						uint trackableId = item.Padding;
+
+						return new BuffRemoveSingleEvent(item.Time, removalTarget, skill, removalSource, removedDuration, buffRemove, isNinety, isFifty, moving, isFlanking, trackableId);
+					}
+					case StateChange.BuffRemoveAll:
+					{
+						// src_agent: agent with buffs removed
+						// dst_agent: agent removing the buffs
+						// value: ms duration removed calculated as duration
+						// buff_dmg: ms duration removed calculated as intensity
+						// skillid: buff skill id
+						// iff: is friend foe of enum iff
+						// is_buffremove: of enum cbtbuffremove
+						// is_ninety: src is above 90% health
+						// is_fifty: dst is below 50% health
+						// is_moving: bit0 set if src is moving, bit1 set if dst is moving
+						// is_flanking: src is flanking dst
+
+						Agent removalTarget = GetAgentByAddress(item.SrcAgent);
+						Agent removalSource = GetAgentByAddress(item.DstAgent);
+						int removedDuration = item.Value;
+						int removedIntensity = item.BuffDmg;
+						Skill skill = GetSkillById(item.SkillId);
+						BuffRemove buffRemove = item.IsBuffRemove;
+						bool isNinety = item.IsNinety > 0;
+						bool isFifty = item.IsFifty > 0;
+						Moving moving = (Moving) item.IsMoving;
+						bool isFlanking = item.IsFlanking > 0;
+
+						return new BuffRemoveAllEvent(item.Time, removalTarget, skill, removalSource, removedDuration, removedIntensity, buffRemove, isNinety, isFifty, moving, isFlanking);
+					}
+					case StateChange.Transformation:
+					{
+						// src_agent: related to agent
+						// skillid: transformation id (0 if untransform)
+
+						if (!state.TransformationsById.TryGetValue(item.SkillId, out Transformation transformation))
+						{
+							if (item.SkillId != 0)
+							{
+								transformation = new Transformation(item.SkillId);
+								state.TransformationsById[item.SkillId] = transformation;
+							}
+						}
+
+						if (item.SkillId != 0)
+						{
+							return new AgentTransformationEvent(item.Time, GetAgentByAddress(item.SrcAgent), item.SkillId);
+						}
+						else
+						{
+							return new AgentTransformationRemoveEvent(item.Time, GetAgentByAddress(item.SrcAgent), item.SkillId);
+						}
+					}
+					case StateChange.WvWTeam:
+					{
+						// src_agent: (uint32_t*)&src_agent is uint32[6], redshard id, blueshard id, greenshard id, redteam id, blueteam id, greenteam id
+						// teams[0] = redshard->ShardId();
+						// teams[1] = blueshard->ShardId();
+						// teams[2] = greenshard->ShardId();
+						// teams[3] = redteamid;
+						// teams[4] = blueteamid;
+						// teams[5] = greenteamid;
+
+						Span<byte> wvwTeamBytes = stackalloc byte[6 * sizeof(uint)];
+						
+						BitConverter.GetBytes(item.SrcAgent).CopyTo(wvwTeamBytes[0..8]);
+						BitConverter.GetBytes(item.DstAgent).CopyTo(wvwTeamBytes[8..16]);
+						BitConverter.GetBytes(item.Value).CopyTo(wvwTeamBytes[16..20]);
+						BitConverter.GetBytes(item.BuffDmg).CopyTo(wvwTeamBytes[20..24]);
+
+						uint redShardID = BitConverter.ToUInt32(wvwTeamBytes[0..4]);
+						uint blueShardID = BitConverter.ToUInt32(wvwTeamBytes[4..8]);
+						uint greenShardID = BitConverter.ToUInt32(wvwTeamBytes[8..12]);
+						uint redTeamID = BitConverter.ToUInt32(wvwTeamBytes[12..16]);
+						uint blueTeamID = BitConverter.ToUInt32(wvwTeamBytes[16..20]);
+						uint greenTeamID = BitConverter.ToUInt32(wvwTeamBytes[20..24]);
+
+						return new WvWTeamsEvent(item.Time, redShardID, blueShardID, greenShardID, redTeamID, blueTeamID, greenTeamID);
+					}
+					case StateChange.WvWObjectiveStatus:
+					{
+						// value: map id
+						// buff_dmg: team id
+						// skillid: objective id
+						// buff: objective type
+						// pad61: (uint32_t*)&pad61 is uint32[1], upgrade progress count
+
+						return new WvWObjectiveStatusEvent(item.Time, item.Value, item.BuffDmg, (int)item.SkillId, item.Buff, item.Padding);
+					}
+					case StateChange.StealthChange:
+					{
+						// agent stealth state. 0 false, 1 true, 2 unsupported
+						// src_agent: relates to agent
+						// dst_agent: new stealth state (characters only)
+
+						return new AgentStealthChangeEvent(item.Time, GetAgentByAddress(item.SrcAgent), item.DstAgent);
+					}
+					case StateChange.GadgetAnimation:
+					{
+						// play model animation
+						// src_agent: relates to agent
+						// dst_agent: token
+
+						return new AgentGadgetAnimationEvent(item.Time, GetAgentByAddress(item.SrcAgent), item.DstAgent);
+					}
+					case StateChange.GadgetName:
+					{
+						// gadget name visibility state. 0 false, 1 true, 2 unsupported
+						// src_agent: relates to agent
+						// dst_agent: new state (gadgets only)
+
+						return new AgentGadgetNameEvent(item.Time, GetAgentByAddress(item.SrcAgent), item.DstAgent);
+					}
+					case StateChange.MissileEffect:
+					{
+						// dst_agent: owner of missile
+						// skillid: effect id
+						// value: *(uint32_t*)&value duration
+						// pad61: (uint32_t*)&pad61 is uint32[1], trackable id
+
+						return new MissileEffectEvent(item.Time, GetAgentByAddress(item.DstAgent), item.SkillId, item.Value, item.Padding);
+					}
+					case StateChange.GadgetCaptureOutlineShow:
+					{
+						// src_agent: relates to agent
+						// buff: wrbg colour
+
+						return new GadgetCaptureOutlineShowEvent(item.Time, GetAgentByAddress(item.SrcAgent), item.Buff);
+					}
+					case StateChange.GadgetCaptureSplitPercent:
+					{
+						// src_agent: relates to agent
+						// value: *(float*)&ev->value percent (1.0 - 0.0)
+						// buff: wrbg capping from
+						// result: wrbg capping by
+
+						// Note by deltaconnected on Discord: value is the float without any conversion or lower-precision-inting
+
+						float percentage = BitConverter.Int32BitsToSingle(item.Value);
+
+						return new GadgetCaptureSplitPercentEvent(item.Time, GetAgentByAddress(item.SrcAgent), percentage, item.Buff, (byte)item.Result);
+					}
+					case StateChange.GadgetCaptureOutlineHide:
+					{
+						// src_agent: relates to agent
+
+						return new GadgetCaptureOutlineHideEvent(item.Time, GetAgentByAddress(item.SrcAgent));
+					}
+					case StateChange.GadgetCaptureOutlinePoint:
+					{
+						// src_agent: relates to agent
+						// dst_agent: point index
+						// value: *(float*)&ev->value x
+						// buff_dmg: *(float*)&ev->buff_dmg y
+						// overstack_value: point count for this agent. if count is 1, shape is a circle around agent with radius x
+
+						float x = BitConverter.Int32BitsToSingle(item.Value);
+						float y = BitConverter.Int32BitsToSingle(item.BuffDmg);
+
+						return new GadgetCaptureOutlinePointEvent(item.Time, GetAgentByAddress(item.SrcAgent), (int)item.DstAgent, [x, y], item.OverstackValue);
+					}
 					default:
 						return new UnknownEvent(item.Time, item);
 				}
@@ -1330,19 +1946,19 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 			{
 				switch (item.IsActivation)
 				{
-					case Activation.CancelCancel:
+					case Activation.Cancel:
 						return new EndSkillCastEvent(item.Time, GetAgentByAddress(item.SrcAgent),
 							GetSkillById(item.SkillId), item.Value, EndSkillCastEvent.SkillEndType.Cancel);
-					case Activation.CancelFire:
+					case Activation.Minimum:
 						return new EndSkillCastEvent(item.Time, GetAgentByAddress(item.SrcAgent),
 							GetSkillById(item.SkillId), item.Value, EndSkillCastEvent.SkillEndType.Fire);
 					case Activation.Normal:
+						// if skillid == CSK_GADGETINTERACT, (u32)pad61 = gadget instid, if skillid == CSK_EMOTE, (u32)pad61 = emote_id
 						return new StartSkillCastEvent(item.Time, GetAgentByAddress(item.SrcAgent),
-							GetSkillById(item.SkillId), item.Value, StartSkillCastEvent.SkillCastType.Normal);
+							GetSkillById(item.SkillId), item.Value, item.Padding, StartSkillCastEvent.SkillCastType.Normal);
 					case Activation.Quickness:
 						return new StartSkillCastEvent(item.Time, GetAgentByAddress(item.SrcAgent),
-							GetSkillById(item.SkillId), item.Value,
-							StartSkillCastEvent.SkillCastType.WithQuickness);
+							GetSkillById(item.SkillId), item.Value, item.Padding, StartSkillCastEvent.SkillCastType.WithQuickness);
 					case Activation.Reset:
 						return new ResetSkillCastEvent(item.Time, GetAgentByAddress(item.SrcAgent),
 							GetSkillById(item.SkillId), item.Value);

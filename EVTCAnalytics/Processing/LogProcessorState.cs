@@ -20,16 +20,25 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 		public Dictionary<uint, Skill> SkillsById { get; set; }
 		public Dictionary<uint, Effect> EffectsById { get; set; }
 		public Dictionary<uint, Marker> MarkersById { get; set; }
+		public Dictionary<uint, Species> SpeciesById { get; set; }
+		public Dictionary<uint, Team> TeamsById { get; set; }
+		public Dictionary<uint, Emote> EmotesById { get; set; }
+		public Dictionary<uint, Transformation> TransformationsById { get; set; }
 		public List<Skill> Skills { get; set; }
 		public List<Event> Events { get; set; }
 		public List<LogError> Errors { get; set; }
 		public LogTime LogStartTime { get; set; }
+		public List<LogTime> LogStartTimes { get; set; }
 		public LogTime LogEndTime { get; set; }
+		public List<LogTime> LogEndTimes { get; set; }
 		public Player PointOfView { get; set; }
 		public string EvtcVersion { get; set; }
 		public InstanceStart InstanceStart { get; set; }
 		public int? GameBuild { get; set; }
 		public int? GameShardId { get; set; }
+		public int? UpperShardId { get; set; }
+		public int? UserWorldId0 { get; set; }
+		public int? UserWorldId1 { get; set; }
 		public int? GameLanguageId { get; set; }
 		public int? MapId { get; set; }
 		public int? FractalScale { get; set; }
@@ -40,5 +49,6 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 		public bool MastersAssigned { get; set; }
 		public Agent MainTarget { get; set; }
 		public string ArcdpsBuild { get; set; }
+		public Dictionary<uint, EffectStartEvent> OngoingEffects { get; set; }
 	}
 }

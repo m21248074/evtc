@@ -14,6 +14,10 @@ namespace GW2Scratch.EVTCAnalytics.GameData
 	/// </remarks>
 	public static class GadgetIds
 	{
+		// Wing 1
+		public const int EtherealBarrier = 47188;
+		public const int EtherealBarrierChina = 48133; // ID for the Chinese version of GW2
+
 		// Wing 4
 		// Deimos
 		public const int ShackledPrisoner = 53040;
@@ -22,8 +26,8 @@ namespace GW2Scratch.EVTCAnalytics.GameData
 		// Wing 6
 		// Conjured Amalgamate
 		public const int ConjuredAmalgamate = 43974;
-		
-		// Strike Missions - End of Dragons
+
+		// Raid Encounters - End of Dragons
 		public const int TheDragonvoid = 43488;
 		public const int TheDragonvoidFinal = 1378;
 	}

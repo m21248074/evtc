@@ -3,6 +3,7 @@ using GW2Scratch.EVTCAnalytics.Model;
 using GW2Scratch.EVTCAnalytics.Model.Agents;
 using GW2Scratch.EVTCAnalytics.Model.Effects;
 using GW2Scratch.EVTCAnalytics.Model.Skills;
+using GW2Scratch.EVTCAnalytics.Parsed.Enums;
 
 namespace GW2Scratch.EVTCAnalytics.Events
 {
@@ -260,6 +261,20 @@ namespace GW2Scratch.EVTCAnalytics.Events
 	}
 
 	/// <summary>
+	/// Enemy agent that went down and time since last 90% in milliseconds.
+	/// </summary>
+	/// <remarks>
+	/// Retired since EVTC20240529
+	/// </remarks>
+	public class Last90BeforeDownEvent(long time, Agent agent, ulong timeSinceLast90) : AgentEvent(time, agent)
+	{
+		/// <summary>
+		/// Time in milliseconds since last 90%.
+		/// </summary>
+		public ulong TimeSinceLast90 { get; } = timeSinceLast90;
+	}
+
+	/// <summary>
 	/// An event specifying that an effect was created.
 	/// </summary>
 	/// <remarks>
@@ -317,12 +332,12 @@ namespace GW2Scratch.EVTCAnalytics.Events
 		/// </summary>
 		public ushort Duration { get; } = duration;
 	}
-	
+
 	/// <summary>
 	/// An event specifying that an effect was created.
 	/// </summary>
 	/// <remarks>
-	/// Introduced in EVTC20230718.
+	/// Introduced in EVTC20230718 and retired in EVTC20250526.
 	/// </remarks>
 	public class EffectStartEvent(
 		long time,
@@ -368,21 +383,65 @@ namespace GW2Scratch.EVTCAnalytics.Events
 		public uint Duration { get; } = duration;
 
 		/// <summary>
-		/// Trackable id of this effect. Used for pairing with a corresponding EffectEndEvent.
+		/// Trackable id of this effect. Used for pairing with a corresponding <see cref="EffectEndEvent"/>.
 		/// </summary>
 		public uint TrackableId { get; } = trackableId;
 	}
-	
+
 	/// <summary>
 	/// An event specifying that an effect ended.
 	/// </summary>
 	/// <remarks>
-	/// Introduced in EVTC20230718.
+	/// Introduced in EVTC20230718 and retired in EVTC20250526.
 	/// </remarks>
-	public class EffectEndEvent(long time, uint trackableId) : Event(time)
+	public class EffectEndEvent(
+		long time,
+		Agent effectOwner,
+		Effect effect,
+		Agent agentTarget,
+		float[] position,
+		short[] orientation,
+		uint? duration,
+		uint trackableId)
+		: AgentEvent(time, effectOwner)
 	{
 		/// <summary>
-		/// Trackable id of this effect. Used for pairing with a corresponding EffectStartEvent.
+		/// The owner of this effect. May be <see langword="null" /> if the corresponding start event could not be paired.
+		/// </summary>
+		public Agent EffectOwner => Agent;
+
+		/// <summary>
+		/// The Effect created. May be <see langword="null" /> if the corresponding start event could not be paired.
+		/// </summary>
+		public Effect Effect { get; } = effect;
+
+		/// <summary>
+		/// The <see cref="Agent"/> this effect is anchored to if anchored. May be <see langword="null" />.
+		/// May be <see langword="null" /> if the corresponding start event could not be paired.
+		/// </summary>
+		/// <seealso cref="Position"/>
+		public Agent AgentTarget { get; internal set; } = agentTarget;
+
+		/// <summary>
+		/// Position (x, y, z) of the effect when not anchored to a target. May be <see langword="null" />.
+		/// May be <see langword="null" /> if the corresponding start event could not be paired.
+		/// </summary>
+		/// <seealso cref="AgentTarget"/>
+		public float[] Position { get; } = position;
+
+		/// <summary>
+		/// The orientation (x, y, z) of the effect.
+		/// May be <see langword="null" /> if the corresponding start event could not be paired.
+		/// </summary>
+		public short[] Orientation { get; } = orientation;
+
+		/// <summary>
+		/// The duration of the effect in milliseconds.
+		/// May be <see langword="null" /> if the corresponding start event could not be paired.
+		/// </summary>
+		public uint? Duration { get; } = duration;
+		/// <summary>
+		/// Trackable id of this effect. Used for pairing with a corresponding <see cref="EffectStartEvent"/>.
 		/// </summary>
 		public uint TrackableId { get; } = trackableId;
 	}
@@ -401,4 +460,87 @@ namespace GW2Scratch.EVTCAnalytics.Events
 	/// Introduced in EVTC20240627.
 	/// </remarks>
 	public class AgentGliderCloseEvent(long time, Agent agent) : AgentEvent(time, agent);
+
+	/// <summary>
+	/// Indicates that an agent broke a crowd control status.
+	/// </summary>
+	/// <remarks>Introduced in EVTC20240627</remarks>
+	public class AgentStunBreakEvent(long time, Agent agent, int duration) : AgentEvent(time, agent)
+	{
+		/// <summary>
+		/// Remaining crowd control duration.
+		/// </summary>
+		public int RemainingDuration { get; } = duration;
+	}
+
+	/// <summary>
+	/// Agent transformation wrapper.
+	/// </summary>
+	public class AgentTransformation(long time, Agent agent) : AgentEvent(time, agent)
+	{
+
+	}
+
+	/// <summary>
+	/// Agent tranformation (chair, tonic, mounts, etc.).
+	/// </summary>
+	/// <param name="id">Transformation id, 0 if untransformed</param>
+	/// <remarks>Introduced in EVTC20260507</remarks>
+	public class AgentTransformationEvent(long time, Agent agent, uint id) : AgentTransformation(time, agent)
+	{
+		/// <summary>
+		/// Trackable ID of the transformation.
+		/// </summary>
+		public uint TransformationID { get; } = id;
+	}
+
+	/// <summary>
+	/// Agent transforming back to the normal character model.
+	/// </summary>
+	public class AgentTransformationRemoveEvent(long time, Agent agent, uint id) : AgentTransformation(time, agent)
+	{
+		/// <summary>
+		/// Trackable ID of the transformation.
+		/// </summary>
+		public uint TransformationID { get; } = id;
+	}
+
+	/// <summary>
+	/// Agent visibility state change.
+	/// </summary>
+	/// <remarks>
+	/// Introduced in 20260527
+	/// </remarks>
+	public class AgentStealthChangeEvent(long time, Agent agent, ulong state) : AgentEvent(time, agent)
+	{
+		/// <summary>
+		/// Visibility state of the agent.
+		/// </summary>
+		public VisibilityState State { get; } = (VisibilityState)state;
+	}
+
+	/// <summary>
+	/// Player model animation.
+	/// </summary>
+	/// <remarks>
+	/// Introduced in 20260530
+	/// </remarks>
+	public class AgentGadgetAnimationEvent(long time, Agent agent, ulong token) : AgentEvent(time, agent)
+	{
+		public ulong Token { get; } = token;
+	}
+
+	/// <summary>
+	/// Gadget name visibility state change.
+	/// </summary>
+	/// <remarks>
+	/// Introduced in 20260530
+	/// </remarks>
+	public class AgentGadgetNameEvent(long time, Agent agent, ulong state) : AgentEvent(time, agent)
+	{
+		/// <summary>
+		/// Visibility state of the gadget name.
+		/// </summary>
+		public VisibilityState State { get; } = (VisibilityState) state;
+	}
 }

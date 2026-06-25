@@ -13,6 +13,7 @@ namespace GW2Scratch.EVTCAnalytics.GameData.Encounters
 			{
 				{Encounter.Other, EncounterCategory.Other},
 				{Encounter.ValeGuardian, EncounterCategory.RaidWing1},
+				{Encounter.SpiritRace, EncounterCategory.RaidWing1},
 				{Encounter.Gorseval, EncounterCategory.RaidWing1},
 				{Encounter.Sabetha, EncounterCategory.RaidWing1},
 				{Encounter.Slothasor, EncounterCategory.RaidWing2},
@@ -38,6 +39,9 @@ namespace GW2Scratch.EVTCAnalytics.GameData.Encounters
 				{Encounter.Adina, EncounterCategory.RaidWing7},
 				{Encounter.Sabir, EncounterCategory.RaidWing7},
 				{Encounter.QadimThePeerless, EncounterCategory.RaidWing7},
+				{Encounter.Greer, EncounterCategory.RaidWing8},
+				{Encounter.Decima, EncounterCategory.RaidWing8},
+				{Encounter.Ura, EncounterCategory.RaidWing8},
 				{Encounter.MAMA, EncounterCategory.FractalNightmare},
 				{Encounter.SiaxTheCorrupted, EncounterCategory.FractalNightmare},
 				{Encounter.EnsolyssOfTheEndlessTorment, EncounterCategory.FractalNightmare},
@@ -52,26 +56,28 @@ namespace GW2Scratch.EVTCAnalytics.GameData.Encounters
 				{Encounter.AiKeeperOfThePeakDayAndNight, EncounterCategory.FractalSunquaPeak},
 				{Encounter.Kanaxai, EncounterCategory.FractalSilentSurf},
 				{Encounter.Eparch, EncounterCategory.FractalLonelyTower},
-				{Encounter.Freezie, EncounterCategory.StrikeMissionFestival},
+				{Encounter.WhisperingShadow, EncounterCategory.FractalKinfall},
+				{Encounter.Freezie, EncounterCategory.RaidEncounterFestival},
 				{Encounter.StandardKittyGolem, EncounterCategory.SpecialForcesTrainingArea},
 				{Encounter.MediumKittyGolem, EncounterCategory.SpecialForcesTrainingArea},
 				{Encounter.LargeKittyGolem, EncounterCategory.SpecialForcesTrainingArea},
 				{Encounter.MassiveKittyGolem, EncounterCategory.SpecialForcesTrainingArea},
 				{Encounter.WorldVersusWorld, EncounterCategory.WorldVersusWorld},
-				{Encounter.ShiverpeaksPass, EncounterCategory.StrikeMissionIcebroodSaga},
-				{Encounter.VoiceAndClawOfTheFallen, EncounterCategory.StrikeMissionIcebroodSaga},
-				{Encounter.FraenirOfJormag, EncounterCategory.StrikeMissionIcebroodSaga},
-				{Encounter.Boneskinner, EncounterCategory.StrikeMissionIcebroodSaga},
-				{Encounter.WhisperOfJormag, EncounterCategory.StrikeMissionIcebroodSaga},
-				{Encounter.VariniaStormsounder, EncounterCategory.StrikeMissionIcebroodSaga},
+				{Encounter.ShiverpeaksPass, EncounterCategory.RaidEncounterIcebroodSaga},
+				{Encounter.VoiceAndClawOfTheFallen, EncounterCategory.RaidEncounterIcebroodSaga},
+				{Encounter.FraenirOfJormag, EncounterCategory.RaidEncounterIcebroodSaga},
+				{Encounter.Boneskinner, EncounterCategory.RaidEncounterIcebroodSaga},
+				{Encounter.WhisperOfJormag, EncounterCategory.RaidEncounterIcebroodSaga},
+				{Encounter.VariniaStormsounder, EncounterCategory.RaidEncounterIcebroodSaga},
 				{Encounter.Mordremoth, EncounterCategory.Other},
-				{Encounter.AetherbladeHideout, EncounterCategory.StrikeMissionEndOfDragons},
-				{Encounter.XunlaiJadeJunkyard, EncounterCategory.StrikeMissionEndOfDragons},
-				{Encounter.KainengOverlook, EncounterCategory.StrikeMissionEndOfDragons},
-				{Encounter.HarvestTemple, EncounterCategory.StrikeMissionEndOfDragons},
-				{Encounter.OldLionsCourt, EncounterCategory.StrikeMissionEndOfDragons},
-				{Encounter.CosmicObservatory, EncounterCategory.StrikeMissionSecretsOfTheObscure},
-				{Encounter.TempleOfFebe, EncounterCategory.StrikeMissionSecretsOfTheObscure},
+				{Encounter.AetherbladeHideout, EncounterCategory.RaidEncounterEndOfDragons},
+				{Encounter.XunlaiJadeJunkyard, EncounterCategory.RaidEncounterEndOfDragons},
+				{Encounter.KainengOverlook, EncounterCategory.RaidEncounterEndOfDragons},
+				{Encounter.HarvestTemple, EncounterCategory.RaidEncounterEndOfDragons},
+				{Encounter.OldLionsCourt, EncounterCategory.RaidEncounterEndOfDragons},
+				{Encounter.CosmicObservatory, EncounterCategory.RaidEncounterSecretsOfTheObscure},
+				{Encounter.TempleOfFebe, EncounterCategory.RaidEncounterSecretsOfTheObscure},
+				{Encounter.GuardiansGlade, EncounterCategory.RaidEncounterVisionsOfEternity},
 				{Encounter.Map, EncounterCategory.Map},
 			};
 
@@ -85,15 +91,17 @@ namespace GW2Scratch.EVTCAnalytics.GameData.Encounters
 				EncounterCategory.RaidWing5,
 				EncounterCategory.RaidWing6,
 				EncounterCategory.RaidWing7,
+				EncounterCategory.RaidWing8,
 			};
 		
-		private static readonly HashSet<EncounterCategory> StrikeMissionCategories =
+		private static readonly HashSet<EncounterCategory> RaidEncounterCategories =
 			new HashSet<EncounterCategory>
 			{
-				EncounterCategory.StrikeMissionIcebroodSaga,
-				EncounterCategory.StrikeMissionEndOfDragons,
-				EncounterCategory.StrikeMissionSecretsOfTheObscure,
-				EncounterCategory.StrikeMissionFestival,
+				EncounterCategory.RaidEncounterIcebroodSaga,
+				EncounterCategory.RaidEncounterEndOfDragons,
+				EncounterCategory.RaidEncounterSecretsOfTheObscure,
+				EncounterCategory.RaidEncounterVisionsOfEternity,
+				EncounterCategory.RaidEncounterFestival,
 			};
 
 		private static readonly HashSet<EncounterCategory> FractalCategories =
@@ -104,6 +112,7 @@ namespace GW2Scratch.EVTCAnalytics.GameData.Encounters
 				EncounterCategory.FractalSunquaPeak,
 				EncounterCategory.FractalSilentSurf,
 				EncounterCategory.FractalLonelyTower,
+				EncounterCategory.FractalKinfall,
 			};
 
 		/// <summary>
@@ -123,7 +132,7 @@ namespace GW2Scratch.EVTCAnalytics.GameData.Encounters
 		}
 
 		/// <summary>
-		/// Checks if this is a raid category.
+		/// Checks if this is a raid encounter or event inside a raid wing.
 		/// </summary>
 		/// <returns>A value indicating whether the provided category is a raid category.</returns>
 		public static bool IsRaid(this EncounterCategory category)
@@ -132,9 +141,9 @@ namespace GW2Scratch.EVTCAnalytics.GameData.Encounters
 		}
 		
 		/// <summary>
-		/// Checks if this is a raid encounter.
+		/// Checks if this is a raid encounter or event inside a raid wing.
 		/// </summary>
-		/// <returns>A value indicating whether the provided encounter is a raid encounter.</returns>
+		/// <returns>A value indicating whether the provided encounter is a raid encounter or event inside a raid wing.</returns>
 		public static bool IsRaid(this Encounter encounter)
 		{
 			var category = encounter.GetEncounterCategory();
@@ -142,22 +151,22 @@ namespace GW2Scratch.EVTCAnalytics.GameData.Encounters
 		}
 		
 		/// <summary>
-		/// Checks if this is a strike mission category.
+		/// Checks if this is a raid encounter category.
 		/// </summary>
-		/// <returns>A value indicating whether the provided category is a strike mission category.</returns>
-		public static bool IsStrikeMission(this EncounterCategory category)
+		/// <returns>A value indicating whether the provided category is a raid encounter category.</returns>
+		public static bool IsRaidEncounter(this EncounterCategory category)
 		{
-			return StrikeMissionCategories.Contains(category);
+			return RaidEncounterCategories.Contains(category);
 		}
-		
+
 		/// <summary>
-		/// Checks if this is a strike mission category.
+		/// Checks if this is a raid encounter category.
 		/// </summary>
-		/// <returns>A value indicating whether the provided category is a strike mission category.</returns>
-		public static bool IsStrikeMission(this Encounter encounter)
+		/// <returns>A value indicating whether the provided category is a raid encounter.</returns>
+		public static bool IsRaidEncounter(this Encounter encounter)
 		{
 			var category = encounter.GetEncounterCategory();
-			return IsStrikeMission(category);
+			return IsRaidEncounter(category);
 		}
 
 		/// <summary>

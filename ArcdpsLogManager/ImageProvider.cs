@@ -24,40 +24,58 @@ namespace GW2Scratch.ArcdpsLogManager
 		private Lazy<Image> TinyIconUnknownProfession { get; } = new Lazy<Image>(Resources.GetTinyIconUnknown);
 
 		// SPECIALIZATIONS
+		// Warrior
 		private Lazy<Image> TinyIconBerserker { get; } = new Lazy<Image>(Resources.GetTinyIconBerserker);
 		private Lazy<Image> TinyIconSpellbreaker { get; } = new Lazy<Image>(Resources.GetTinyIconSpellbreaker);
 		private Lazy<Image> TinyIconBladesworn { get; } = new Lazy<Image>(Resources.GetTinyIconBladesworn);
+		private Lazy<Image> TinyIconParagon { get; } = new Lazy<Image>(Resources.GetTinyIconParagon);
+		// Guardian
 		private Lazy<Image> TinyIconDragonhunter { get; } = new Lazy<Image>(Resources.GetTinyIconDragonhunter);
 		private Lazy<Image> TinyIconWillbender { get; } = new Lazy<Image>(Resources.GetTinyIconWillbender);
 		private Lazy<Image> TinyIconFirebrand { get; } = new Lazy<Image>(Resources.GetTinyIconFirebrand);
+		private Lazy<Image> TinyIconLuminary { get; } = new Lazy<Image>(Resources.GetTinyIconLuminary);
+		// Revenant
 		private Lazy<Image> TinyIconHerald { get; } = new Lazy<Image>(Resources.GetTinyIconHerald);
 		private Lazy<Image> TinyIconRenegade { get; } = new Lazy<Image>(Resources.GetTinyIconRenegade);
 		private Lazy<Image> TinyIconVindicator { get; } = new Lazy<Image>(Resources.GetTinyIconVindicator);
+		private Lazy<Image> TinyIconConduit { get; } = new Lazy<Image>(Resources.GetTinyIconConduit);
+		// Ranger
 		private Lazy<Image> TinyIconDruid { get; } = new Lazy<Image>(Resources.GetTinyIconDruid);
 		private Lazy<Image> TinyIconSoulbeast { get; } = new Lazy<Image>(Resources.GetTinyIconSoulbeast);
 		private Lazy<Image> TinyIconUntamed { get; } = new Lazy<Image>(Resources.GetTinyIconUntamed);
+		private Lazy<Image> TinyIconGaleshot { get; } = new Lazy<Image>(Resources.GetTinyIconGaleshot);
+		// Thief
 		private Lazy<Image> TinyIconDaredevil { get; } = new Lazy<Image>(Resources.GetTinyIconDaredevil);
 		private Lazy<Image> TinyIconDeadeye { get; } = new Lazy<Image>(Resources.GetTinyIconDeadeye);
 		private Lazy<Image> TinyIconSpecter { get; } = new Lazy<Image>(Resources.GetTinyIconSpecter);
+		private Lazy<Image> TinyIconAntiquary { get; } = new Lazy<Image>(Resources.GetTinyIconAntiquary);
+		// Engineer
 		private Lazy<Image> TinyIconScrapper { get; } = new Lazy<Image>(Resources.GetTinyIconScrapper);
 		private Lazy<Image> TinyIconHolosmith { get; } = new Lazy<Image>(Resources.GetTinyIconHolosmith);
 		private Lazy<Image> TinyIconMechanist { get; } = new Lazy<Image>(Resources.GetTinyIconMechanist);
+		private Lazy<Image> TinyIconAmalgam { get; } = new Lazy<Image>(Resources.GetTinyIconAmalgam);
+		// Necromancer
 		private Lazy<Image> TinyIconReaper { get; } = new Lazy<Image>(Resources.GetTinyIconReaper);
 		private Lazy<Image> TinyIconScourge { get; } = new Lazy<Image>(Resources.GetTinyIconScourge);
 		private Lazy<Image> TinyIconHarbinger { get; } = new Lazy<Image>(Resources.GetTinyIconHarbinger);
+		private Lazy<Image> TinyIconRitualist { get; } = new Lazy<Image>(Resources.GetTinyIconRitualist);
+		// Elementalist
 		private Lazy<Image> TinyIconTempest { get; } = new Lazy<Image>(Resources.GetTinyIconTempest);
 		private Lazy<Image> TinyIconWeaver { get; } = new Lazy<Image>(Resources.GetTinyIconWeaver);
 		private Lazy<Image> TinyIconCatalyst { get; } = new Lazy<Image>(Resources.GetTinyIconCatalyst);
+		private Lazy<Image> TinyIconEvoker { get; } = new Lazy<Image>(Resources.GetTinyIconEvoker);
+		// Mesmer
 		private Lazy<Image> TinyIconChronomancer { get; } = new Lazy<Image>(Resources.GetTinyIconChronomancer);
 		private Lazy<Image> TinyIconMirage { get; } = new Lazy<Image>(Resources.GetTinyIconMirage);
 		private Lazy<Image> TinyIconVirtuoso { get; } = new Lazy<Image>(Resources.GetTinyIconVirtuoso);
+		private Lazy<Image> TinyIconTroubadour { get; } = new Lazy<Image>(Resources.GetTinyIconTroubadour);
 
 		// CATEGORIES
 		private Lazy<Image> TinyIconRaid { get; } = new Lazy<Image>(Resources.GetTinyIconRaid);
 		private Lazy<Image> TinyIconFractals { get; } = new Lazy<Image>(Resources.GetTinyIconFractals);
 		private Lazy<Image> TinyIconLog { get; } = new Lazy<Image>(Resources.GetTinyIconGuildRegistrar);
 		private Lazy<Image> TinyIconCommander { get; } = new Lazy<Image>(Resources.GetTinyIconCommander);
-		private Lazy<Image> TinyIconStrike { get; } = new Lazy<Image>(Resources.GetTinyIconStrike);
+		private Lazy<Image> TinyIconRaidEncounter { get; } = new Lazy<Image>(Resources.GetTinyIconRaidEncounter);
 		private Lazy<Image> TinyIconTrainingArea { get; } = new Lazy<Image>(Resources.GetTinyIconTrainingArea);
 		private Lazy<Image> TinyIconWorldVersusWorld { get; } = new Lazy<Image>(Resources.GetTinyIconWorldVersusWorld);
 		private Lazy<Image> TinyIconUncategorized { get; } = new Lazy<Image>(Resources.GetTinyIconUncategorized);
@@ -65,6 +83,7 @@ namespace GW2Scratch.ArcdpsLogManager
 		private Lazy<Image> TinyIconIcebroodSaga { get; } = new Lazy<Image>(Resources.GetTinyIconIcebroodSaga);
 		private Lazy<Image> TinyIconEndOfDragons { get; } = new Lazy<Image>(Resources.GetTinyIconEndOfDragons);
 		private Lazy<Image> TinyIconSecretsOfTheObscure { get; } = new Lazy<Image>(Resources.GetTinyIconSecretsOfTheObscure);
+		private Lazy<Image> TinyVisionsOfEternity { get; } = new Lazy<Image>(Resources.GetTinyIconVisionsOfEternity);
 		private Lazy<Image> TinyIconInstance { get; } = new Lazy<Image>(Resources.GetTinyIconInstance);
 
 		// RAIDS
@@ -76,6 +95,7 @@ namespace GW2Scratch.ArcdpsLogManager
 		// RAID BOSSES
 		// WING 1
 		private Lazy<Image> ValeGuardianIcon { get; } = new Lazy<Image>(Resources.GetValeGuardianIcon);
+		private Lazy<Image> SpiritRaceIcon { get; } = new Lazy<Image>(Resources.GetSpiritRaceIcon);
 		private Lazy<Image> GorsevalIcon { get; } = new Lazy<Image>(Resources.GetGorsevalIcon);
 		private Lazy<Image> SabethaIcon { get; } = new Lazy<Image>(Resources.GetSabethaIcon);
 
@@ -114,24 +134,32 @@ namespace GW2Scratch.ArcdpsLogManager
 		private Lazy<Image> CardinalSabirIcon { get; } = new Lazy<Image>(Resources.GetCardinalSabirIcon);
 		private Lazy<Image> QadimThePeerlessIcon { get; } = new Lazy<Image>(Resources.GetQadimThePeerlessIcon);
 
-		// STRIKES - ICEBROOD SAGA
+		// WING 8
+		private Lazy<Image> GreerIcon { get; } = new Lazy<Image>(Resources.GetGreerIcon);
+		private Lazy<Image> DecimaIcon { get; } = new Lazy<Image>(Resources.GetDecimaIcon);
+		private Lazy<Image> UraIcon { get; } = new Lazy<Image>(Resources.GetUraIcon);
+
+		// RAID ENCOUNTERS - ICEBROOD SAGA
 		private Lazy<Image> ShiverpeaksPassIcon { get; } = new Lazy<Image>(Resources.GetShiverpeaksPassIcon);
 		private Lazy<Image> VoiceAndClawOfTheFallenIcon { get; } = new Lazy<Image>(Resources.GetVoiceAndClawOfTheFallenIcon);
 		private Lazy<Image> FraenirOfJormagIcon { get; } = new Lazy<Image>(Resources.GetFraenirOfJormagIcon);
 		private Lazy<Image> BoneskinnerIcon { get; } = new Lazy<Image>(Resources.GetBoneskinnerIcon);
 		private Lazy<Image> WhisperOfJormagIcon { get; } = new Lazy<Image>(Resources.GetWhisperOfJormagIcon);
 		private Lazy<Image> VariniaStormsounderIcon { get; } = new Lazy<Image>(Resources.GetVariniaStormsounderIcon);
-		
-		// STRIKES - END OF DRAGONS
+
+		// RAID ENCOUNTERS - END OF DRAGONS
 		private Lazy<Image> AetherbladeHideoutIcon { get; } = new Lazy<Image>(Resources.GetAetherbladeHideoutIcon);
 		private Lazy<Image> XunlaiJadeJunkyardIcon { get; } = new Lazy<Image>(Resources.GetXunlaiJadeJunkyardIcon);
 		private Lazy<Image> KainengOverlookIcon { get; } = new Lazy<Image>(Resources.GetKainengOverlookIcon);
 		private Lazy<Image> HarvestTempleIcon { get; } = new Lazy<Image>(Resources.GetHarvestTempleIcon);
 		private Lazy<Image> OldLionsCourtIcon { get; } = new Lazy<Image>(Resources.GetOldLionsCourtIcon);
-		
-		// STRIKES - SECRETS OF THE OBSCURE
+
+		// RAID ENCOUNTERS - SECRETS OF THE OBSCURE
 		private Lazy<Image> CosmicObservatoryIcon { get; } = new Lazy<Image>(Resources.GetCosmicObservatoryIcon);
 		private Lazy<Image> TempleOfFebeIcon { get; } = new Lazy<Image>(Resources.GetTempleOfFebeIcon);
+
+		// RAID ENCOUNTERS - VISIONS OF ETERNITY
+		private Lazy<Image> GuardiansGladeIcon { get; } = new Lazy<Image>(Resources.GetGuardiansGladeIcon);
 
 		// FRACTALS
 		private Lazy<Image> MAMAIcon { get; } = new Lazy<Image>(Resources.GetMAMAIcon);
@@ -146,8 +174,9 @@ namespace GW2Scratch.ArcdpsLogManager
 		private Lazy<Image> BothPhasesAiKeeperOfThePeakIcon { get; } = new Lazy<Image>(Resources.GetBothPhasesAiKeeperOfThePeakIcon);
 		private Lazy<Image> KanaxaiIcon { get; } = new Lazy<Image>(Resources.GetKanaxaiIcon);
 		private Lazy<Image> EparchIcon { get; } = new Lazy<Image>(Resources.GetEparchIcon);
+		private Lazy<Image> WhisperingShadowIcon { get; } = new Lazy<Image>(Resources.GetWhisperingShadowIcon);
 
-		// FESTIVALS
+		// RAID ENCOUNTERS - FESTIVALS
 		private Lazy<Image> FreezieIcon { get; } = new Lazy<Image>(Resources.GetFreezieIcon);
 
 		// TRAINING AREA
@@ -199,6 +228,7 @@ namespace GW2Scratch.ArcdpsLogManager
 		private Lazy<Image> WideIcebroodSagaIcon { get; } = new Lazy<Image>(Resources.GetWideIcebroodSagaIcon);
 		private Lazy<Image> WideEndOfDragonsIcon { get; } = new Lazy<Image>(Resources.GetWideEndOfDragonsIcon);
 		private Lazy<Image> WideSecretsOfTheObscureIcon { get; } = new Lazy<Image>(Resources.GetWideSecretsOfTheObscureIcon);
+		private Lazy<Image> WideVisionsOfEternityIcon { get; } = new Lazy<Image>(Resources.GetWideVisionsOfEternityIcon);
 		private Lazy<Image> WideRaidWing1Icon { get; } = new Lazy<Image>(Resources.GetWideRaidWing1Icon);
 		private Lazy<Image> WideRaidWing2Icon { get; } = new Lazy<Image>(Resources.GetWideRaidWing2Icon);
 		private Lazy<Image> WideRaidWing3Icon { get; } = new Lazy<Image>(Resources.GetWideRaidWing3Icon);
@@ -206,12 +236,13 @@ namespace GW2Scratch.ArcdpsLogManager
 		private Lazy<Image> WideRaidWing5Icon { get; } = new Lazy<Image>(Resources.GetWideRaidWing5Icon);
 		private Lazy<Image> WideRaidWing6Icon { get; } = new Lazy<Image>(Resources.GetWideRaidWing6Icon);
 		private Lazy<Image> WideRaidWing7Icon { get; } = new Lazy<Image>(Resources.GetWideRaidWing7Icon);
+		private Lazy<Image> WideRaidWing8Icon { get; } = new Lazy<Image>(Resources.GetWideRaidWing8Icon);
 
 		public Image GetTinyLogIcon() => TinyIconLog.Value;
 		public Image GetTinyFractalsIcon() => TinyIconFractals.Value;
 		public Image GetTinyRaidIcon() => TinyIconRaid.Value;
 		public Image GetTinyCommanderIcon() => TinyIconCommander.Value;
-		public Image GetTinyStrikeIcon() => TinyIconStrike.Value;
+		public Image GetTinyRaidEncounterIcon() => TinyIconRaidEncounter.Value;
 		public Image GetTinyTrainingAreaIcon() => TinyIconTrainingArea.Value;
 		public Image GetTinyWorldVersusWorldIcon() => TinyIconWorldVersusWorld.Value;
 		public Image GetTinyUncategorizedIcon() => TinyIconUncategorized.Value;
@@ -219,6 +250,7 @@ namespace GW2Scratch.ArcdpsLogManager
 		public Image GetTinyIcebroodSagaIcon() => TinyIconIcebroodSaga.Value;
 		public Image GetTinyEndOfDragonsIcon() => TinyIconEndOfDragons.Value;
 		public Image GetTinySecretsOfTheObscureIcon() => TinyIconSecretsOfTheObscure.Value;
+		public Image GetTinyVisionsOfEternityIcon() => TinyVisionsOfEternity.Value;
 		public Image GetTinyInstanceIcon() => TinyIconInstance.Value;
 		public Image GetCopyButtonEnabledImage() => CopyButtonEnabledIcon.Value;
 		public Image GetCopyButtonDisabledImage() => CopyButtonDisabledIcon.Value;
@@ -229,6 +261,7 @@ namespace GW2Scratch.ArcdpsLogManager
 		public Image GetWideIcebroodSagaIcon() => WideIcebroodSagaIcon.Value;
 		public Image GetWideEndOfDragonsIcon() => WideEndOfDragonsIcon.Value;
 		public Image GetWideSecretsOfTheObscureIcon() => WideSecretsOfTheObscureIcon.Value;
+		public Image GetWideVisionsOfEternityIcon() => WideVisionsOfEternityIcon.Value;
 		public Image GetWideRaidWing1Icon() => WideRaidWing1Icon.Value;
 		public Image GetWideRaidWing2Icon() => WideRaidWing2Icon.Value;
 		public Image GetWideRaidWing3Icon() => WideRaidWing3Icon.Value;
@@ -236,6 +269,7 @@ namespace GW2Scratch.ArcdpsLogManager
 		public Image GetWideRaidWing5Icon() => WideRaidWing5Icon.Value;
 		public Image GetWideRaidWing6Icon() => WideRaidWing6Icon.Value;
 		public Image GetWideRaidWing7Icon() => WideRaidWing7Icon.Value;
+		public Image GetWideRaidWing8Icon() => WideRaidWing8Icon.Value;
 
 		public Image GetTinyProfessionIcon(Profession profession)
 		{
@@ -259,33 +293,51 @@ namespace GW2Scratch.ArcdpsLogManager
 		{
 			return specialization switch
 			{
+				// Warrior
 				EliteSpecialization.Berserker => TinyIconBerserker.Value,
 				EliteSpecialization.Spellbreaker => TinyIconSpellbreaker.Value,
 				EliteSpecialization.Bladesworn => TinyIconBladesworn.Value,
+				EliteSpecialization.Paragon => TinyIconParagon.Value,
+				// Guardian
 				EliteSpecialization.Dragonhunter => TinyIconDragonhunter.Value,
 				EliteSpecialization.Firebrand => TinyIconFirebrand.Value,
 				EliteSpecialization.Willbender => TinyIconWillbender.Value,
+				EliteSpecialization.Luminary => TinyIconLuminary.Value,
+				// Revenant
 				EliteSpecialization.Herald => TinyIconHerald.Value,
 				EliteSpecialization.Renegade => TinyIconRenegade.Value,
 				EliteSpecialization.Vindicator => TinyIconVindicator.Value,
+				EliteSpecialization.Conduit => TinyIconConduit.Value,
+				// Ranger
 				EliteSpecialization.Druid => TinyIconDruid.Value,
 				EliteSpecialization.Soulbeast => TinyIconSoulbeast.Value,
 				EliteSpecialization.Untamed => TinyIconUntamed.Value,
+				EliteSpecialization.Galeshot => TinyIconGaleshot.Value,
+				// Thief
 				EliteSpecialization.Daredevil => TinyIconDaredevil.Value,
 				EliteSpecialization.Deadeye => TinyIconDeadeye.Value,
+				EliteSpecialization.Specter => TinyIconSpecter.Value,
+				EliteSpecialization.Antiquary => TinyIconAntiquary.Value,
+				// Engineer
 				EliteSpecialization.Scrapper => TinyIconScrapper.Value,
 				EliteSpecialization.Holosmith => TinyIconHolosmith.Value,
 				EliteSpecialization.Mechanist => TinyIconMechanist.Value,
+				EliteSpecialization.Amalgam => TinyIconAmalgam.Value,
+				// Necromancer
 				EliteSpecialization.Reaper => TinyIconReaper.Value,
 				EliteSpecialization.Scourge => TinyIconScourge.Value,
 				EliteSpecialization.Harbinger => TinyIconHarbinger.Value,
+				EliteSpecialization.Ritualist => TinyIconRitualist.Value,
+				// Elementalist
 				EliteSpecialization.Tempest => TinyIconTempest.Value,
 				EliteSpecialization.Weaver => TinyIconWeaver.Value,
+				EliteSpecialization.Catalyst => TinyIconCatalyst.Value,
+				EliteSpecialization.Evoker => TinyIconEvoker.Value,
+				// Mesmr
 				EliteSpecialization.Chronomancer => TinyIconChronomancer.Value,
 				EliteSpecialization.Mirage => TinyIconMirage.Value,
 				EliteSpecialization.Virtuoso => TinyIconVirtuoso.Value,
-				EliteSpecialization.Specter => TinyIconSpecter.Value,
-				EliteSpecialization.Catalyst => TinyIconCatalyst.Value,
+				EliteSpecialization.Troubadour => TinyIconTroubadour.Value,
 				_ => throw new ArgumentOutOfRangeException(nameof(specialization)),
 			};
 		}
@@ -307,6 +359,7 @@ namespace GW2Scratch.ArcdpsLogManager
 				// RAIDS
 				// W1
 				Encounter.ValeGuardian => ValeGuardianIcon.Value,
+				Encounter.SpiritRace => SpiritRaceIcon.Value,
 				Encounter.Gorseval => GorsevalIcon.Value,
 				Encounter.Sabetha => SabethaIcon.Value,
 				// W2
@@ -338,22 +391,28 @@ namespace GW2Scratch.ArcdpsLogManager
 				Encounter.Adina => CardinalAdinaIcon.Value,
 				Encounter.Sabir => CardinalSabirIcon.Value,
 				Encounter.QadimThePeerless => QadimThePeerlessIcon.Value,
-				// STRIKES - ICEBROOD SAGA
+				// W8
+				Encounter.Greer => GreerIcon.Value,
+				Encounter.Decima => DecimaIcon.Value,
+				Encounter.Ura => UraIcon.Value,
+				// RAID ENCOUNTERS - ICEBROOD SAGA
 				Encounter.ShiverpeaksPass => ShiverpeaksPassIcon.Value,
 				Encounter.VoiceAndClawOfTheFallen => VoiceAndClawOfTheFallenIcon.Value,
 				Encounter.FraenirOfJormag => FraenirOfJormagIcon.Value,
 				Encounter.Boneskinner => BoneskinnerIcon.Value,
 				Encounter.WhisperOfJormag => WhisperOfJormagIcon.Value,
 				Encounter.VariniaStormsounder => VariniaStormsounderIcon.Value,
-				// STRIKES - END OF DRAGONS
+				// RAID ENCOUNTERS - END OF DRAGONS
 				Encounter.AetherbladeHideout => AetherbladeHideoutIcon.Value,
 				Encounter.XunlaiJadeJunkyard => XunlaiJadeJunkyardIcon.Value,
 				Encounter.KainengOverlook => KainengOverlookIcon.Value,
 				Encounter.HarvestTemple => HarvestTempleIcon.Value,
 				Encounter.OldLionsCourt => OldLionsCourtIcon.Value,
-				// STRIKES - SECRETS OF THE OBSCURE
+				// RAID ENCOUNTERS - SECRETS OF THE OBSCURE
 				Encounter.CosmicObservatory => CosmicObservatoryIcon.Value,
 				Encounter.TempleOfFebe => TempleOfFebeIcon.Value,
+				// RAID ENCOUNTERS - VISIONS OF ETERNITY
+				Encounter.GuardiansGlade => GuardiansGladeIcon.Value,
 				// FRACTALS
 				Encounter.MAMA => MAMAIcon.Value,
 				Encounter.SiaxTheCorrupted => SiaxTheCorruptedIcon.Value,
@@ -369,7 +428,8 @@ namespace GW2Scratch.ArcdpsLogManager
 				Encounter.AiKeeperOfThePeakDayAndNight => BothPhasesAiKeeperOfThePeakIcon.Value,
 				Encounter.Kanaxai => KanaxaiIcon.Value,
 				Encounter.Eparch => EparchIcon.Value,
-				// FESTIVALS
+				Encounter.WhisperingShadow => WhisperingShadowIcon.Value,
+				// RAID ENCOUNTERS - FESTIVALS
 				Encounter.Freezie => FreezieIcon.Value,
 				// TRAINING AREA
 				Encounter.StandardKittyGolem => StandardKittyGolemIcon.Value,

@@ -42,7 +42,7 @@
 		BreakbarState = 34,
 		BreakbarPercent = 35,
 		Error = 36,
-		Tag = 37, // Renamed from CBTS_TAG to CBTS_MARKER within arcdps at some point.
+		TagMarker = 37, // Renamed from CBTS_TAG to CBTS_MARKER within arcdps at some point. Used for all kinds of over-agent/gadget markers.
 		BarrierUpdate = 38,
 		StatReset = 39, // Only in realtime API; should not appear in logs
 		Extension = 40,
@@ -61,5 +61,33 @@
 		SquadMarker = 53, // Added 20240328
 		ArcBuild = 54, // Added 20240614
 		Glider = 55, // Added 20240627
+		StunBreak = 56, // Added 20240627
+		MissileCreate = 57, // Added 20250525
+		MissileLaunch = 58, // Added 20250525
+		MissileRemove = 59, // Added 20250525
+		EffectGroundCreate = 60, // Added 20250526, replaces Effect2 51
+		EffectGroundRemove = 61, // Added 20250526, replaces Effect2 51
+		EffectAgentCreate = 62, // Added 20250526, replaces Effect2 51
+		EffectAgentRemove = 63, // Added 20250526, replaces Effect2 51
+		IIDChange = 64,
+		MapChange = 65,
+		EarlyExit = 66, // Added 20260507, internal use
+		AnimationStart = 67, // Added 20260430
+		AnimationEnd = 68, // Added 20260430
+		BuffApply = 69, // Added 20260501
+		BuffChange = 70, // Added 20260501
+		BuffRemoveSingle = 71, // Added 20260501
+		BuffRemoveAll = 72, // Added 20260501
+		Transformation = 73, // Added 20260502
+		WvWTeam = 74, // Added 20260505
+		WvWObjectiveStatus = 75, // Added 20260507
+		StealthChange = 76, // Added 20260527
+		GadgetAnimation = 77, // Added 20260530
+		GadgetName = 78, // Added 20260530
+		MissileEffect = 79, // Added 20260610
+		GadgetCaptureOutlineShow = 80, // Added 20260610
+		GadgetCaptureSplitPercent = 81, // Added 20260610
+		GadgetCaptureOutlineHide = 82, // Added 20260610
+		GadgetCaptureOutlinePoint = 83, // Added 20260612
 	};
 }

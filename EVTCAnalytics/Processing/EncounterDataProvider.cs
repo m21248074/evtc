@@ -63,6 +63,12 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 				// Raids - Wing 1
 				case Encounter.ValeGuardian:
 					return GetDefaultBuilder(encounter, mainTarget).Build();
+				case Encounter.SpiritRace:
+				{
+					return GetDefaultBuilder(encounter, mainTarget)
+						.WithResult(new RewardDeterminer(404))
+						.Build();
+				}
 				case Encounter.Gorseval:
 					return GetDefaultBuilder(encounter, mainTarget).Build();
 				case Encounter.Sabetha:
@@ -77,7 +83,7 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 					var narella = GetTargetBySpeciesId(agents, SpeciesIds.Narella);
 					var prisoner = GetTargetBySpeciesId(agents, SpeciesIds.TrioCagePrisoner);
 
-					var targets = new Agent[] {berg, zane, narella}.Where(x => x != null).ToArray();
+					var targets = new Agent[] { berg, zane, narella }.Where(x => x != null).ToArray();
 
 					return GetDefaultBuilder(encounter, targets)
 						.WithResult(new ConditionalResultDeterminer(
@@ -123,7 +129,7 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 							// ensure that this will be ignored. It is also very unlikely the boss would be defeated in such a short time,
 							// barring extreme exploits of broken game skills.
 							// Even such exploits from the past would have trouble meeting this time requirement (Shadow Flare, Renegade Invoke Torment).
-							(true, new AgentCombatExitDeterminer(secondPhaseXera) {MinTimeSinceSpawn = 10000})
+							(true, new AgentCombatExitDeterminer(secondPhaseXera) { MinTimeSinceSpawn = 10000 })
 						))
 						.WithHealth(new ConditionalHealthDeterminer(
 							(secondPhaseXera == null, new MaxMinHealthDeterminer()),
@@ -161,7 +167,7 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 					// a long period of time when logs did not contain the main gadget so we need to rely on this.
 					bool canUseReward = gameBuild != null && gameBuild < GameBuilds.AhdashimRelease;
 
-					
+
 					// Deimos, the NPC, is replaced with a gadget for the last 10% of the fight.
 					// There may sometimes be other gadgets with the same id. They do not, however,
 					// have an attack target. They also have lower maximum health values.
@@ -174,7 +180,7 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 					bool canUseTargets = mainGadget != null && attackTarget != null && prisoner != null;
 
 					var targets = new List<Agent> { mainTarget, mainGadget }.Where(x => x != null).ToList();
-					
+
 					return GetDefaultBuilder(encounter, mainTarget)
 						.WithModes(new AgentHealthModeDeterminer(mainTarget, 42_000_000))
 						.WithTargets(targets)
@@ -306,6 +312,49 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 				{
 					return GetDefaultBuilder(encounter, mainTarget)
 						.WithModes(new AgentHealthModeDeterminer(mainTarget, 50_000_000))
+						.Build();
+				}
+				// Raids - Wing 8
+				case Encounter.Greer:
+				{
+					// HP values are identical in Normal and Challenge Mode.
+					// 14 April 2026 update:
+					// Greer: 47.188.800 -> 42.469.920 HP.
+					// Gree, Reeg and Ereg: 23.594.400 -> 21.234.960 HP.
+					return GetDefaultBuilder(encounter, mainTarget)
+						.WithModes(new NPCPresentModeDeterminer(SpeciesIds.Ereg))
+						.Build();
+				}
+				case Encounter.Decima:
+				{
+					// Decima released with 83.288.232 HP and got nerfed without patch to 70.795.000.
+					// Some logs with the original HP exist.
+					// On December 10th, 2024, Decima's got nerfed from 70.795.000 to 60.165.720 HP.
+					// Challenge Mode has 97.020.184 HP.
+
+					// 14 April 2026 update:
+					// Normal Mode: 60.165.720 -> 54.149.148 HP.
+					// Challenge Mode: 97.020.184 -> 87.318.152 HP.
+					return GetDefaultBuilder(encounter, mainTarget)
+						.WithModes(new AgentHealthModeDeterminer(mainTarget, 86_000_000))
+						.Build();
+				}
+				case Encounter.Ura:
+				{
+					// Normal mode 61.345.440
+					// Challenge mode 79.749.072
+					// Legendary challenge mode 105.508.684
+
+					// 14 April 2026 update:
+					// Normal mode: 55.210.896
+					// Challenge mode: 71.774.168
+					// Legendary challenge mode: 94.962.736
+					return GetDefaultBuilder(encounter, mainTarget)
+						.WithModes(new FallbackModeDeterminer(
+							new AgentHealthModeDeterminer(mainTarget, 80_000_000, EncounterMode.LegendaryChallenge),
+							new AgentHealthModeDeterminer(mainTarget, 70_000_000, EncounterMode.Challenge),
+							finalFallbackMode: null
+						))
 						.Build();
 				}
 				// Challenge Mode fractals
@@ -456,9 +505,16 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 				}
 				case Encounter.AetherbladeHideout:
 				{
+					// 14 April 2026 update:
+					// Normal Mode:
+					// Mai Trin: 5.898.600 -> 5.308.740 HP.
+					// Echo of Scarlet: 17.695.800 -> 15.926.220 HP.
+					// Challenge Mode:
+					// Mai Trin: 8.898.600-> 8.008.740 HP.
+					// Echo of Scarlet: 40.082.400 -> 36.074.160 HP.
 					return GetDefaultBuilder(encounter, mainTarget)
 						.WithResult(new AgentBuffGainedDeterminer(mainTarget, SkillIds.Determined895))
-						.WithModes(new AgentHealthModeDeterminer(mainTarget, 8_800_000))
+						.WithModes(new AgentHealthModeDeterminer(mainTarget, 8_000_000))
 						.Build();
 				}
 				case Encounter.XunlaiJadeJunkyard:
@@ -469,12 +525,19 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 						// joins the instance late.
 						// Ankka changes teams twice at the start and then once when she is beaten.
 						// We just pick an arbitrary conservative threshold that her health needs to reach first: 50%.
+
+						// 14 April 2026 update:
+						// Normal Mode: 29.393.280 -> 26.453.952 HP.
+						// Challenge Mode: 52.173.072 -> 46.955.764 HP.
 						.WithResult(new TeamChangedBelowHealthThresholdDeterminer(mainTarget, 0.5f))
-						.WithModes(new AgentHealthModeDeterminer(mainTarget, 50_000_000))
+						.WithModes(new AgentHealthModeDeterminer(mainTarget, 45_000_000))
 						.Build();
 				}
 				case Encounter.KainengOverlook:
 				{
+					// 14 April 2026 update:
+					// Normal Mode: 29.493.000 -> 26.543.700 HP.
+					// Challenge Mode: 42.469.920 -> 38.222.928 HP.
 					return GetDefaultBuilder(encounter, mainTarget)
 						// This has the same rationale behind it as the check for Xunlai Jade Junkyard.
 						.WithResult(new TeamChangedBelowHealthThresholdDeterminer(mainTarget, 0.5f))
@@ -561,6 +624,9 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 				}
 				case Encounter.OldLionsCourt:
 				{
+					// 14 April 2026 update:
+					// Normal Mode: 14.156.640 -> 12.740.976 HP.
+					// Challenge Mode: 23.594.400 -> 21.234.960 HP.
 					var targetOptions = new (int Normal, int Challenge)[]
 					{
 						(SpeciesIds.PrototypeArsenite, SpeciesIds.PrototypeArseniteChallengeMode),
@@ -614,6 +680,9 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 				}
 				case Encounter.Kanaxai:
 				{
+					// 14 April 2026 update:
+					// Normal Mode: ? -> ? HP.
+					// Challenge Mode: 33.982.376 -> 16.999.004 HP.
 					var mode = mainTarget switch
 					{
 						NPC { SpeciesId: SpeciesIds.KanaxaiNM } => EncounterMode.Normal,
@@ -628,6 +697,12 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 				}
 				case Encounter.CosmicObservatory:
 				{
+					// Normal Mode: 47.188.800
+					// Challenge Mode: 56.626.560
+
+					// 14 April 2026 update:
+					// Normal Mode: 47.188.800 -> 42.469.920 HP.
+					// Challenge Mode: 56.626.560 -> 50.963.904 HP.
 					return GetDefaultBuilder(encounter, mainTarget)
 						.WithResult(
 							new AnyCombinedResultDeterminer(
@@ -638,19 +713,23 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 							)
 						).WithModes(new ConditionalModeDeterminer(
 							(gameBuild != null && gameBuild < GameBuilds.CosmicObservatoryCMRelease, new ConstantModeDeterminer(EncounterMode.Normal)),
-							(true, new AgentHealthModeDeterminer(mainTarget, 56_600_000))))
+							(true, new AgentHealthModeDeterminer(mainTarget, 50_600_000))))
                         .Build();
 				}
 				case Encounter.TempleOfFebe:
 				{
-					// NM: before CM release 47,188,800, after CM release: 53,087,400
-					// CM: on release 106,174,800 first phase, second phase 159M
-					// CM: after first fix 130,064,136 in all phases
-					// CM: made easier at 106,174,800 health (2024-03-19)
-					// Legendary Challenge: keeps 130,064,136 (introduced in 2024-03-19)
-					
-					// Achievements were given retroactively, so we count everything above 106,174,800
+					// NM: before CM release 47.188.800, after CM release: 53.087.400
+					// CM: on release 106.174.800 first phase, second phase 159M
+					// CM: after first fix 130.064.136 in all phases
+					// CM: made easier at 106.174.800 health (2024-03-19)
+					// Legendary Challenge: keeps 130.064.136 (introduced in 2024-03-19)
+					// Achievements were given retroactively, so we count everything above 106.174.800
 					// as legendary challenge even before its introduction
+
+					// 14 April 2026 update:
+					// Normal mode: 53.087.400 -> 47.778.660 HP.
+					// Challenge mode: 106.174.800 -> 95.557.328 HP.
+					// Legendary challenge mode: 130.064.136 -> 117.057.712 HP.
 					return GetDefaultBuilder(encounter, mainTarget)
 						.WithModes(new ConditionalModeDeterminer(
 							// The first version of CM with varying health is also recognized as legendary challenge.
@@ -671,6 +750,10 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 					// Challenge Mode Release (Normal Mode T4): 19.857.206
 					// HP Nerfs Patch (Challenge Mode): 22.833.236 
 					// HP Nerfs Patch (Normal Mode T4): 13.900.044
+
+					// 14 April 2026 update:
+					// Normal mode: 13.900.044 -> ? HP.
+					// Challenge mode: 22.833.236 -> 16.961.832 HP.
 					return GetDefaultBuilder(encounter, mainTarget)
 						.WithResult(new AnyCombinedResultDeterminer(
 								new AgentKillingBlowDeterminer(mainTarget),
@@ -680,11 +763,39 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 								new ConstantModeDeterminer(EncounterMode.Normal)),
 							(gameBuild != null && gameBuild >= GameBuilds.LonelyTowerCMRelease && gameBuild < GameBuilds.LonelyTowerHPNerf2,
 								new AgentHealthModeDeterminer(mainTarget, 31_000_000)),
-							(gameBuild != null && gameBuild >= GameBuilds.LonelyTowerHPNerf2,
-								new AgentHealthModeDeterminer(mainTarget, 21_000_000))
+							(gameBuild != null && gameBuild >= GameBuilds.LonelyTowerHPNerf2 && gameBuild < GameBuilds.BossHpReductions,
+								new AgentHealthModeDeterminer(mainTarget, 21_000_000)),
+							(gameBuild != null && gameBuild >= GameBuilds.BossHpReductions,
+								new AgentHealthModeDeterminer(mainTarget, 16_000_000))
 							))
 						.Build();
 				}
+				case Encounter.WhisperingShadow:
+				{
+					// Tier 1 12.404.224 HP
+					// Tier 2 14.202.094 HP
+					// Tier 3 16.941.704 HP
+					// Tier 4 & CM 19.082.024 HP
+
+					// 14 April 2026 update:
+					// Tier 4 & CM: 19.082.024 -> 11.449.214 HP.
+					return GetDefaultBuilder(encounter, mainTarget)
+						.WithModes(new ConditionalModeDeterminer(
+							(gameBuild != null && gameBuild >= GameBuilds.KinfallCMRelease, new SkillPresentModeDeterminer(SkillIds.LifeFireCircleCM, EncounterMode.Challenge))
+							))
+						.Build();
+				}
+				case Encounter.GuardiansGlade:
+					// Normal Mode 42.469.920 HP 
+					// Challenge Mode 74.322.360 HP
+
+					// 14 April 2026 update:
+					// Normal mode: 42.469.920 -> 38.222.928 HP.
+					// Challenge mode: 74.322.360 -> 66.890.120 HP.
+					return GetDefaultBuilder(encounter, mainTarget)
+						.WithResult(new AgentBuffGainedDeterminer(mainTarget, SkillIds.Determined))
+						.WithModes(new AgentHealthModeDeterminer(mainTarget, 45_000_000))
+						.Build();
 				default:
 					return GetDefaultBuilder(encounter, mainTarget, mergeMainTarget: false).Build();
 			}
@@ -697,7 +808,7 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 				encounter,
 				new List<Agent> {mainTarget},
 				new AgentKilledDeterminer(mainTarget),
-				new EmboldenedDetectingModeDeterminer(),
+				new EmboldenedQuickplayDetectingModeDeterminer(),
 				new MaxMinHealthDeterminer()
 			);
 			if (mergeMainTarget && mainTarget is NPC npc)
@@ -728,7 +839,7 @@ namespace GW2Scratch.EVTCAnalytics.Processing
 				encounter,
 				targets.ToList(),
 				result,
-				new EmboldenedDetectingModeDeterminer(),
+				new EmboldenedQuickplayDetectingModeDeterminer(),
 				new MaxMinHealthDeterminer()
 			);
 

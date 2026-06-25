@@ -22,6 +22,7 @@ public class StoredSettings
 	public string DpsReportDomain { get; set; } = DpsReportUploader.DefaultDomain.Domain;
 	public bool DpsReportAutoUpload { get; set; } = false;
 	public bool DpsReportUploadDetailedWvw { get; set; } = false;
+	public bool DpsReportAutoUploadApplyFilters { get; set; } = false;
 	public int? MinimumLogDurationSeconds { get; set; } = null;
 
 	public List<string> HiddenLogListColumns { get; set; } =
@@ -39,5 +40,10 @@ public class StoredSettings
 	public List<string> PlayerAccountNames { get; set; } = [];
 
 	public List<EncounterCategory> WeeklyClearGroups { get; set; } =
-		[EncounterCategory.Raids, EncounterCategory.StrikeEndOfDragons, EncounterCategory.StrikeSecretsOfTheObscure];
+	[
+		EncounterCategory.Raids, 
+		EncounterCategory.RaidEncountersEndOfDragons, 
+		EncounterCategory.RaidEncountersSecretsOfTheObscure,
+		EncounterCategory.RaidEncountersVisionsOfEternity,
+	];
 }
