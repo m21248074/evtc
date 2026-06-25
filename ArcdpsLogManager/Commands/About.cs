@@ -8,7 +8,6 @@ namespace GW2Scratch.ArcdpsLogManager.Commands
 		public About()
 		{
 			MenuText = "關於";
-			// Shortcut = Keys.F11;
 		}
 
 		protected override void OnExecuted(EventArgs e)
@@ -75,7 +74,7 @@ The software
 				License = license,
 				Developers = new []{"Sejsel","Cavey (zh_TW Translation)"},
 				ProgramName = "arcdps 日誌管理器",
-				ProgramDescription = "由 arcdps (激戰2插件)產生的 EVTC 日誌管理器"
+				ProgramDescription = "由 arcdps (激戰2插件) 產生的 EVTC 日誌管理器"
 			};
 			about.ShowDialog(Application.Instance.MainForm);
 		}
